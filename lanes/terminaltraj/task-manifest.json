@@ -64,7 +64,10 @@
     "repo_level_license": "Apache-2.0",
     "selected_task_source_repo_from_item_info": "CanberraTinkerer/homeassistant-addons-jdeath_7",
     "source_license_row_found": false,
-    "decision": "unresolved_for_selected_task"
+    "source_license_resolved_from_upstream": true,
+    "upstream_repo": "CanberraTinkerer/homeassistant-addons-jdeath",
+    "upstream_license": "MIT",
+    "decision": "resolved_for_local_validation_only"
   },
   "execution_status": {
     "reset": "passed",
@@ -72,5 +75,5 @@
     "verifier": "passed",
     "cleanup": "passed"
   },
-  "export_decision": "blocked"
+  "export_decision": "blocked_for_hosted_sft_and_training"
 }

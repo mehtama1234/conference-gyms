@@ -22,14 +22,12 @@
   },
   "runtime_blockers": [
     "released Docker task archive is downloaded only to ignored local cache",
-    "one task manifest has been selected but not run",
-    "selected task source-license row is unresolved",
+    "one task manifest has been selected and run locally",
+    "privacy and split-integrity receipts do not authorize export",
     "training and hosted export approvals are not cleared"
   ],
   "next_required_artifacts": [
-    "license-resolution-receipt.json",
-    "split-integrity-receipt.json",
-    "privacy-review-receipt.json"
+    "export-approval-receipt.json"
   ],
   "export_decision": {
     "local_contract_validation": "allowed",

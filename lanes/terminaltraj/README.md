@@ -49,9 +49,10 @@ The released instance archive has been downloaded into ignored local cache and
 one task, `task_5279`, has been run locally. Docker is installed, the task base
 image was pulled, the task image was built with `TMPDIR` redirected away from
 the full `/tmp`, the container was reset, task actions were applied, and the
-released pytest verifier passed all four checks. Export remains blocked because
-the task-specific source-license row has not been resolved from
-`repo&license.jsonl`.
+released pytest verifier passed all four checks. The task source license is
+resolved from the upstream GitHub repo as MIT for local validation. Export
+remains blocked because privacy and split-integrity receipts do not authorize
+hosted conversion, SFT export, or training export.
 
 Because of that, this lane can now claim local runtime validation for one task,
 but still cannot honestly claim:
@@ -88,6 +89,10 @@ The lane now includes a fixture-level contract test:
 - `verifier-receipt.json`: released pytest verifier result, 4 passed.
 - `cleanup-receipt.json`: container and network cleanup evidence.
 - `replay-receipt.json`: repeat replay wrapper result, 4 passed, cleanup clear.
+- `license-resolution-receipt.json`: upstream source license evidence for the
+  selected task.
+- `privacy-review-receipt.json`: local validation allowed, export blocked.
+- `split-integrity-receipt.json`: split membership unresolved, export blocked.
 - `trace.schema.json`: normalized terminal/sandbox trace shape.
 - `trace.fixture.json`: non-runtime fixture trace that exercises the shape
   without claiming benchmark execution.

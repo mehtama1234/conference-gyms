@@ -12,15 +12,16 @@
   "blocking_reasons": [
     "fixture trace is bound to a selected TerminalTraj dataset instance but is not a real execution",
     "real local task execution passed but is only one selected task",
-    "dataset row license has not been tied to a selected task",
-    "privacy and split-integrity receipts do not exist"
+    "privacy receipt allows local validation only",
+    "split-integrity receipt does not prove train/eval/test membership",
+    "no export approval receipt exists"
   ],
   "required_to_unblock_training_export": [
     "select one released TerminalTraj task instance",
-    "record source repository and license row for that task",
+    "record export approval for the selected task and normalized trace",
     "materialize the Docker task environment",
     "record reset, action, verifier, final-state, cleanup, and replay receipts",
-    "record privacy and split-integrity decisions",
+    "record split membership or exclude this task from training export",
     "rerun trace validation on the real normalized trace"
   ]
 }

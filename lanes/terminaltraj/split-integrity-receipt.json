@@ -1,0 +1,26 @@
+{
+  "lane_id": "terminaltraj-production-lane",
+  "split_receipt_id": "terminaltraj-task-5279-split-001",
+  "status": "local_validation_allowed_export_blocked",
+  "task_id": "task_5279",
+  "source_dataset": "m-a-p/TerminalTraj-5k-instances",
+  "observations": [
+    "The selected task comes from the released 5k instance archive.",
+    "The local archive contains task folders but no tracked split manifest proving train, validation, test, or held-out membership for task_5279.",
+    "The normalized trace was produced from a benchmark-style task with executable verifier output.",
+    "Without a split manifest, the trace must not be exported as SFT or training data because it could contaminate evaluation sets."
+  ],
+  "decision": {
+    "local_contract_validation": "allowed",
+    "hosted_conversion": "blocked",
+    "sft_export": "blocked",
+    "training_export": "blocked",
+    "reason": "Replay is valid as a local adapter proof, but split membership is not proven and no export approval receipt exists."
+  },
+  "required_to_unblock": [
+    "authoritative split manifest for task_5279",
+    "decision whether task_5279 is eval-only or exportable",
+    "explicit exclusion rule if task_5279 is benchmark/evaluation data",
+    "export approval receipt referencing the normalized trace"
+  ]
+}

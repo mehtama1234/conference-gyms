@@ -12,7 +12,7 @@
     "mode": "real_local_run",
     "is_real_runtime": true,
     "blockers": [
-      "selected task source-license row is unresolved",
+      "privacy and split-integrity receipts allow local validation only",
       "hosted conversion, SFT export, and training export remain blocked"
     ]
   },
@@ -112,13 +112,13 @@
     "evidence_completeness": "partial",
     "replay_confidence": "high",
     "failure_category": "none_for_local_task_execution",
-    "notes": "One released task ran locally and passed its executable verifier, then replayed successfully through scripts/replay_terminaltraj_task_5279.py. Evidence remains partial because license resolution and split integrity are not complete."
+    "notes": "One released task ran locally and passed its executable verifier, then replayed successfully through scripts/replay_terminaltraj_task_5279.py. Evidence remains partial because privacy and split integrity do not authorize hosted conversion, SFT export, or training export."
   },
   "export_decision": {
     "local_contract_validation": "allowed",
     "hosted_conversion": "blocked",
     "sft_export": "blocked",
     "training_export": "blocked",
-    "reason": "Real local verifier passed, but the selected task source-license row, privacy review, split-integrity receipt, and export approvals remain unresolved."
+    "reason": "Real local verifier passed and source license is resolved for local validation, but privacy and split-integrity receipts do not authorize hosted conversion, SFT export, or training export."
   }
 }

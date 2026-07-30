@@ -143,7 +143,14 @@ def validate_task_manifest(task_manifest: dict[str, object], errors: list[str]) 
     require_keys(license_status, ["repo_level_license", "source_license_row_found", "decision"], "task-manifest.license_status", errors)
     if isinstance(license_status, dict):
         require(license_status.get("source_license_row_found") is False, "selected task license row must not be marked found without evidence", errors)
-        require(license_status.get("decision") == "unresolved_for_selected_task", "selected task license decision must remain unresolved", errors)
+        require(
+            license_status.get("decision") in {"unresolved_for_selected_task", "resolved_for_local_validation_only"},
+            "selected task license decision is invalid",
+            errors,
+        )
+        if license_status.get("decision") == "resolved_for_local_validation_only":
+            require(license_status.get("source_license_resolved_from_upstream") is True, "resolved license must cite upstream resolution", errors)
+            require(license_status.get("upstream_license") == "MIT", "task_5279 upstream license must be MIT", errors)
     execution_status = task_manifest.get("execution_status")
     require_keys(execution_status, ["reset", "agent_actions", "verifier", "cleanup"], "task-manifest.execution_status", errors)
     if isinstance(execution_status, dict):
@@ -212,6 +219,9 @@ def validate_receipts(
     verifier_receipt: dict[str, object],
     cleanup_receipt: dict[str, object],
     replay_receipt: dict[str, object],
+    license_receipt: dict[str, object],
+    privacy_receipt: dict[str, object],
+    split_receipt: dict[str, object],
     errors: list[str],
 ) -> None:
     require(reset_receipt.get("status") == "passed", "reset receipt must be passed", errors)
@@ -239,6 +249,30 @@ def validate_receipts(
         require(replay_export.get("sft_export") == "blocked", "replay SFT export must remain blocked", errors)
         require(replay_export.get("training_export") == "blocked", "replay training export must remain blocked", errors)
 
+    require(license_receipt.get("status") == "resolved_for_local_validation_only", "license receipt must be local-validation only", errors)
+    license_decision = license_receipt.get("decision")
+    require_keys(license_decision, ["local_contract_validation", "hosted_conversion", "sft_export", "training_export", "reason"], "license-receipt.decision", errors)
+    if isinstance(license_decision, dict):
+        require(license_decision.get("local_contract_validation") == "allowed", "license receipt must allow local validation", errors)
+        require(license_decision.get("hosted_conversion") == "blocked", "license receipt must block hosted conversion", errors)
+        require(license_decision.get("sft_export") == "blocked", "license receipt must block SFT export", errors)
+        require(license_decision.get("training_export") == "blocked", "license receipt must block training export", errors)
+    evidence = license_receipt.get("evidence")
+    require(isinstance(evidence, list) and len(evidence) >= 2, "license receipt must include repository and license API evidence", errors)
+    if isinstance(evidence, list):
+        license_ids = {entry.get("license_spdx_id") for entry in evidence if isinstance(entry, dict)}
+        require("MIT" in license_ids, "license evidence must include MIT SPDX id", errors)
+
+    for name, receipt in [("privacy", privacy_receipt), ("split", split_receipt)]:
+        require(receipt.get("status") == "local_validation_allowed_export_blocked", f"{name} receipt must allow local validation only", errors)
+        decision = receipt.get("decision")
+        require_keys(decision, ["local_contract_validation", "hosted_conversion", "sft_export", "training_export", "reason"], f"{name}-receipt.decision", errors)
+        if isinstance(decision, dict):
+            require(decision.get("local_contract_validation") == "allowed", f"{name} receipt must allow local validation", errors)
+            require(decision.get("hosted_conversion") == "blocked", f"{name} receipt must block hosted conversion", errors)
+            require(decision.get("sft_export") == "blocked", f"{name} receipt must block SFT export", errors)
+            require(decision.get("training_export") == "blocked", f"{name} receipt must block training export", errors)
+
 
 def main() -> int:
     errors: list[str] = []
@@ -251,6 +285,9 @@ def main() -> int:
     verifier_receipt = load_json(LANE / "verifier-receipt.json")
     cleanup_receipt = load_json(LANE / "cleanup-receipt.json")
     replay_receipt = load_json(LANE / "replay-receipt.json")
+    license_receipt = load_json(LANE / "license-resolution-receipt.json")
+    privacy_receipt = load_json(LANE / "privacy-review-receipt.json")
+    split_receipt = load_json(LANE / "split-integrity-receipt.json")
     export_decision = load_json(LANE / "export-decision.json")
     load_json(LANE / "trace.schema.json")
 
@@ -263,6 +300,9 @@ def main() -> int:
     require(isinstance(verifier_receipt, dict), "verifier-receipt.json must be an object", errors)
     require(isinstance(cleanup_receipt, dict), "cleanup-receipt.json must be an object", errors)
     require(isinstance(replay_receipt, dict), "replay-receipt.json must be an object", errors)
+    require(isinstance(license_receipt, dict), "license-resolution-receipt.json must be an object", errors)
+    require(isinstance(privacy_receipt, dict), "privacy-review-receipt.json must be an object", errors)
+    require(isinstance(split_receipt, dict), "split-integrity-receipt.json must be an object", errors)
     require(isinstance(export_decision, dict), "export-decision.json must be an object", errors)
 
     if isinstance(task_manifest, dict):
@@ -278,8 +318,20 @@ def main() -> int:
         and isinstance(verifier_receipt, dict)
         and isinstance(cleanup_receipt, dict)
         and isinstance(replay_receipt, dict)
+        and isinstance(license_receipt, dict)
+        and isinstance(privacy_receipt, dict)
+        and isinstance(split_receipt, dict)
     ):
-        validate_receipts(reset_receipt, verifier_receipt, cleanup_receipt, replay_receipt, errors)
+        validate_receipts(
+            reset_receipt,
+            verifier_receipt,
+            cleanup_receipt,
+            replay_receipt,
+            license_receipt,
+            privacy_receipt,
+            split_receipt,
+            errors,
+        )
     if (
         isinstance(source_pin, dict)
         and isinstance(task_manifest, dict)

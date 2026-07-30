@@ -1,0 +1,40 @@
+{
+  "lane_id": "terminaltraj-production-lane",
+  "license_receipt_id": "terminaltraj-task-5279-license-001",
+  "status": "resolved_for_local_validation_only",
+  "task_id": "task_5279",
+  "source_from_item_info": "CanberraTinkerer/homeassistant-addons-jdeath_7",
+  "normalized_upstream_repo": "CanberraTinkerer/homeassistant-addons-jdeath",
+  "evidence": [
+    {
+      "kind": "github_repository_api",
+      "url": "https://api.github.com/repos/CanberraTinkerer/homeassistant-addons-jdeath",
+      "http_status": 200,
+      "full_name": "CanberraTinkerer/homeassistant-addons-jdeath",
+      "default_branch": "main",
+      "license_spdx_id": "MIT"
+    },
+    {
+      "kind": "github_license_api",
+      "url": "https://api.github.com/repos/CanberraTinkerer/homeassistant-addons-jdeath/license",
+      "http_status": 200,
+      "path": "LICENSE",
+      "download_url": "https://raw.githubusercontent.com/CanberraTinkerer/homeassistant-addons-jdeath/main/LICENSE",
+      "license_spdx_id": "MIT"
+    }
+  ],
+  "terminaltraj_metadata_status": {
+    "local_repo_license_file": "TerminalTraj/License",
+    "local_repo_license": "Apache-2.0",
+    "source_license_metadata_file": "TerminalTraj/source/repo&license.jsonl",
+    "exact_source_row_found": false,
+    "note": "The selected task source path includes a local suffix, homeassistant-addons-jdeath_7. The exact string was not present in repo&license.jsonl, so upstream GitHub license evidence is used for local validation."
+  },
+  "decision": {
+    "local_contract_validation": "allowed",
+    "hosted_conversion": "blocked",
+    "sft_export": "blocked",
+    "training_export": "blocked",
+    "reason": "MIT source license is enough to clear the selected task's local validation license gate, but export still requires privacy, split-integrity, and explicit export approval receipts."
+  }
+}
