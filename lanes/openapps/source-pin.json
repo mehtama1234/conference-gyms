@@ -1,6 +1,6 @@
 {
   "lane_id": "openapps-production-lane",
-  "status": "source_pinned_reward_fixture_passed_browser_attempt_blocked",
+  "status": "source_pinned_browser_runtime_passed_single_task_export_blocked",
   "local_source_repo": "OpenApps",
   "upstream_remote": "https://github.com/facebookresearch/OpenApps.git",
   "commit": "015715adca8e6c59627e21b7a72b4e555dcb18f1",
@@ -11,12 +11,12 @@
   "paper_url": "https://arxiv.org/abs/2511.20766",
   "runtime_blockers": [
     "full OpenApps dependency environment is not installed in this repo",
-    "browser runtime attempt uses an ignored minimal .cache/openapps-browser-venv and ignored local browser libraries rather than vendored dependencies",
+    "browser runtime uses an ignored minimal .cache/openapps-browser-venv and ignored local browser libraries rather than vendored dependencies",
     "Playwright Chromium host-library blocker was cleared locally by extracting libnss3, libnspr4, and libasound2t64 .deb packages into .cache/local-browser-libs",
-    "current OpenApps/FastHTML/Starlette runtime compatibility is not resolved enough for the todo page to render #new-title",
-    "BrowserGym/Playwright actions have not executed because the OpenApps page render path is blocked",
-    "no dummy-agent task execution receipt exists",
-    "no browser reward verifier receipt exists",
+    "selected AddToDoTask browser GUI run passed with local OpenApps/FastHTML compatibility shims",
+    "runtime shims are still required: builtins.Any, fastcore.xml.to_xml bool-child compatibility, builtins.picolink, and builtins.database",
+    "only one deterministic selected task has a real browser reward verifier receipt",
+    "no model-agent evaluation receipt exists",
     "hosted conversion, SFT export, and training export approvals are not cleared"
   ],
   "export_decision": {

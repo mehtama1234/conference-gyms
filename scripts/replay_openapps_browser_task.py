@@ -118,7 +118,10 @@ def ensure_venv() -> None:
         [
             str(PYTHON),
             "-c",
-            "import browsergym.core, playwright, fasthtml, hydra, deepdiff, fastlite, starlette",
+            "import importlib.metadata as md; "
+            "import browsergym.core, playwright, fasthtml, hydra, deepdiff, fastlite, starlette; "
+            "raise SystemExit(0 if md.version('python-fasthtml') == '0.12.14' "
+            "and md.version('starlette') == '0.46.2' else 1)",
         ],
         check=False,
     )
@@ -148,6 +151,28 @@ import json
 import typing
 
 builtins.Any = typing.Any
+import fastcore.xml as fastcore_xml
+
+_original_to_xml = fastcore_xml.to_xml
+
+
+def _to_xml_bool_compat(*elms, **kwargs):
+    def clean(elm):
+        if isinstance(elm, bool):
+            return ""
+        if isinstance(elm, tuple):
+            return tuple(clean(item) for item in elm)
+        if isinstance(elm, list):
+            return [clean(item) for item in elm]
+        return elm
+
+    return _original_to_xml(*(clean(elm) for elm in elms), **kwargs)
+
+
+fastcore_xml.to_xml = _to_xml_bool_compat
+import fasthtml.core as fasthtml_core
+
+fasthtml_core.to_xml = _to_xml_bool_compat
 from fasthtml.common import Link
 from fastlite import database
 
@@ -167,7 +192,12 @@ async def run_task():
     session = Session("todo")
     report = {
         "task_name": "add_call_mom_to_my_todo",
-        "runtime_shims": ["builtins.Any", "builtins.picolink", "builtins.database"],
+        "runtime_shims": [
+            "builtins.Any",
+            "fastcore.xml.to_xml bool-child compatibility",
+            "builtins.picolink",
+            "builtins.database",
+        ],
     }
     try:
         await session.start()

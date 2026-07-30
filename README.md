@@ -30,8 +30,8 @@ Analysis artifacts:
   no-heavy import smoke, and heavy-runtime blockers.
 - `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
   smoke, saved-state reward fixture and replay, local Chromium library
-  extraction, and a tracked MCP/Playwright browser attempt blocked by
-  OpenApps/FastHTML runtime compatibility.
+  extraction, and one real MCP/Playwright browser GUI task passed with reward
+  1.0.
 
 Run the current production gate:
 
@@ -60,9 +60,9 @@ Current adapter coverage from the generated readiness rollup:
 - 1 generated ADP approval override template with 280 editable receipt entries.
 - `OpenApps` source-specific projection is ready and its no-heavy-run adapter
   smoke and evidence/gate receipts are complete. Its production lane now has a
-  saved-state reward replay plus an MCP/Playwright browser attempt; Chromium
-  launch can be cleared with local extracted libraries, but OpenApps/FastHTML
-  compatibility still blocks rendering the todo page.
+  saved-state reward replay plus a real MCP/Playwright browser GUI run for
+  `add_call_mom_to_my_todo`; Chromium runs with local extracted libraries,
+  compatibility shims are still required, and export remains blocked.
 - `Agent-Data-Protocol` source-specific projection is ready and its no-heavy-run
   adapter smoke and evidence/gate receipts are complete; full dataset
   conversion, split integrity, and training-export blockers remain. It is now
@@ -198,5 +198,5 @@ bridge and the first cross-platform CUA bridge, so it now acts as the platform
 config, model endpoint, screenshot/action trace, WebArenaLiteV2/AndroidWorld
 evaluator, privacy, and export-gate pattern for later computer-use worlds.
 
-The next decision is whether to promote `OpenApps` from source/config smoke to
-one real GUI task run before returning to CyberGym's heavier server/data setup.
+The next decision is whether to harden `OpenApps` beyond one GUI task or return
+to CyberGym's heavier server/data setup.

@@ -5,7 +5,11 @@
     "source-pin.json",
     "task-contract.json",
     "source-smoke-receipt.json",
-    "browser-runtime-attempt-receipt.json"
+    "reward-fixture-receipt.json",
+    "replay-receipt.json",
+    "browser-runtime-attempt-receipt.json",
+    "trace.fixture.json",
+    "trace.real.json"
   ],
   "local_contract_validation": "allowed",
   "hosted_conversion": "blocked",
@@ -13,19 +17,23 @@
   "training_export": "blocked",
   "blocking_reasons": [
     "repo license is CC-BY-NC-4.0",
-    "selected task has only been run as a saved-state reward fixture",
-    "browser runtime attempt is blocked by OpenApps/FastHTML/Starlette compatibility before the todo page renders",
-    "no browser trace exists",
-    "no browser reward verifier result exists",
+    "real browser GUI evidence covers one deterministic selected task only",
+    "runtime still depends on local OpenApps/FastHTML compatibility shims rather than an upstream dependency lock or patch",
+    "no model-agent evaluation receipt exists",
     "no privacy or split receipt exists",
+    "no contamination review receipt exists",
     "no export approval receipt exists"
   ],
   "required_to_unblock_local_runtime": [
-    "resolve OpenApps/FastHTML/Starlette runtime compatibility so #new-title renders",
-    "select one low-risk task such as add_call_mom_to_my_todo",
-    "run dummy agent or deterministic browser fixture against the app",
-    "record app state before and after",
-    "record reward/verifier result",
-    "emit normalized GUI trace"
+    "remove or upstream the OpenApps/FastHTML compatibility shims",
+    "run a broader selected-task sample, not just add_call_mom_to_my_todo",
+    "record cleanup and replay receipts for the broader sample",
+    "decide whether dummy-agent evaluation or deterministic fixtures are the intended production proof"
+  ],
+  "required_to_unblock_export": [
+    "license review for CC-BY-NC-4.0 reuse scope",
+    "privacy review of task states and screenshots",
+    "split and contamination receipt",
+    "explicit hosted conversion, SFT export, and training export approvals"
   ]
 }

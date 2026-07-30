@@ -25,8 +25,8 @@ pipeline without hand-waving:
 
 ## Recommended First Lane
 
-Use `TerminalTraj` or `CyberGym` before browser/mobile/full external-service
-lanes.
+Use the existing real-run lanes to harden the evidence contract, then promote
+the highest-value blocked family.
 
 `TerminalTraj` is the lower-risk first production lane because terminal tasks
 have a compact state surface: filesystem, commands, stdout/stderr, exit status,
@@ -38,6 +38,11 @@ model endpoints, or human review.
 ultimately care about: executable vulnerability verification. A successful
 security lane proves that the pipeline can represent setup, exploit attempt,
 patch state, verifier logs, network/sandbox boundaries, and safety gates.
+
+`OpenApps` is now useful as the browser/GUI proof lane because one selected task
+has run through Playwright/Chromium and produced a real normalized GUI trace. It
+still needs broader coverage and cleaner dependency policy before it can be used
+as a production benchmark lane.
 
 ## Definition Of Done For One Lane
 
@@ -70,23 +75,23 @@ smoke are complete; heavyweight data/server runtime remains blocked.
 
 `OpenApps` is the third lane: source pin, package root import, app config
 discovery, task YAML parsing, saved-state reward replay, no-sudo Chromium
-library extraction, and a tracked MCP/Playwright browser attempt are complete.
-The remaining blocker is OpenApps/FastHTML/Starlette runtime compatibility
-before the todo page renders `#new-title`.
+library extraction, and one real MCP/Playwright browser GUI task are complete.
+The selected AddToDo task reset the app, clicked the todo input, typed
+`Call Mom`, pressed Enter, moved the todo count from 15 to 16, and received
+ground-truth reward 1.0.
 
 ## Next Concrete Work Item
 
-Promote OpenApps first, then CyberGym:
+Choose between hardening OpenApps and promoting CyberGym:
 
-1. For OpenApps, resolve the FastHTML/Starlette compatibility issue so the
-   todo page renders `#new-title`.
-2. Rerun `make replay-openapps-browser`.
-3. Reset app state and apply the deterministic AddToDo browser action path.
-4. Record reward/verifier output.
-5. Emit a normalized OpenApps GUI trace.
-6. Keep export blocked unless privacy, split, license, and contamination
+1. For OpenApps, remove the local compatibility shims or turn them into a
+   documented dependency patch.
+2. Run a small selected-task sample, not just `add_call_mom_to_my_todo`.
+3. Add cleanup/replay receipts for that sample.
+4. For CyberGym, attempt one local security task with server/data setup and PoC
+   verifier output.
+5. Keep export blocked unless privacy, split, license, and contamination
    receipts explicitly clear it.
-7. Then return to CyberGym and attempt one local security task if storage allows.
 
 ## What This Does Not Claim
 

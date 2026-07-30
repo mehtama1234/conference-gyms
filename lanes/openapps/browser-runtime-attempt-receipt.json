@@ -1,13 +1,14 @@
 {
   "lane_id": "openapps-production-lane",
   "attempt_receipt_id": "openapps-browser-runtime-attempt-001",
-  "status": "blocked_openapps_fasthtml_runtime_compatibility",
-  "scope": "browser_gui_runtime_attempt",
+  "status": "passed_browser_gui_runtime",
+  "scope": "browser_gui_runtime_single_task",
   "script": "scripts/replay_openapps_browser_task.py",
   "command": "make replay-openapps-browser",
   "selected_task": {
     "task_name": "add_call_mom_to_my_todo",
     "task_class": "open_apps.tasks.tasks.AddToDoTask",
+    "task_id": "4f36dd2b04083d6e0d3f5043b98aa1a49270616a77e8b1a5eff8337738be4b2b",
     "goal": "Add 'Call Mom' to my todo list.",
     "expected_action_path": [
       "start todo app",
@@ -26,41 +27,64 @@
     "local_browser_libraries": ".cache/local-browser-libs/lib",
     "minimal_dependency_strategy": "install browsergym-core and the OpenApps MCP/session imports, not the full browsergym/OpenApps meta dependency graph",
     "runtime_pins_after_compatibility_probe": {
+      "browsergym-core": "0.14.3",
+      "playwright": "1.44.0",
       "python-fasthtml": "0.12.14",
       "starlette": "0.46.2"
     }
   },
   "observed_progress": [
-    "minimal Python 3.12 browser venv created in ignored .cache",
-    "browsergym-core, playwright, python-fasthtml, starlette, hydra-core, deepdiff, omegaconf, uvicorn, requests, pytest, pillow, feedgen, jinja2, python-multipart, and thefuzz installed",
-    "Playwright Chromium 125.0.6422.26 build v1117 downloaded into ignored .cache/ms-playwright",
+    "minimal Python 3.12 browser venv is created in ignored .cache when missing",
+    "browsergym-core, playwright, python-fasthtml, starlette, hydra-core, deepdiff, omegaconf, uvicorn, requests, pytest, pillow, feedgen, jinja2, python-multipart, and thefuzz are installed into the ignored venv",
+    "Playwright Chromium 125.0.6422.26 build v1117 is available in ignored .cache/ms-playwright",
     "missing Chromium libraries were downloaded as .deb files and extracted into ignored .cache/local-browser-libs/lib without sudo",
     "a standalone Playwright Chromium data URL smoke passed with LD_LIBRARY_PATH pointing at the extracted libraries",
     "OpenApps app server initialization reached messages, todo, calendar, codeeditor, and map setup",
     "todo app state was seeded",
-    "runtime compatibility shims were required for OpenApps/FastHTML: builtins.Any, builtins.picolink, and builtins.database",
-    "Chromium launch progressed past the previous libnss3/libnspr4/libasound2 blocker"
+    "runtime compatibility shims were required for OpenApps/FastHTML: builtins.Any, fastcore.xml.to_xml bool-child compatibility, builtins.picolink, and builtins.database",
+    "the todo page exposed #new-title",
+    "the deterministic browser action path executed through Playwright",
+    "the final ground-truth reward was 1.0"
   ],
-  "blocking_error": {
-    "stage": "OpenApps FastHTML app rendering before todo input is available",
-    "error_type": "TimeoutError",
-    "primary_error": "OpenApps server did not become healthy or the todo page did not expose #new-title because FastHTML XML rendering raised TypeError: sequence item 1: expected str instance, bool found",
-    "compatibility_errors_seen": [
-      "python-fasthtml 0.14.9 lacks picolink, database, Group, and Container exports expected by OpenApps commit 015715a",
-      "python-fasthtml 0.12.14 on Python 3.12 requires builtins.Any shim during import",
-      "Starlette 1.3.1 is incompatible with python-fasthtml 0.12.14 constructor arguments",
-      "python-fasthtml 0.12.14 with Starlette 0.46.2 starts route setup but fails XML rendering on boolean children"
+  "result": {
+    "status": "passed",
+    "task_id": "4f36dd2b04083d6e0d3f5043b98aa1a49270616a77e8b1a5eff8337738be4b2b",
+    "registered_apps": [
+      "messages",
+      "todo",
+      "calendar",
+      "codeeditor",
+      "map"
     ],
-    "host_library_status": "previous Chromium host-library blocker cleared locally by extracting libnss3, libnspr4, and libasound2t64 debs into .cache and setting LD_LIBRARY_PATH",
-    "remaining_blocker": "select or patch a compatible FastHTML/Starlette/OpenApps runtime so the todo page renders #new-title"
+    "initial_url_path": "/todo",
+    "final_url_path": "/todo",
+    "actions": [
+      "mouse_click(464, 91)",
+      "keyboard_type('Call Mom')",
+      "keyboard_press('Enter')"
+    ],
+    "errors": [
+      null,
+      null,
+      null
+    ],
+    "initial_todo_count": 15,
+    "final_todo_count": 16,
+    "final_contains_call_mom": true,
+    "reward": 1.0,
+    "done": true,
+    "screenshot_bytes": 32183
   },
-  "does_not_claim": [
-    "OpenApps todo page rendered successfully",
-    "BrowserGym or Playwright action was executed against #new-title",
-    "browser screenshot exists",
-    "browser reward verifier passed",
-    "normalized real GUI trace exists",
-    "hosted conversion or training export is allowed"
+  "residual_warnings": [
+    "the replay still uses local compatibility shims rather than an upstream OpenApps/FastHTML compatibility fix",
+    "server logs may include non-fatal FastAPI/FastHTML route noise during shutdown or unrelated route handling",
+    "this receipt covers one deterministic selected task, not the full 28-task benchmark"
   ],
-  "next_action": "Resolve the OpenApps/FastHTML runtime compatibility issue, then rerun make replay-openapps-browser to execute the AddToDo browser action path and emit trace.real.json."
+  "does_not_claim": [
+    "all OpenApps tasks pass",
+    "a model agent was evaluated",
+    "the compatibility shims are production dependency policy",
+    "privacy, split, contamination, hosted conversion, SFT export, or training export approval exists"
+  ],
+  "next_action": "Normalize this browser GUI run into trace.real.json, then decide whether to remove runtime shims upstream or promote another lane."
 }

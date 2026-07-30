@@ -1,0 +1,99 @@
+{
+  "schema_version": "browser-gui-real-trace/v0.1",
+  "trace_id": "openapps-add-todo-browser-real-001",
+  "lane_id": "openapps-production-lane",
+  "source": {
+    "local_repo": "OpenApps",
+    "upstream_remote": "https://github.com/facebookresearch/OpenApps.git",
+    "commit": "015715adca8e6c59627e21b7a72b4e555dcb18f1",
+    "repo_license": "CC-BY-NC-4.0",
+    "paper_title": "OpenApps: Building Blocks for Computer-Use Agents Research"
+  },
+  "runtime_status": {
+    "mode": "real_browser_gui_runtime",
+    "is_browser_runtime": true,
+    "browser": "Playwright Chromium 125.0.6422.26 build v1117",
+    "local_runtime_notes": [
+      "executed through scripts/replay_openapps_browser_task.py",
+      "used ignored Python 3.12 venv at .cache/openapps-browser-venv",
+      "used ignored Playwright browser cache at .cache/ms-playwright",
+      "used ignored extracted Chromium host libraries at .cache/local-browser-libs/lib",
+      "used OpenApps/FastHTML compatibility shims: builtins.Any, fastcore.xml.to_xml bool-child compatibility, builtins.picolink, and builtins.database"
+    ]
+  },
+  "task": {
+    "task_name": "add_call_mom_to_my_todo",
+    "task_class": "AddToDoTask",
+    "task_id": "4f36dd2b04083d6e0d3f5043b98aa1a49270616a77e8b1a5eff8337738be4b2b",
+    "goal": "Add 'Call Mom' to my todo list.",
+    "target_change": "todo list gains Call Mom with done=false"
+  },
+  "observations": [
+    {
+      "step": 0,
+      "kind": "browser_page",
+      "url_path": "/todo",
+      "todo_count": 15,
+      "reward": 0.0,
+      "done": false
+    },
+    {
+      "step": 3,
+      "kind": "browser_page",
+      "url_path": "/todo",
+      "todo_count": 16,
+      "contains_call_mom": true,
+      "reward": 1.0,
+      "done": true,
+      "screenshot_bytes": 32183
+    }
+  ],
+  "actions": [
+    {
+      "step": 1,
+      "action_type": "mouse_click",
+      "raw": "mouse_click(464, 91)",
+      "status": "passed",
+      "error": null
+    },
+    {
+      "step": 2,
+      "action_type": "keyboard_type",
+      "raw": "keyboard_type('Call Mom')",
+      "status": "passed",
+      "error": null
+    },
+    {
+      "step": 3,
+      "action_type": "keyboard_press",
+      "raw": "keyboard_press('Enter')",
+      "status": "passed",
+      "error": null
+    }
+  ],
+  "verifier": {
+    "status": "passed",
+    "kind": "ground_truth_state_reward",
+    "passed": true,
+    "reward": 1.0,
+    "done": true,
+    "evidence": [
+      "final todo count is 16 after initial count 15",
+      "final todo state contains title Call Mom",
+      "OpenApps AddToDoTask reward returned 1.0"
+    ]
+  },
+  "quality": {
+    "evidence_completeness": "browser_runtime_single_task",
+    "replay_confidence": "medium",
+    "failure_category": "none_for_selected_task",
+    "notes": "This is a real local browser GUI run for one deterministic selected task. Confidence is medium because the run depends on local compatibility shims and ignored cache artifacts, and it does not cover the full OpenApps task set."
+  },
+  "export_decision": {
+    "local_contract_validation": "allowed",
+    "hosted_conversion": "blocked",
+    "sft_export": "blocked",
+    "training_export": "blocked",
+    "reason": "CC-BY-NC-4.0 license, no privacy/split/contamination receipt, local runtime shims, one selected task only, and no export approval."
+  }
+}

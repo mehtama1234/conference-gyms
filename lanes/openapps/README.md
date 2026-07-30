@@ -3,12 +3,13 @@
 ## Current Status
 
 Status: source pinned, source/config smoke passed, state reward fixture passed,
-browser runtime attempted and blocked by OpenApps/FastHTML compatibility.
+and one real Playwright/Chromium browser GUI task passed. Export remains
+blocked.
 
 OpenApps is the third production lane. It represents browser/GUI worlds with
 transparent Python app state and ground-truth rewards. It is lower
 infrastructure than CyberGym because the README says it runs on a single CPU
-without Docker or OS emulators, but a real agent/browser run still requires
+without Docker or OS emulators, but broader agent/browser runs still require
 Python dependencies, BrowserGym, Playwright/Chromium, and optional model keys.
 
 ## Current Proof
@@ -21,19 +22,20 @@ The lane currently proves:
 - task YAML parsing
 - local task inventory count
 - non-browser task reward check for `AddToDoTask`
-- attempted MCP/Playwright browser startup for `AddToDoTask`
 - local no-sudo Chromium library extraction
-- exact OpenApps/FastHTML/Starlette compatibility blocker
-- export blocked by CC BY-NC 4.0 and missing runtime/export receipts
+- real MCP/Playwright browser execution for `AddToDoTask`
+- deterministic browser actions: click, type `Call Mom`, press Enter
+- final todo count moved from 15 to 16
+- ground-truth browser reward was 1.0
+- normalized real browser GUI trace
+- export blocked by CC BY-NC 4.0 and missing privacy/split/export receipts
 
 It does not yet claim:
 
-- compatible OpenApps/FastHTML/Starlette runtime for page rendering
-- BrowserGym/Playwright action execution
-- Playwright/Chromium browser run
-- dummy-agent task execution
-- browser reward verifier result
-- normalized real browser GUI trace
+- all 28 OpenApps tasks pass
+- a model-agent task execution receipt
+- runtime shims are acceptable production dependency policy
+- hosted conversion, SFT export, or training export approval
 
 ## Contract Artifacts
 
@@ -43,10 +45,10 @@ It does not yet claim:
 - `reward-fixture-receipt.json`: repo task class and saved-state reward check.
 - `replay-receipt.json`: repeatable local replay of the saved-state reward
   fixture.
-- `browser-runtime-attempt-receipt.json`: repeatable local attempt to start the
-  MCP/Playwright browser task, currently blocked by OpenApps/FastHTML runtime
-  compatibility before the todo page renders.
+- `browser-runtime-attempt-receipt.json`: repeatable local browser GUI run for
+  the selected AddToDo task.
 - `trace.fixture.json`: normalized non-browser state/reward fixture trace.
+- `trace.real.json`: normalized real browser GUI trace for the selected task.
 - `export-decision.json`: explicit hosted/SFT/training export block.
 - `../../scripts/validate_openapps_lane.py`: local validator.
 
@@ -56,8 +58,8 @@ Run:
 python3 scripts/validate_openapps_lane.py
 ```
 
-The browser attempt is local-only because it may install packages and Chromium
-into ignored `.cache/` paths:
+The browser replay is local-only because it may install packages and Chromium
+into ignored `.cache/` paths and uses local compatibility shims:
 
 ```bash
 make replay-openapps-browser
