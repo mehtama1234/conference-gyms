@@ -1,10 +1,16 @@
 # Repo Publication
 
-## Current Local State
+## Current Published State
 
 This directory is now a local Git repo for the gym analysis and production
-readiness layer. It intentionally does not vendor the upstream benchmark repos
-or heavyweight data.
+readiness layer, pushed to:
+
+```text
+https://github.com/mehtama1234/conference-gyms
+```
+
+It intentionally does not vendor the upstream benchmark repos or heavyweight
+data.
 
 Tracked scope:
 
@@ -29,18 +35,7 @@ The local `origin` remote is configured as:
 https://github.com/mehtama1234/conference-gyms.git
 ```
 
-As of the latest local check, that GitHub repo does not exist yet. The other
-checked candidates also did not exist:
-
-- `conference-gyms`
-- `gyms`
-- `conference-gym-readiness`
-
-Once `mehtama1234/conference-gyms` exists, run:
-
-```bash
-git push -u origin main
-```
+`main` tracks `origin/main`.
 
 Check publication readiness:
 

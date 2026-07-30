@@ -1,17 +1,17 @@
 {
-  "status": "push_ready_remote_missing",
+  "status": "published",
   "checked_at": "2026-07-30",
   "local_branch": "main",
   "configured_origin": "https://github.com/mehtama1234/conference-gyms.git",
-  "remote_exists": false,
+  "remote_exists": true,
   "auth_tooling": {
     "gh_cli_available": false,
-    "github_token_available": false
+    "stored_git_credential_available": true
   },
   "checked_remote_candidates": [
     {
       "url": "https://github.com/mehtama1234/conference-gyms.git",
-      "exists": false
+      "exists": true
     },
     {
       "url": "https://github.com/mehtama1234/gyms.git",
@@ -31,5 +31,7 @@
       "export_blocked_lane_count": 2
     }
   },
-  "next_required_action": "Create https://github.com/mehtama1234/conference-gyms, then run git push -u origin main from /home/manishmehta/ui-projects/gyms."
+  "published_repo": "https://github.com/mehtama1234/conference-gyms",
+  "pushed_branch": "main",
+  "next_required_action": "Keep using make validate before pushing changes."
 }
