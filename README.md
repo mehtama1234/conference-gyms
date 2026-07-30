@@ -99,6 +99,9 @@ Current adapter coverage from the generated readiness rollup:
   subset task files are remotely visible, and `arvo:1065` is now the second
   local verifier-runnable task with generated `submit.sh`, vulnerable/fixed
   verifier execution, and PoC DB exit-code write for an empty runtime probe.
+  A repeated direct-Docker stability audit keeps `arvo:1065` classified as
+  runtime evidence, not exploit evidence, because tiny probes can vary and even
+  fail on the fixed build.
   The other lanes have no-heavy-run smoke and evidence/gate receipts, while
   runtime data, service/toolchain, verifier execution, replay, privacy/license,
   and export blockers remain.

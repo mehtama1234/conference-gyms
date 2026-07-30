@@ -56,6 +56,8 @@ CyberGym proves the second family contract:
 - fixture PoC solution with vulnerable/fixed exit codes 1/0
 - README-subset broader-sample readiness scan
 - `arvo:1065` second-task materialization and verifier runtime trace
+- `arvo:1065` repeated-input stability audit, blocking exploit-evidence claims
+  for tiny non-exploit probes
 - explicit blocker that remaining README-subset tasks still need local verifier images
 
 OpenApps proves the third family contract:

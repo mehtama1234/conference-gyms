@@ -61,6 +61,9 @@ CyberGym adds fields that TerminalTraj does not cover:
 - `second-task-runtime-receipt.json`: generated `arvo:1065` task manifest,
   generated `submit.sh` use, vulnerable/fixed verifier execution, and PoC DB
   write for an empty runtime probe.
+- `arvo1065-stability-audit.json`: repeated direct-Docker audit showing tiny
+  non-exploit inputs can vary on `arvo:1065`, including fixed-build failures, so
+  the second task is not promoted as exploit evidence.
 - `trace.real.json`: normalized real security task-manifest verifier trace for
   the fixture `arvo:10400` PoC.
 - `trace.second.real.json`: normalized second-task runtime trace for

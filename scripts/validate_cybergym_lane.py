@@ -444,6 +444,50 @@ def validate_second_real_trace(trace: dict[str, object], errors: list[str]) -> N
         require(verifier.get("fix_exit_code") == 0, "second CyberGym trace fixed exit code should be 0", errors)
 
 
+def validate_arvo1065_stability(receipt: dict[str, object], errors: list[str]) -> None:
+    require_keys(
+        receipt,
+        [
+            "receipt_id",
+            "script",
+            "command",
+            "task_id",
+            "scope",
+            "rounds_per_input_per_build",
+            "status",
+            "classification",
+            "inputs",
+            "interpretation",
+        ],
+        "arvo1065-stability-audit",
+        errors,
+    )
+    require(receipt.get("receipt_id") == "cybergym-arvo-1065-stability-audit-001", "arvo1065 stability receipt id is invalid", errors)
+    require(receipt.get("script") == "scripts/audit_cybergym_arvo1065_stability.py", "arvo1065 stability script is invalid", errors)
+    require(receipt.get("command") == "make audit-cybergym-arvo1065-stability", "arvo1065 stability command is invalid", errors)
+    require(receipt.get("task_id") == "arvo:1065", "arvo1065 stability task id is invalid", errors)
+    require(receipt.get("rounds_per_input_per_build") == 5, "arvo1065 stability audit should run five rounds", errors)
+    require(receipt.get("status") == "unstable_non_exploit_probe_behavior", "arvo1065 stability status is invalid", errors)
+    classification = receipt.get("classification")
+    require_keys(
+        classification,
+        ["tiny_input_exit_code_variation_observed", "fixed_build_failure_observed", "promote_as_exploit_evidence"],
+        "arvo1065-stability-audit.classification",
+        errors,
+    )
+    if isinstance(classification, dict):
+        require(classification.get("tiny_input_exit_code_variation_observed") is True, "arvo1065 stability must record exit variation", errors)
+        require(classification.get("fixed_build_failure_observed") is True, "arvo1065 stability must record fixed build failures", errors)
+        require(classification.get("promote_as_exploit_evidence") is False, "arvo1065 stability must not promote exploit evidence", errors)
+    inputs = receipt.get("inputs")
+    require(isinstance(inputs, list) and len(inputs) == 4, "arvo1065 stability should record four inputs", errors)
+    if isinstance(inputs, list):
+        for item in inputs:
+            require_keys(item, ["name", "vul_unique_exit_codes", "fix_unique_exit_codes"], "arvo1065-stability-audit.input", errors)
+            if isinstance(item, dict):
+                require("139" in item.get("vul_unique_exit_codes", []) or "139" in item.get("fix_unique_exit_codes", []), "arvo1065 stability input should show at least one failure", errors)
+
+
 def main() -> int:
     errors: list[str] = []
     source = load_json(LANE / "source-pin.json")
@@ -454,6 +498,7 @@ def main() -> int:
     task_manifest = load_json(LANE / "task-manifest-receipt.json")
     broader_sample = load_json(LANE / "broader-sample-readiness.json")
     second_task = load_json(LANE / "second-task-runtime-receipt.json")
+    arvo1065_stability = load_json(LANE / "arvo1065-stability-audit.json")
     real_trace = load_json(LANE / "trace.real.json")
     second_trace = load_json(LANE / "trace.second.real.json")
     export = load_json(LANE / "export-decision.json")
@@ -490,6 +535,10 @@ def main() -> int:
         validate_second_task_runtime(second_task, errors)
     else:
         errors.append("second-task-runtime-receipt.json must be an object")
+    if isinstance(arvo1065_stability, dict):
+        validate_arvo1065_stability(arvo1065_stability, errors)
+    else:
+        errors.append("arvo1065-stability-audit.json must be an object")
     if isinstance(real_trace, dict):
         validate_real_trace(real_trace, errors)
     else:
