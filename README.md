@@ -23,6 +23,7 @@ Analysis artifacts:
   receipt.
 - `PRODUCTION_READINESS_GOAL.md`: end-to-end production proof target.
 - `PRODUCTION_READINESS_STATUS.md`: current lane status and aggregate gate.
+- `REPO_PUBLICATION.md`: remote setup and CI notes for making this public.
 - `lanes/terminaltraj/`: first real local run lane, with normalized trace,
   verifier, replay, and export-gate receipts.
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
@@ -32,6 +33,12 @@ Run the current production gate:
 
 ```bash
 python3 scripts/validate_production_lanes.py
+```
+
+or:
+
+```bash
+make validate
 ```
 
 Current adapter coverage from the generated readiness rollup:

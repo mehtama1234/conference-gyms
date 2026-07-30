@@ -1,0 +1,36 @@
+name: Production Readiness
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-lanes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate production lanes
+        run: python3 scripts/validate_production_lanes.py
+
+      - name: Validate JSON artifacts
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          for path in sorted(Path("lanes").glob("**/*.json")):
+              json.loads(path.read_text())
+              print(f"json ok: {path}")
+          PY
+
+      - name: Compile validator scripts
+        run: python3 -m py_compile scripts/*.py
