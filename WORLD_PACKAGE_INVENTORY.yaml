@@ -1,0 +1,890 @@
+schema_version: aidf.conference_world_inventory.v0
+purpose: >
+  Structured first-pass map from local ICML/ICLR-style benchmark repos to AIDF
+  world-package concepts. This complements CONFERENCE_WORLD_ANALYSIS.md,
+  WORLD_ANATOMY_MAP.md, and AIDF_WORLD_IMPLEMENTATION_GAPS.md.
+
+aidf_extraction_fields:
+  - world_id
+  - source_repo
+  - conference_signal
+  - domain
+  - runtime_substrate
+  - state_model
+  - action_model
+  - observation_model
+  - verifier_stack
+  - trace_and_evidence
+  - source_to_world_extraction
+  - difficulty_controls
+  - human_feedback_calibration
+  - training_export
+  - aidf_next_adapter
+
+worlds:
+  - world_id: conference-world:tau2-bench
+    source_repo: tau2-bench
+    conference_signal: ICML 2026
+    domain: customer-service shared-state work
+    runtime_substrate: python_gymnasium_or_domain_runtime
+    state_model: domain customer, policy, tool, and conversation state
+    action_model: agent tool calls plus simulated user actions over shared state
+    observation_model: conversation turns, tool outputs, user replies, state feedback
+    verifier_stack:
+      - state_inspection
+      - policy_compliance
+      - task_grader
+    trace_and_evidence:
+      - conversation_trace
+      - tool_call_trace
+      - final_state_diff
+    source_to_world_extraction: policies, tools, tasks, and domain records become scenarios
+    difficulty_controls:
+      - shared_control
+      - policy_constraints
+      - user_ambiguity
+      - multi_turn_dependency
+    human_feedback_calibration: useful for policy and process rubric review
+    training_export: agent/user/tool trajectories
+    aidf_next_adapter: dual-control enterprise world adapter
+
+  - world_id: conference-world:bird-interact
+    source_repo: BIRD-Interact
+    conference_signal: ICLR 2026
+    domain: interactive database and text-to-SQL work
+    runtime_substrate: docker_database_runtime
+    state_model: relational database plus task and user-simulator context
+    action_model: SQL, CRUD, exploration, clarification, and user interaction
+    observation_model: query results, errors, user replies, and environment feedback
+    verifier_stack:
+      - executable_sql_check
+      - state_inspection
+      - task_success_metric
+    trace_and_evidence:
+      - query_trace
+      - database_result
+      - user_simulator_dialogue
+    source_to_world_extraction: database schema, data, and task intents become executable worlds
+    difficulty_controls:
+      - hidden_schema_dependency
+      - clarification_need
+      - multi_step_database_update
+    human_feedback_calibration: optional for ambiguous user intents
+    training_export: query-and-dialogue trajectories
+    aidf_next_adapter: database connector simulator plus verifier adapter
+
+  - world_id: conference-world:cybergym
+    source_repo: CyberGym
+    conference_signal: ICLR 2026
+    domain: vulnerability analysis and patch verification
+    runtime_substrate: sandboxed_codebase_runtime
+    state_model: vulnerable repository, exploit condition, patch state, and test state
+    action_model: inspect code, run commands, modify files, generate or validate PoC
+    observation_model: terminal output, files, test logs, exploit behavior
+    verifier_stack:
+      - exploit_reproduction
+      - regression_test
+      - patch_effect_check
+    trace_and_evidence:
+      - terminal_command_output
+      - file_diff
+      - pre_post_verifier_log
+    source_to_world_extraction: CVE or issue source becomes runnable vulnerable task
+    difficulty_controls:
+      - larger_codebase
+      - indirect_exploit_path
+      - noisy_failing_tests
+    human_feedback_calibration: limited; mostly executable verifier driven
+    training_export: repair and exploit-validation trajectories
+    aidf_next_adapter: security world replay adapter
+
+  - world_id: conference-world:menvagent
+    source_repo: MEnvAgent
+    conference_signal: ICML 2026
+    domain: software environment construction
+    runtime_substrate: docker_environment_builder
+    state_model: dependency files, build scripts, runtime image, repair history
+    action_model: infer setup, install dependencies, build container, run validation
+    observation_model: build logs, package errors, test outputs, environment metadata
+    verifier_stack:
+      - build_success
+      - smoke_test
+      - task_validation
+    trace_and_evidence:
+      - dockerfile
+      - setup_log
+      - repair_trace
+      - validation_output
+    source_to_world_extraction: repo metadata and task files become reproducible runtime package
+    difficulty_controls:
+      - missing_dependency
+      - version_conflict
+      - polyglot_runtime
+    human_feedback_calibration: useful for setup-quality rubric
+    training_export: environment-repair trajectories
+    aidf_next_adapter: source-intake to executable environment builder
+
+  - world_id: conference-world:agent-data-protocol
+    source_repo: Agent-Data-Protocol
+    conference_signal: ICLR 2026
+    domain: agent trajectory interchange
+    runtime_substrate: data_protocol
+    state_model: normalized tasks, observations, actions, and messages
+    action_model: schema-level action representation, not a single runtime action set
+    observation_model: standardized observations and tool outputs
+    verifier_stack:
+      - schema_validation
+      - conversion_invariant
+      - dataset_quality_check
+    trace_and_evidence:
+      - normalized_trace
+      - raw_trace
+      - trainable_transcript
+    source_to_world_extraction: raw traces become standardized agent data
+    difficulty_controls:
+      - dataset_filter
+      - trace_quality
+      - observation_noise
+    human_feedback_calibration: supports labeled examples but is not itself a judge
+    training_export: primary purpose; SFT and trajectory conversions
+    aidf_next_adapter: canonical AIDF trace export target
+
+  - world_id: conference-world:astabench
+    source_repo: AstaBench
+    conference_signal: ICLR 2026
+    domain: scientific research-agent workflows
+    runtime_substrate: tool_and_data_research_runtime
+    state_model: research tasks, data assets, tool calls, costs, and submissions
+    action_model: use research tools, inspect data, compute, cite, submit answer
+    observation_model: tool outputs, documents, data, cost receipts, scorer feedback
+    verifier_stack:
+      - task_scorer
+      - citation_or_evidence_check
+      - cost_accounting
+    trace_and_evidence:
+      - tool_trace
+      - cited_evidence
+      - scoring_log
+      - cost_usage
+    source_to_world_extraction: research questions and assets become benchmark tasks
+    difficulty_controls:
+      - tool_budget
+      - evidence_depth
+      - multi_source_dependency
+    human_feedback_calibration: useful for scientific rubric and citation quality
+    training_export: research-agent trajectories with cost and evidence labels
+    aidf_next_adapter: scientific work package and cost-aware verifier adapter
+
+  - world_id: conference-world:webdevjudge
+    source_repo: WebDevJudge
+    conference_signal: ICLR 2026
+    domain: web-development judgment
+    runtime_substrate: browser_and_static_analysis_runtime
+    state_model: task prompt, generated site/app, human labels, judge decisions
+    action_model: inspect code, render page, interact with UI, score dimensions
+    observation_model: DOM, screenshots, interaction results, static signals
+    verifier_stack:
+      - browser_evidence
+      - rubric_judge
+      - human_preference_label
+    trace_and_evidence:
+      - screenshot
+      - interaction_trace
+      - rubric_item
+      - human_label
+    source_to_world_extraction: app requirements and examples become evaluation tasks
+    difficulty_controls:
+      - visual_fidelity
+      - interaction_depth
+      - ambiguous_requirement
+    human_feedback_calibration: central capability
+    training_export: rubric-labeled web-development examples
+    aidf_next_adapter: reviewer calibration and browser evidence adapter
+
+  - world_id: conference-world:realpdebench
+    source_repo: RealPDEBench
+    conference_signal: ICLR 2026
+    domain: scientific physical-system modeling
+    runtime_substrate: scientific_simulator_plus_real_measurements
+    state_model: real measurements, PDE simulation parameters, predictions, metrics
+    action_model: configure simulation, run model, compare against real system
+    observation_model: numerical outputs, plots, metric tables, sim-to-real gaps
+    verifier_stack:
+      - numerical_metric
+      - simulator_metric
+      - real_measurement_comparison
+    trace_and_evidence:
+      - simulation_config
+      - metric_output
+      - plot_or_table
+    source_to_world_extraction: experiment descriptions and data become simulation tasks
+    difficulty_controls:
+      - parameter_shift
+      - sparse_measurement
+      - sim_to_real_gap
+    human_feedback_calibration: expert review useful for scientific validity
+    training_export: simulation-and-metric trajectories
+    aidf_next_adapter: scientific simulator substrate contract
+
+  - world_id: conference-world:causalgame
+    source_repo: CausalGame
+    conference_signal: ICML 2026
+    domain: causal discovery through active experimentation
+    runtime_substrate: interactive_scientific_game
+    state_model: hidden causal graph, interventions, observations, budget
+    action_model: choose experiments, intervene, observe, update hypothesis
+    observation_model: noisy measurements, censored signals, experiment results
+    verifier_stack:
+      - hidden_graph_match
+      - experiment_efficiency
+      - final_hypothesis_score
+    trace_and_evidence:
+      - experiment_log
+      - observation_table
+      - hypothesis_updates
+    source_to_world_extraction: causal system specification becomes hidden-state game
+    difficulty_controls:
+      - confounding
+      - noise
+      - intervention_budget
+      - hidden_variable
+    human_feedback_calibration: useful for rubric over experimental strategy
+    training_export: active-learning trajectories
+    aidf_next_adapter: hidden-state scientific discovery world
+
+  - world_id: conference-world:ui-venus-mobile
+    source_repo: UI-Venus-VenusBench-Mobile
+    conference_signal: ICML 2026
+    domain: mobile GUI computer-use tasks
+    runtime_substrate: android_mobile_emulator
+    state_model: app screen state, user goal, device context, action history
+    action_model: tap, type, scroll, navigate, inspect UI
+    observation_model: screenshot, accessibility tree, app state, action result
+    verifier_stack:
+      - ui_state_check
+      - task_completion_check
+      - capability_diagnostic
+    trace_and_evidence:
+      - screenshot
+      - accessibility_tree
+      - input_action_trace
+    source_to_world_extraction: mobile app tasks and intents become benchmark episodes
+    difficulty_controls:
+      - layout_variation
+      - multi_app_dependency
+      - visual_ambiguity
+    human_feedback_calibration: useful for intent and visual quality judgments
+    training_export: mobile computer-use trajectories
+    aidf_next_adapter: mobile/GUI world substrate adapter
+
+  - world_id: conference-world:swing-bench
+    source_repo: Swing-Bench
+    conference_signal: ICLR 2026
+    domain: repository issue resolution
+    runtime_substrate: repository_plus_ci
+    state_model: issue, repository, branch, tests, reviewer/submission state
+    action_model: inspect code, edit files, run tests, submit patch
+    observation_model: file contents, terminal output, CI logs, review feedback
+    verifier_stack:
+      - unit_test_or_ci
+      - patch_diff_check
+      - reviewer_feedback
+    trace_and_evidence:
+      - git_diff
+      - test_log
+      - ci_result
+      - review_comment
+    source_to_world_extraction: issue and repo snapshot become executable coding task
+    difficulty_controls:
+      - large_repo_context
+      - flaky_or_slow_ci
+      - underspecified_issue
+    human_feedback_calibration: reviewer feedback and acceptance criteria
+    training_export: code-agent repair trajectories
+    aidf_next_adapter: software-development work-world adapter
+
+  - world_id: conference-world:world-in-world
+    source_repo: World-In-World
+    conference_signal: ICLR 2026
+    domain: embodied closed-loop world-model evaluation
+    runtime_substrate: embodied_simulator_or_world_model
+    state_model: scene, agent pose, future observations, task goal
+    action_model: move, inspect, manipulate, plan across predicted state
+    observation_model: generated or simulated visual observations and success state
+    verifier_stack:
+      - simulator_metric
+      - task_success_check
+      - trajectory_consistency
+    trace_and_evidence:
+      - action_sequence
+      - generated_observation
+      - success_metric
+    source_to_world_extraction: scenes and task goals become embodied episodes
+    difficulty_controls:
+      - longer_planning_horizon
+      - partial_observability
+      - scene_complexity
+    human_feedback_calibration: possible for realism and task validity
+    training_export: planning and embodied interaction trajectories
+    aidf_next_adapter: embodied/world-model runtime abstraction
+
+  - world_id: conference-world:gaia2-are
+    source_repo: Gaia2-ARE
+    conference_signal: ICLR 2026
+    domain: dynamic asynchronous general-agent environments
+    runtime_substrate: python_environment_runner
+    state_model: scenario state, dynamic events, tool state, time budget, hidden task context
+    action_model: observe state, call tools, respond, wait, recover from event changes
+    observation_model: environment events, tool outputs, scenario updates, verifier feedback
+    verifier_stack:
+      - action_level_verifier
+      - scenario_score
+      - temporal_constraint_check
+    trace_and_evidence:
+      - environment_event_log
+      - tool_trace
+      - action_verifier_result
+    source_to_world_extraction: scenario definitions and tool specs become async work episodes
+    difficulty_controls:
+      - delayed_event
+      - changing_context
+      - temporal_constraint
+      - tool_failure
+    human_feedback_calibration: useful for ambiguous strategy and partial-credit process review
+    training_export: async tool-use trajectories
+    aidf_next_adapter: dynamic long-horizon environment loop adapter
+
+  - world_id: conference-world:openapps
+    source_repo: OpenApps
+    conference_signal: ICLR 2026
+    domain: configurable UI app computer-use tasks
+    runtime_substrate: browser_ui_runtime
+    state_model: app config, screen state, DOM/UI state, task goal, action history
+    action_model: click, type, scroll, navigate, inspect, submit
+    observation_model: screenshot, DOM or accessibility state, action results, task feedback
+    verifier_stack:
+      - ui_state_check
+      - task_completion_check
+      - robustness_across_variants
+    trace_and_evidence:
+      - screenshot_sequence
+      - ui_action_trace
+      - app_state_diff
+    source_to_world_extraction: app configs and task goals become UI-world variants
+    difficulty_controls:
+      - layout_variation
+      - content_variation
+      - visual_ambiguity
+      - navigation_depth
+    human_feedback_calibration: useful for visual/task intent judgments
+    training_export: computer-use trajectories across app variants
+    aidf_next_adapter: browser UI world variant adapter
+
+  - world_id: conference-world:medagentgym
+    source_repo: MedAgentGym
+    conference_signal: ICLR 2026
+    domain: biomedical coding and data-science tasks
+    runtime_substrate: biomedical_sandbox_runtime
+    state_model: task spec, biomedical dataset, code workspace, execution feedback, ground truth
+    action_model: read task, write code, run code, inspect feedback, submit answer
+    observation_model: dataset samples, execution logs, feedback signals, validation result
+    verifier_stack:
+      - sandbox_ground_truth
+      - code_execution_check
+      - biomedical_task_metric
+    trace_and_evidence:
+      - code_trace
+      - execution_log
+      - feedback_trace
+      - ground_truth_result
+    source_to_world_extraction: biomedical tasks and datasets become executable coding worlds
+    difficulty_controls:
+      - domain_specific_data
+      - sparse_feedback
+      - noisy_measurement
+      - dependency_setup
+    human_feedback_calibration: expert review needed before clinical or biomedical claims
+    training_export: biomedical code-agent trajectories
+    aidf_next_adapter: gated-data scientific coding world adapter
+
+  - world_id: conference-world:sandbox-escape-bench
+    source_repo: SandboxEscapeBench
+    conference_signal: ICML 2026
+    domain: sandbox security and infrastructure-risk evaluation
+    runtime_substrate: isolated_vm_or_inspect_ai_runtime
+    state_model: sandbox scenario, VM/container boundary, command state, flag or success condition
+    action_model: inspect environment, run commands, attempt task, report flag or failure
+    observation_model: terminal output, sandbox state, scenario metadata, scoring result
+    verifier_stack:
+      - inspect_task_score
+      - sandbox_boundary_check
+      - transcript_analysis
+    trace_and_evidence:
+      - inspect_eval_log
+      - terminal_transcript
+      - sandbox_state_receipt
+    source_to_world_extraction: scenario files become isolated security evaluation tasks
+    difficulty_controls:
+      - sandbox_hardening_level
+      - command_surface
+      - network_policy
+      - privilege_boundary
+    human_feedback_calibration: security expert review useful for severity and exploitability
+    training_export: security-sensitive transcripts only after policy review
+    aidf_next_adapter: chaos/security sandbox evaluation adapter
+
+  - world_id: conference-world:cve-factory
+    source_repo: CVE-Factory
+    conference_signal: ICML 2026
+    domain: security world generation from CVE sources
+    runtime_substrate: docker_in_docker_world_factory
+    state_model: CVE metadata, vulnerable repo, generated task, tests, agent traces, verifier result
+    action_model: read CVE, build environment, generate tests, judge task, export world package
+    observation_model: CVE fields, build logs, test logs, generated task review, benchmark result
+    verifier_stack:
+      - generated_security_task_tests
+      - patch_eval
+      - exploit_or_regression_check
+    trace_and_evidence:
+      - factory_stage_log
+      - generated_test_log
+      - distilled_agent_trace
+    source_to_world_extraction: CVE descriptions and repos become runnable vulnerability worlds
+    difficulty_controls:
+      - repo_size
+      - exploit_complexity
+      - test_synthesis_quality
+      - stale_dependency
+    human_feedback_calibration: security expert review needed for task validity
+    training_export: generated security tasks and distilled traces
+    aidf_next_adapter: security source-to-world factory adapter
+
+  - world_id: conference-world:agentflow
+    source_repo: AgentFlow
+    conference_signal: ICLR 2026
+    domain: planner-executor-verifier agent training loop
+    runtime_substrate: agent_training_runtime
+    state_model: plan state, executor state, verifier feedback, generated trajectories, reward signal
+    action_model: plan, execute, verify, generate, update planner policy
+    observation_model: module outputs, verifier feedback, trajectory reward, training logs
+    verifier_stack:
+      - task_verifier
+      - trajectory_level_reward
+      - planner_executor_consistency
+    trace_and_evidence:
+      - planner_trace
+      - executor_trace
+      - verifier_trace
+      - training_log
+    source_to_world_extraction: tasks and verifier feedback become trainable agent-loop episodes
+    difficulty_controls:
+      - verifier_noise
+      - plan_depth
+      - executor_failure
+      - reward_sparsity
+    human_feedback_calibration: useful for validating process rewards
+    training_export: planner/executor/verifier traces
+    aidf_next_adapter: harness improvement-loop and training-export adapter
+
+  - world_id: conference-world:algoveri
+    source_repo: AlgoVeri
+    conference_signal: ICML 2026
+    domain: cross-tool algorithm verification
+    runtime_substrate: formal_methods_toolchain
+    state_model: algorithm spec, implementation, proof obligations, toolchain result
+    action_model: write or repair code, write proof annotations, run verifier, inspect failures
+    observation_model: compiler output, proof errors, counterexamples, pass/fail result
+    verifier_stack:
+      - formal_verifier
+      - proof_obligation_check
+      - cross_tool_consistency
+    trace_and_evidence:
+      - source_diff
+      - verifier_log
+      - proof_error_trace
+    source_to_world_extraction: algorithm contracts become Dafny/Verus/Lean verification tasks
+    difficulty_controls:
+      - invariant_complexity
+      - toolchain_difference
+      - proof_gap
+    human_feedback_calibration: expert review useful for proof strategy quality
+    training_export: formal-code repair trajectories
+    aidf_next_adapter: formal verification world adapter
+
+  - world_id: conference-world:verina
+    source_repo: VERINA
+    conference_signal: ICLR 2026
+    domain: Lean verifiable-code generation
+    runtime_substrate: lean_toolchain
+    state_model: natural-language task, Lean spec, implementation, proof state, theorem result
+    action_model: write code, write proof, run Lean, inspect proof errors, repair
+    observation_model: Lean diagnostics, proof state, compile result, test or theorem result
+    verifier_stack:
+      - lean_compile_check
+      - theorem_proof_check
+      - intermediate_artifact_score
+    trace_and_evidence:
+      - lean_file_diff
+      - proof_state_log
+      - compiler_output
+    source_to_world_extraction: code/spec/proof tasks become verifiable formal worlds
+    difficulty_controls:
+      - theorem_depth
+      - missing_lemma
+      - proof_search_branching
+    human_feedback_calibration: useful for proof decomposition quality
+    training_export: Lean code/proof trajectories
+    aidf_next_adapter: Lean verifier and formal artifact adapter
+
+  - world_id: conference-world:vision2web
+    source_repo: Vision2Web
+    conference_signal: ICML 2026
+    domain: visual website development
+    runtime_substrate: browser_and_web_build_runtime
+    state_model: visual target, app source, rendered DOM, screenshots, interaction state
+    action_model: inspect image, edit web files, run app, interact, submit implementation
+    observation_model: rendered screenshot, DOM, Playwright results, visual comparison signals
+    verifier_stack:
+      - visual_similarity
+      - browser_functionality_check
+      - static_code_check
+    trace_and_evidence:
+      - screenshot
+      - playwright_trace
+      - code_diff
+      - visual_metric
+    source_to_world_extraction: design images and requirements become web implementation tasks
+    difficulty_controls:
+      - responsive_layout
+      - component_hierarchy
+      - visual_detail
+      - interaction_requirement
+    human_feedback_calibration: central for visual fidelity and usability
+    training_export: visual-to-web build trajectories
+    aidf_next_adapter: browser evidence plus visual rubric adapter
+
+  - world_id: conference-world:miniappbench
+    source_repo: MiniAppBench
+    conference_signal: ICML 2026
+    domain: interactive HTML app generation and evaluation
+    runtime_substrate: browser_app_runtime
+    state_model: app prompt, generated HTML app, browser state, interaction outcomes
+    action_model: create app, inspect DOM, interact with controls, run dynamic checks
+    observation_model: screenshots, DOM, console logs, interaction success, static signals
+    verifier_stack:
+      - static_requirement_check
+      - dynamic_browser_check
+      - rubric_judge
+    trace_and_evidence:
+      - generated_app
+      - browser_trace
+      - interaction_result
+      - rubric_score
+    source_to_world_extraction: user app requests become executable mini-app benchmark tasks
+    difficulty_controls:
+      - ambiguous_requirement
+      - interaction_depth
+      - visual_quality
+      - state_persistence
+    human_feedback_calibration: important for intent match and visual quality
+    training_export: app-building and app-evaluation trajectories
+    aidf_next_adapter: deployable-project world generation adapter
+
+  - world_id: conference-world:phyworldbench
+    source_repo: PhyWorldBench
+    conference_signal: ICLR 2026
+    domain: physical realism evaluation for generated worlds/videos
+    runtime_substrate: multimodal_generation_eval
+    state_model: physical prompt, generated media, physics taxonomy, evaluation labels
+    action_model: generate or inspect media, classify physical failures, score realism
+    observation_model: video/image frames, model score, human label, taxonomy category
+    verifier_stack:
+      - physical_principle_taxonomy
+      - human_physics_rubric
+      - model_based_score
+    trace_and_evidence:
+      - media_reference
+      - physical_error_label
+      - rubric_annotation
+    source_to_world_extraction: physical scenarios become realism-evaluation tasks
+    difficulty_controls:
+      - contact_dynamics
+      - conservation_law
+      - occlusion
+      - temporal_consistency
+    human_feedback_calibration: central for physics validity labels
+    training_export: physics-labeled media evaluation data
+    aidf_next_adapter: scientific/multimodal rubric adapter
+
+  - world_id: conference-world:redteamcua
+    source_repo: RedTeamCUA
+    conference_signal: ICLR 2026
+    domain: adversarial computer-use security
+    runtime_substrate: vm_plus_docker_gui_runtime
+    state_model: desktop/web app state, adversarial content, user goal, security objective
+    action_model: observe GUI, click/type, navigate, handle injected instructions, report outcome
+    observation_model: screenshots, DOM or OS state, adversarial messages, task result
+    verifier_stack:
+      - security_goal_check
+      - task_completion_check
+      - prompt_injection_violation_check
+    trace_and_evidence:
+      - screenshot_sequence
+      - gui_action_trace
+      - security_event_log
+    source_to_world_extraction: red-team goals and web/OS apps become adversarial GUI tasks
+    difficulty_controls:
+      - indirect_prompt_injection
+      - credential_or_secret_decoy
+      - app_boundary
+      - multi_surface_navigation
+    human_feedback_calibration: security review needed for exploit severity and policy boundary
+    training_export: adversarial CUA traces after safety review
+    aidf_next_adapter: GUI chaos and security-policy adapter
+
+  - world_id: conference-world:simuhome
+    source_repo: SimuHome
+    conference_signal: ICLR 2026
+    domain: smart-home simulation
+    runtime_substrate: device_simulator_runtime
+    state_model: devices, rooms, schedules, environmental variables, user goal, time
+    action_model: call device APIs, schedule actions, observe device state, wait
+    observation_model: device readings, event logs, time updates, task success state
+    verifier_stack:
+      - device_state_check
+      - schedule_constraint_check
+      - safety_policy_check
+    trace_and_evidence:
+      - device_api_trace
+      - time_event_log
+      - state_snapshot_diff
+    source_to_world_extraction: home/device/task specs become smart-home episodes
+    difficulty_controls:
+      - time_delay
+      - device_dependency
+      - sensor_noise
+      - conflicting_user_preferences
+    human_feedback_calibration: useful for home policy and comfort tradeoffs
+    training_export: IoT planning/control trajectories
+    aidf_next_adapter: enterprise IoT/device simulator adapter
+
+  - world_id: conference-world:mc-search
+    source_repo: MC-Search
+    conference_signal: ICLR 2026
+    domain: multimodal multi-hop search and reasoning
+    runtime_substrate: multimodal_retrieval_dataset
+    state_model: question, subquestions, retrieved evidence, image/text context, answer state
+    action_model: decompose question, retrieve text/image, answer subquestion, submit
+    observation_model: retrieval results, supporting facts, intermediate answers, verifier feedback
+    verifier_stack:
+      - hop_wise_attribution
+      - process_metric
+      - final_answer_metric
+    trace_and_evidence:
+      - verified_reasoning_chain
+      - retrieval_trace
+      - supporting_fact_refs
+    source_to_world_extraction: QA examples become guided evidence-search worlds
+    difficulty_controls:
+      - hop_count
+      - distractor_evidence
+      - modality_dependency
+      - subquestion_branching
+    human_feedback_calibration: useful for evidence sufficiency and attribution review
+    training_export: process-supervised search trajectories
+    aidf_next_adapter: evidence graph and retrieval-trace adapter
+
+  - world_id: conference-world:terminaltraj
+    source_repo: TerminalTraj
+    conference_signal: ICML 2026
+    domain: dockerized terminal-agent trajectories
+    runtime_substrate: docker_terminal_instances
+    state_model: terminal instance, filesystem, command history, validator state
+    action_model: run commands, edit files, inspect output, validate result
+    observation_model: terminal output, filesystem diff, validator result, task metadata
+    verifier_stack:
+      - executable_validator
+      - terminal_task_check
+      - trace_quality_check
+    trace_and_evidence:
+      - terminal_agent_trajectory
+      - command_output
+      - validator_trace
+    source_to_world_extraction: terminal tasks and instances become replayable command worlds
+    difficulty_controls:
+      - command_depth
+      - filesystem_size
+      - dependency_failure
+      - hidden_validator
+    human_feedback_calibration: optional for trace quality and task validity
+    training_export: primary purpose; terminal trajectories and instances
+    aidf_next_adapter: terminal world trace replay adapter
+
+  - world_id: conference-world:davinci-dev
+    source_repo: daVinci-Dev
+    conference_signal: ICML 2026
+    domain: software-agent trajectory data
+    runtime_substrate: trajectory_dataset
+    state_model: code context, tool calls, tests, edits, environment-native trace state
+    action_model: load trace, convert trace, train or evaluate, inspect tool/test evidence
+    observation_model: context flow, tool invocation, test execution, edit result
+    verifier_stack:
+      - format_conversion_check
+      - benchmark_score
+      - trace_completeness_check
+    trace_and_evidence:
+      - contextually_native_trajectory
+      - environmentally_native_trajectory
+      - tool_test_trace
+    source_to_world_extraction: software traces become trainable or replayable code-agent examples
+    difficulty_controls:
+      - context_window
+      - tool_failure
+      - test_feedback_sparsity
+    human_feedback_calibration: useful for trace filtering and quality labels
+    training_export: primary purpose; software-agent trajectory data
+    aidf_next_adapter: code-agent trajectory import/export adapter
+
+  - world_id: conference-world:scalecua
+    source_repo: ScaleCUA
+    conference_signal: ICLR 2026
+    domain: cross-platform computer-use data and evaluation
+    runtime_substrate: gui_eval_and_data_pipeline
+    state_model: screen, platform, UI tree or state, task goal, human-agent correction trace
+    action_model: observe screen, click, type, navigate, submit
+    observation_model: screenshots, UI state, action feedback, task outcome
+    verifier_stack:
+      - gui_task_score
+      - benchmark_score
+      - human_correction_check
+    trace_and_evidence:
+      - computer_use_trace
+      - screenshot_sequence
+      - human_agent_correction_trace
+    source_to_world_extraction: GUI task/data examples become cross-platform computer-use worlds
+    difficulty_controls:
+      - platform_shift
+      - screen_resolution
+      - action_granularity
+      - human_correction_density
+    human_feedback_calibration: central for computer-use trajectory quality
+    training_export: human-agent GUI traces and evaluation data
+    aidf_next_adapter: cross-platform CUA trace/data adapter
+
+  - world_id: conference-world:deep-synth
+    source_repo: DeepSynth
+    conference_signal: ICLR 2026
+    domain: deep information synthesis
+    runtime_substrate: long_horizon_research_dataset
+    state_model: source corpus, synthesis question, gathered evidence, intermediate notes, final answer
+    action_model: search, read sources, extract claims, synthesize, cite, submit
+    observation_model: source passages, retrieval results, note artifacts, rubric feedback
+    verifier_stack:
+      - evidence_coverage_check
+      - synthesis_rubric
+      - citation_quality_check
+    trace_and_evidence:
+      - source_trace
+      - note_artifact
+      - citation_map
+      - rubric_score
+    source_to_world_extraction: source sets and synthesis tasks become long-horizon research worlds
+    difficulty_controls:
+      - source_count
+      - conflicting_evidence
+      - distractor_source
+      - required_synthesis_depth
+    human_feedback_calibration: central for synthesis quality and evidence use
+    training_export: long-horizon research trajectories
+    aidf_next_adapter: evidence-grounded synthesis world adapter
+
+  - world_id: conference-world:madqa
+    source_repo: MADQA
+    conference_signal: ICML 2026
+    domain: document-agent question answering
+    runtime_substrate: document_navigation_dataset
+    state_model: documents, pages, question, navigation history, answer state, effort budget
+    action_model: inspect PDF/page, search, extract evidence, answer, stop
+    observation_model: page text, document metadata, retrieval results, answer feedback
+    verifier_stack:
+      - answer_accuracy_metric
+      - effort_metric
+      - evidence_attribution_check
+    trace_and_evidence:
+      - document_navigation_trace
+      - extracted_evidence
+      - answer_record
+    source_to_world_extraction: document collections and questions become navigation/evidence tasks
+    difficulty_controls:
+      - document_count
+      - page_depth
+      - distractor_document
+      - evidence_scatter
+    human_feedback_calibration: useful for evidence sufficiency and search strategy
+    training_export: document-agent navigation trajectories
+    aidf_next_adapter: document world and effort-aware verifier adapter
+
+  - world_id: conference-world:counselbench
+    source_repo: CounselBench
+    conference_signal: ICLR 2026
+    domain: expert counseling and mental-health response evaluation
+    runtime_substrate: expert_rubric_dataset
+    state_model: counseling prompt, response, expert labels, adversarial condition, rubric dimensions
+    action_model: produce response, judge response, compare labels, analyze failure
+    observation_model: expert annotation, judge score, adversarial prompt category, disagreement signal
+    verifier_stack:
+      - expert_rubric
+      - llm_judge_agreement
+      - adversarial_safety_check
+    trace_and_evidence:
+      - expert_label
+      - judge_rationale
+      - adversarial_case_record
+    source_to_world_extraction: counseling prompts and expert labels become HIL rubric worlds
+    difficulty_controls:
+      - adversarial_question
+      - safety_sensitive_context
+      - empathy_specificity_tradeoff
+      - judge_disagreement
+    human_feedback_calibration: primary capability; expert labels are the signal
+    training_export: rubric-labeled response evaluation examples
+    aidf_next_adapter: expert feedback calibration and safety-sensitive rubric adapter
+
+  - world_id: conference-world:thor
+    source_repo: THOR
+    conference_signal: ICLR 2026
+    domain: tool-integrated math and code reasoning
+    runtime_substrate: tool_integrated_reasoning_runtime
+    state_model: problem, tool state, generated code/math steps, verifier feedback, reward
+    action_model: reason, call tool, execute code, inspect feedback, revise, submit
+    observation_model: tool output, execution error, intermediate verification, final score
+    verifier_stack:
+      - tool_feedback_check
+      - trajectory_reward
+      - final_answer_metric
+    trace_and_evidence:
+      - tool_call_trace
+      - reasoning_step_trace
+      - reward_log
+    source_to_world_extraction: math/code problems become tool-integrated reasoning worlds
+    difficulty_controls:
+      - tool_choice_branching
+      - execution_error
+      - long_solution_depth
+      - reward_sparsity
+    human_feedback_calibration: useful for step quality review
+    training_export: tool-integrated reasoning trajectories
+    aidf_next_adapter: tool feedback and trajectory-reward adapter
+
+next_goal:
+  name: conference_world_adapter_matrix
+  description: >
+    Convert this inventory into AIDF adapter readiness records: what runs
+    locally, what package fields can be populated automatically, what needs
+    source-intake extraction, and what verifier/runtime work is missing.
+  first_adapters:
+    - Agent-Data-Protocol
+    - tau2-bench
+    - BIRD-Interact
+    - MEnvAgent
+    - AstaBench
