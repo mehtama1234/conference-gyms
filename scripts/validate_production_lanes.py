@@ -38,10 +38,10 @@ LANES = [
         "name": "OpenApps",
         "validator": "scripts/validate_openapps_lane.py",
         "status": "source_pinned_reward_fixture_passed_browser_attempt_blocked",
-        "runtime": "browser_attempt_blocked_host_dependencies",
+        "runtime": "browser_attempt_blocked_openapps_fasthtml_compatibility",
         "replay": "reward_fixture_replay_passed",
         "export": "blocked",
-        "summary": "OpenApps is source-pinned with package/config smoke, 8 app configs, 28 parsed original tasks, a saved-state reward fixture, and a tracked MCP/Playwright browser attempt blocked by missing host Chromium libraries.",
+        "summary": "OpenApps is source-pinned with package/config smoke, 8 app configs, 28 parsed original tasks, a saved-state reward fixture, local Chromium library extraction, and a tracked MCP/Playwright browser attempt blocked by OpenApps/FastHTML runtime compatibility.",
     },
 ]
 
@@ -75,7 +75,7 @@ def main() -> int:
         "real_local_run_lane_count": sum(1 for item in results if item["runtime"] == "passed"),
         "export_blocked_lane_count": sum(1 for item in results if item["export"] == "blocked"),
         "lanes": results,
-        "next_meaty_goal": "Install the host Chromium libraries for OpenApps, rerun make replay-openapps-browser, then promote the lane to one deterministic local GUI task with app-state reset, browser actions, reward verifier receipt, cleanup, and normalized GUI trace.",
+        "next_meaty_goal": "Resolve OpenApps/FastHTML runtime compatibility, rerun make replay-openapps-browser, then promote the lane to one deterministic local GUI task with app-state reset, browser actions, reward verifier receipt, cleanup, and normalized GUI trace.",
     }
 
     print(json.dumps(report, indent=2))

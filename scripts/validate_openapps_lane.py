@@ -47,7 +47,7 @@ def validate_source(source: dict[str, object], errors: list[str]) -> None:
     require(source.get("repo_license") == "CC-BY-NC-4.0", "OpenApps license must be CC-BY-NC-4.0", errors)
     blockers = source.get("runtime_blockers")
     require(isinstance(blockers, list) and any("Playwright" in item for item in blockers), "source blockers must mention Playwright/browser runtime", errors)
-    require(isinstance(blockers, list) and any("libnss3" in item for item in blockers), "source blockers must mention missing host browser libraries", errors)
+    require(isinstance(blockers, list) and any("FastHTML" in item for item in blockers), "source blockers must mention OpenApps/FastHTML runtime compatibility", errors)
 
 
 def validate_contract(contract: dict[str, object], errors: list[str]) -> None:
@@ -140,7 +140,7 @@ def validate_browser_attempt(receipt: dict[str, object], errors: list[str]) -> N
         errors,
     )
     require(receipt.get("lane_id") == "openapps-production-lane", "browser attempt lane_id is invalid", errors)
-    require(receipt.get("status") == "blocked_host_browser_dependencies", "browser attempt must be blocked on host browser dependencies", errors)
+    require(receipt.get("status") == "blocked_openapps_fasthtml_runtime_compatibility", "browser attempt must be blocked on OpenApps/FastHTML runtime compatibility", errors)
     require(receipt.get("scope") == "browser_gui_runtime_attempt", "browser attempt scope is invalid", errors)
     require(receipt.get("script") == "scripts/replay_openapps_browser_task.py", "browser attempt script is invalid", errors)
     task = receipt.get("selected_task")
@@ -149,25 +149,22 @@ def validate_browser_attempt(receipt: dict[str, object], errors: list[str]) -> N
         require(task.get("task_name") == "add_call_mom_to_my_todo", "browser attempt task name is invalid", errors)
         require(task.get("task_class") == "open_apps.tasks.tasks.AddToDoTask", "browser attempt task class is invalid", errors)
     runtime = receipt.get("runtime_environment")
-    require_keys(runtime, ["python", "venv", "pythonpath", "playwright_browsers_path", "minimal_dependency_strategy"], "browser-runtime-attempt.runtime_environment", errors)
+    require_keys(runtime, ["python", "venv", "pythonpath", "playwright_browsers_path", "local_browser_libraries", "minimal_dependency_strategy"], "browser-runtime-attempt.runtime_environment", errors)
     if isinstance(runtime, dict):
         require(runtime.get("python") == "python3.12", "browser attempt must use Python 3.12", errors)
         require(runtime.get("venv") == ".cache/openapps-browser-venv", "browser attempt venv is invalid", errors)
     progress = receipt.get("observed_progress")
     require(isinstance(progress, list) and any("Chromium" in item for item in progress), "browser attempt must record Chromium download/setup progress", errors)
+    require(isinstance(progress, list) and any("standalone Playwright Chromium" in item for item in progress), "browser attempt must record standalone Chromium launch smoke", errors)
     blocker = receipt.get("blocking_error")
-    require_keys(blocker, ["stage", "error_type", "missing_host_libraries", "sudo_attempt_result", "host_probe_result"], "browser-runtime-attempt.blocking_error", errors)
+    require_keys(blocker, ["stage", "error_type", "primary_error", "compatibility_errors_seen", "host_library_status", "remaining_blocker"], "browser-runtime-attempt.blocking_error", errors)
     if isinstance(blocker, dict):
-        missing = blocker.get("missing_host_libraries")
-        require(
-            isinstance(missing, list)
-            and {"libnss3", "libnspr4", "libasound2"}.issubset(set(missing)),
-            "browser attempt must identify libnss3/libnspr4/libasound2",
-            errors,
-        )
-        require(blocker.get("stage") == "Playwright chromium launch", "browser attempt blocker stage is invalid", errors)
+        require(blocker.get("stage") == "OpenApps FastHTML app rendering before todo input is available", "browser attempt blocker stage is invalid", errors)
+        require("FastHTML" in str(blocker.get("primary_error")), "browser attempt primary error must mention FastHTML rendering", errors)
+        compat = blocker.get("compatibility_errors_seen")
+        require(isinstance(compat, list) and any("Starlette" in item for item in compat), "browser attempt must record Starlette compatibility evidence", errors)
     does_not_claim = receipt.get("does_not_claim")
-    require(isinstance(does_not_claim, list) and "Chromium launched successfully" in does_not_claim, "browser attempt must not claim Chromium launch", errors)
+    require(isinstance(does_not_claim, list) and "OpenApps todo page rendered successfully" in does_not_claim, "browser attempt must not claim todo page rendering", errors)
 
 
 def validate_trace(trace: dict[str, object], errors: list[str]) -> None:
@@ -195,7 +192,7 @@ def validate_export(export: dict[str, object], errors: list[str]) -> None:
     require(export.get("training_export") == "blocked", "training export must be blocked", errors)
     blockers = export.get("blocking_reasons")
     require(isinstance(blockers, list) and any("CC-BY-NC" in item for item in blockers), "export blockers must cite CC-BY-NC license", errors)
-    require(isinstance(blockers, list) and any("libnss3" in item for item in blockers), "export blockers must cite missing browser host libraries", errors)
+    require(isinstance(blockers, list) and any("FastHTML" in item for item in blockers), "export blockers must cite OpenApps/FastHTML compatibility", errors)
 
 
 def main() -> int:

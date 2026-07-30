@@ -18,11 +18,14 @@ PYTHON = VENV / "bin" / "python"
 OPENAPPS_SRC = ROOT / "OpenApps" / "src"
 TMP = ROOT / ".cache" / "tmp"
 BROWSERS = ROOT / ".cache" / "ms-playwright"
+LOCAL_DEBS = ROOT / ".cache" / "local-debs"
+LOCAL_LIBS = ROOT / ".cache" / "local-browser-libs"
 
 RUNTIME_PACKAGES = [
     "browsergym-core==0.14.3",
     "playwright==1.44.0",
-    "python-fasthtml",
+    "python-fasthtml==0.12.14",
+    "starlette==0.46.2",
     "hydra-core",
     "deepdiff",
     "omegaconf",
@@ -43,6 +46,9 @@ def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess[st
     env["TMPDIR"] = str(TMP)
     env["PYTHONPATH"] = str(OPENAPPS_SRC)
     env["PLAYWRIGHT_BROWSERS_PATH"] = str(BROWSERS)
+    lib_path = local_lib_path()
+    if lib_path is not None:
+        env["LD_LIBRARY_PATH"] = f"{lib_path}:{env.get('LD_LIBRARY_PATH', '')}"
     return subprocess.run(
         cmd,
         cwd=ROOT,
@@ -52,6 +58,44 @@ def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess[st
         stderr=subprocess.STDOUT,
         check=check,
     )
+
+
+def local_lib_path() -> Path | None:
+    lib = LOCAL_LIBS / "lib"
+    return lib if lib.exists() else None
+
+
+def ensure_local_browser_libs() -> None:
+    """Extract Chromium's missing shared libraries into ignored .cache."""
+    lib = LOCAL_LIBS / "lib"
+    required = [lib / "libnss3.so", lib / "libnspr4.so", lib / "libasound.so.2"]
+    if all(path.exists() for path in required):
+        return
+
+    LOCAL_DEBS.mkdir(parents=True, exist_ok=True)
+    packages = ["libnss3", "libnspr4", "libasound2t64"]
+    download = subprocess.run(
+        ["apt-get", "download", *packages],
+        cwd=LOCAL_DEBS,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    if download.returncode != 0:
+        raise RuntimeError(f"apt-get download failed:\n{download.stdout}")
+
+    extract = LOCAL_LIBS / "extract"
+    extract.mkdir(parents=True, exist_ok=True)
+    lib.mkdir(parents=True, exist_ok=True)
+    for deb in LOCAL_DEBS.glob("*.deb"):
+        subprocess.run(["dpkg-deb", "-x", str(deb), str(extract)], check=True)
+    for shared in extract.glob("usr/lib/x86_64-linux-gnu/*.so*"):
+        target = lib / shared.name
+        if not target.exists():
+            target.write_bytes(shared.read_bytes())
+    alsa = lib / "libasound.so.2"
+    if not alsa.exists() and (lib / "libasound.so.2.0.0").exists():
+        alsa.symlink_to("libasound.so.2.0.0")
 
 
 def ensure_venv() -> None:
@@ -69,11 +113,12 @@ def ensure_venv() -> None:
         venv.EnvBuilder(with_pip=True).create(VENV)
         run([str(PYTHON), "-m", "pip", "install", "--upgrade", "pip"])
 
+    ensure_local_browser_libs()
     probe = run(
         [
             str(PYTHON),
             "-c",
-            "import browsergym.core, playwright, fasthtml, hydra, deepdiff, fastlite",
+            "import browsergym.core, playwright, fasthtml, hydra, deepdiff, fastlite, starlette",
         ],
         check=False,
     )
@@ -100,6 +145,9 @@ def main() -> int:
 import asyncio
 import builtins
 import json
+import typing
+
+builtins.Any = typing.Any
 from fasthtml.common import Link
 from fastlite import database
 
@@ -119,7 +167,7 @@ async def run_task():
     session = Session("todo")
     report = {
         "task_name": "add_call_mom_to_my_todo",
-        "runtime_shims": ["builtins.picolink", "builtins.database"],
+        "runtime_shims": ["builtins.Any", "builtins.picolink", "builtins.database"],
     }
     try:
         await session.start()
@@ -172,12 +220,17 @@ async def run_task():
     return report
 
 
-print(json.dumps(asyncio.run(run_task()), indent=2))
+report = asyncio.run(run_task())
+print("OPENAPPS_BROWSER_REPLAY_REPORT_START")
+print(json.dumps(report, indent=2))
+print("OPENAPPS_BROWSER_REPLAY_REPORT_END")
 """
     result = run([str(PYTHON), "-c", code], check=False)
     print(result.stdout.rstrip())
     try:
-        report = json.loads(result.stdout[result.stdout.index("{") :])
+        body = result.stdout.split("OPENAPPS_BROWSER_REPLAY_REPORT_START", 1)[1]
+        body = body.split("OPENAPPS_BROWSER_REPLAY_REPORT_END", 1)[0]
+        report = json.loads(body)
     except Exception:
         return 1
     return 0 if report.get("status") == "passed" else 1

@@ -14,14 +14,14 @@
   "blocking_reasons": [
     "repo license is CC-BY-NC-4.0",
     "selected task has only been run as a saved-state reward fixture",
-    "browser runtime attempt is blocked by missing host libraries libnss3, libnspr4, and libasound2",
+    "browser runtime attempt is blocked by OpenApps/FastHTML/Starlette compatibility before the todo page renders",
     "no browser trace exists",
     "no browser reward verifier result exists",
     "no privacy or split receipt exists",
     "no export approval receipt exists"
   ],
   "required_to_unblock_local_runtime": [
-    "install host browser libraries libnss3, libnspr4, and libasound2",
+    "resolve OpenApps/FastHTML/Starlette runtime compatibility so #new-title renders",
     "select one low-risk task such as add_call_mom_to_my_todo",
     "run dummy agent or deterministic browser fixture against the app",
     "record app state before and after",

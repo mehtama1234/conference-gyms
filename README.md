@@ -29,8 +29,9 @@ Analysis artifacts:
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
   no-heavy import smoke, and heavy-runtime blockers.
 - `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
-  smoke, saved-state reward fixture and replay, and a tracked MCP/Playwright
-  browser attempt blocked by missing host Chromium libraries.
+  smoke, saved-state reward fixture and replay, local Chromium library
+  extraction, and a tracked MCP/Playwright browser attempt blocked by
+  OpenApps/FastHTML runtime compatibility.
 
 Run the current production gate:
 
@@ -60,7 +61,8 @@ Current adapter coverage from the generated readiness rollup:
 - `OpenApps` source-specific projection is ready and its no-heavy-run adapter
   smoke and evidence/gate receipts are complete. Its production lane now has a
   saved-state reward replay plus an MCP/Playwright browser attempt; Chromium
-  launch is blocked on host libraries `libnss3`, `libnspr4`, and `libasound2`.
+  launch can be cleared with local extracted libraries, but OpenApps/FastHTML
+  compatibility still blocks rendering the todo page.
 - `Agent-Data-Protocol` source-specific projection is ready and its no-heavy-run
   adapter smoke and evidence/gate receipts are complete; full dataset
   conversion, split integrity, and training-export blockers remain. It is now

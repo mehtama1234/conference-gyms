@@ -11,10 +11,10 @@
   "paper_url": "https://arxiv.org/abs/2511.20766",
   "runtime_blockers": [
     "full OpenApps dependency environment is not installed in this repo",
-    "browser runtime attempt uses an ignored minimal .cache/openapps-browser-venv rather than vendored dependencies",
-    "Playwright Chromium was downloaded but cannot launch because host libraries libnss3, libnspr4, and libasound2 are missing",
-    "current python-fasthtml requires local compatibility shims for OpenApps picolink and database imports",
-    "BrowserGym/Playwright actions have not executed because Chromium launch is blocked",
+    "browser runtime attempt uses an ignored minimal .cache/openapps-browser-venv and ignored local browser libraries rather than vendored dependencies",
+    "Playwright Chromium host-library blocker was cleared locally by extracting libnss3, libnspr4, and libasound2t64 .deb packages into .cache/local-browser-libs",
+    "current OpenApps/FastHTML/Starlette runtime compatibility is not resolved enough for the todo page to render #new-title",
+    "BrowserGym/Playwright actions have not executed because the OpenApps page render path is blocked",
     "no dummy-agent task execution receipt exists",
     "no browser reward verifier receipt exists",
     "hosted conversion, SFT export, and training export approvals are not cleared"

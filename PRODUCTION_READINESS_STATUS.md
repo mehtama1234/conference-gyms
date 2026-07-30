@@ -8,7 +8,7 @@ The production proof now has three lanes.
 | --- | --- | --- | --- |
 | `TerminalTraj` | One released task, `task_5279`, ran locally, passed the released pytest verifier, replayed through a tracked wrapper, and produced `trace.real.json`. | Passed for one task. | Hosted conversion, SFT export, and training export blocked. |
 | `CyberGym` | Repo pinned, security task contract normalized, and no-heavy import smoke passed. | Heavy runtime blocked until data/server receipts exist. | Hosted conversion, SFT export, and training export blocked. |
-| `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, 28 original tasks parsed, `AddToDoTask` saved-state reward fixture passed, reward fixture replay passed, and MCP/Playwright browser startup was attempted. | Browser runtime blocked by missing host libraries `libnss3`, `libnspr4`, and `libasound2`. | Hosted conversion, SFT export, and training export blocked. |
+| `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, 28 original tasks parsed, `AddToDoTask` saved-state reward fixture passed, reward fixture replay passed, no-sudo Chromium library extraction passed, and MCP/Playwright browser startup progressed to app rendering. | Browser runtime blocked by OpenApps/FastHTML/Starlette compatibility before the todo page exposes `#new-title`. | Hosted conversion, SFT export, and training export blocked. |
 
 Run the aggregate gate:
 
@@ -58,7 +58,8 @@ OpenApps proves the third family contract:
 - saved-state reward fixture
 - saved-state reward replay
 - attempted MCP/Playwright browser runtime
-- exact host dependency blocker
+- no-sudo local Chromium library extraction
+- exact OpenApps/FastHTML/Starlette runtime blocker
 
 ## What Is Not Proven Yet
 
@@ -68,7 +69,7 @@ The repo does not yet prove:
 - CyberGym selected task generation
 - CyberGym PoC submission
 - CyberGym vulnerable/fixed verifier execution
-- OpenApps Chromium launch on a host with `libnss3`, `libnspr4`, and `libasound2`
+- OpenApps FastHTML/Starlette runtime compatibility for the todo page
 - OpenApps BrowserGym/Playwright action execution
 - OpenApps dummy-agent or fixture task execution
 - OpenApps reward verifier execution
@@ -80,7 +81,7 @@ The repo does not yet prove:
 Promote OpenApps from source/config smoke to one real local GUI task first,
 because it is lower infrastructure than CyberGym:
 
-1. install host libraries `libnss3`, `libnspr4`, and `libasound2`
+1. resolve OpenApps/FastHTML/Starlette runtime compatibility so the todo page renders `#new-title`
 2. rerun `make replay-openapps-browser`
 3. reset the app state
 4. run the deterministic AddToDo browser action sequence

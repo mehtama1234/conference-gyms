@@ -3,7 +3,7 @@
 ## Current Status
 
 Status: source pinned, source/config smoke passed, state reward fixture passed,
-browser runtime attempted and blocked on host Chromium libraries.
+browser runtime attempted and blocked by OpenApps/FastHTML compatibility.
 
 OpenApps is the third production lane. It represents browser/GUI worlds with
 transparent Python app state and ground-truth rewards. It is lower
@@ -22,12 +22,13 @@ The lane currently proves:
 - local task inventory count
 - non-browser task reward check for `AddToDoTask`
 - attempted MCP/Playwright browser startup for `AddToDoTask`
-- exact host dependency blocker for Chromium launch
+- local no-sudo Chromium library extraction
+- exact OpenApps/FastHTML/Starlette compatibility blocker
 - export blocked by CC BY-NC 4.0 and missing runtime/export receipts
 
 It does not yet claim:
 
-- host Chromium dependencies
+- compatible OpenApps/FastHTML/Starlette runtime for page rendering
 - BrowserGym/Playwright action execution
 - Playwright/Chromium browser run
 - dummy-agent task execution
@@ -43,7 +44,8 @@ It does not yet claim:
 - `replay-receipt.json`: repeatable local replay of the saved-state reward
   fixture.
 - `browser-runtime-attempt-receipt.json`: repeatable local attempt to start the
-  MCP/Playwright browser task, currently blocked by missing host libraries.
+  MCP/Playwright browser task, currently blocked by OpenApps/FastHTML runtime
+  compatibility before the todo page renders.
 - `trace.fixture.json`: normalized non-browser state/reward fixture trace.
 - `export-decision.json`: explicit hosted/SFT/training export block.
 - `../../scripts/validate_openapps_lane.py`: local validator.

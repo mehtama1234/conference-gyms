@@ -69,16 +69,17 @@ normalized trace, and kept export blocked.
 smoke are complete; heavyweight data/server runtime remains blocked.
 
 `OpenApps` is the third lane: source pin, package root import, app config
-discovery, task YAML parsing, saved-state reward replay, and a tracked
-MCP/Playwright browser attempt are complete. Chromium launch is blocked on
-host libraries `libnss3`, `libnspr4`, and `libasound2`.
+discovery, task YAML parsing, saved-state reward replay, no-sudo Chromium
+library extraction, and a tracked MCP/Playwright browser attempt are complete.
+The remaining blocker is OpenApps/FastHTML/Starlette runtime compatibility
+before the todo page renders `#new-title`.
 
 ## Next Concrete Work Item
 
 Promote OpenApps first, then CyberGym:
 
-1. For OpenApps, install host Chromium libraries `libnss3`, `libnspr4`, and
-   `libasound2`.
+1. For OpenApps, resolve the FastHTML/Starlette compatibility issue so the
+   todo page renders `#new-title`.
 2. Rerun `make replay-openapps-browser`.
 3. Reset app state and apply the deterministic AddToDo browser action path.
 4. Record reward/verifier output.
