@@ -9,8 +9,9 @@
   "sft_export": "blocked",
   "training_export": "blocked",
   "blocking_reasons": [
-    "fixture trace is not a real TerminalTraj dataset instance",
-    "Docker task instance is not materialized locally",
+    "fixture trace is bound to a selected TerminalTraj dataset instance but is not a real execution",
+    "Docker task instance is extracted only to ignored local cache",
+    "base Docker image is missing locally",
     "validator was not executed",
     "dataset row license has not been tied to a selected task",
     "privacy and split-integrity receipts do not exist"

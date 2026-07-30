@@ -1,0 +1,76 @@
+{
+  "lane_id": "terminaltraj-production-lane",
+  "task_manifest_id": "terminaltraj-task-5279-manifest",
+  "status": "selected_not_run",
+  "source_dataset": {
+    "dataset": "m-a-p/TerminalTraj-5k-instances",
+    "archive": "5k_instances.tar.gz",
+    "archive_size_bytes": 12792481,
+    "archive_cache_path": ".cache/terminaltraj/5k_instances.tar.gz",
+    "selected_task_path": ".cache/terminaltraj/extract-one/5k_instances/task_5279"
+  },
+  "task": {
+    "task_id": "task_5279",
+    "difficulty": "easy",
+    "category": "mathematics",
+    "parser_name": "pytest",
+    "max_agent_timeout_sec": 900.0,
+    "max_test_timeout_sec": 180.0,
+    "run_tests_in_same_shell": false,
+    "summary": "Modify TubeSync local_settings.py so the configured Path moves from /config/addons_config/tubesync to /config/custom_tubesync_data, preserve a backup, create the target directory, and write a config_test.txt sentinel file."
+  },
+  "runtime": {
+    "dockerfile_base_image": "yizhilll/tb_container-392402c50123e9f1ba672a157adc3750:tmux_asciinema_v2",
+    "base_image_local_status": "missing",
+    "compose_service": "client",
+    "test_entrypoint": "run-tests.sh",
+    "verifier": "tests/test_outputs.py"
+  },
+  "file_hashes": {
+    "task.yaml": {
+      "size_bytes": 1869,
+      "sha256": "f1ccd8c065d13b993c4c3a3503213b478acfd9cf9bd377682985f8feb7aab204"
+    },
+    "Dockerfile": {
+      "size_bytes": 78,
+      "sha256": "22789e4174fdbe3aa4fce28b2f0bca93d181d22c31523f2d5a2b924896f1cc37"
+    },
+    "docker-compose.yaml": {
+      "size_bytes": 372,
+      "sha256": "67508645f15bc3f73b598843d7661a7451083588760314df2895fc0470869e36"
+    },
+    "run-tests.sh": {
+      "size_bytes": 467,
+      "sha256": "aca20f1c75bc8413d74b53cea81294143290979682b990aaf65fb155ebf515b1"
+    },
+    "tests/test_outputs.py": {
+      "size_bytes": 2252,
+      "sha256": "5512488a4ba95984396f8372f7338a65737b4a76568e3e4cc48e7e01dcc42f43"
+    },
+    "item_info.json": {
+      "size_bytes": 5244,
+      "sha256": "eaab0acc3fe57386f0d981850f591aa9f150435e973daaf84428017d0a61a502"
+    }
+  },
+  "verifier_expectations": [
+    "backup file /app/tubesync/local_settings_backup.py exists",
+    "backup contains Path('/config/addons_config/tubesync') and valid Python syntax",
+    "main settings file contains Path('/config/custom_tubesync_data')",
+    "main settings file no longer contains Path('/config/addons_config/tubesync')",
+    "directory /config/custom_tubesync_data exists",
+    "file /config/custom_tubesync_data/config_test.txt contains exactly TubeSync configuration successfully redirected"
+  ],
+  "license_status": {
+    "repo_level_license": "Apache-2.0",
+    "selected_task_source_repo_from_item_info": "CanberraTinkerer/homeassistant-addons-jdeath_7",
+    "source_license_row_found": false,
+    "decision": "unresolved_for_selected_task"
+  },
+  "execution_status": {
+    "reset": "not_run",
+    "agent_actions": "not_run",
+    "verifier": "not_run",
+    "cleanup": "not_run"
+  },
+  "export_decision": "blocked"
+}

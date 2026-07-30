@@ -12,21 +12,22 @@
     "mode": "fixture_contract",
     "is_real_runtime": false,
     "blockers": [
-      "released Docker task instances are not present locally",
-      "no selected TerminalTraj task manifest exists",
+      "released Docker task instance task_5279 is selected but not run",
+      "selected task base Docker image is missing locally",
+      "selected task source-license row is unresolved",
       "no validator was executed"
     ]
   },
   "task": {
-    "task_id": "fixture-terminaltraj-contract-001",
-    "prompt": "Fixture placeholder for the minimal terminal task shape: inspect repository state, make a terminal action, and run an executable validator.",
+    "task_id": "task_5279",
+    "prompt": "Fixture placeholder bound to released task_5279: modify TubeSync local_settings.py, preserve a backup, create /config/custom_tubesync_data, and write config_test.txt.",
     "domain": "terminal_sandbox_contract",
-    "source_instance": "synthetic fixture derived from TerminalTraj README contract, not a released dataset instance"
+    "source_instance": "released TerminalTraj task_5279 selected from m-a-p/TerminalTraj-5k-instances, not executed"
   },
   "reset": {
     "status": "not_run",
     "evidence": [
-      "TerminalTraj source repo was pinned, but no Docker task instance was materialized."
+      "TerminalTraj source repo was pinned and task_5279 was extracted into ignored cache, but Docker reset was not run."
     ]
   },
   "observations": [
@@ -53,7 +54,7 @@
     "kind": "executable_validator",
     "passed": false,
     "evidence": [
-      "No released instance or validator file is present in the local checkout."
+      "task_5279 verifier file was inspected, but was not executed."
     ]
   },
   "final_state": {

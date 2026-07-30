@@ -2,7 +2,8 @@
 
 ## Current Status
 
-Status: source pinned, fixture contract valid, runtime blocked.
+Status: source pinned, one released task selected, fixture contract valid,
+runtime blocked.
 
 This lane is the first production-readiness proof target for terminal/sandbox
 gyms. The local checkout is enough to identify the paper, source repo, license,
@@ -44,14 +45,15 @@ That gives us the minimum serious gym contract:
 
 ## Current Blocker
 
-The local repo does not contain the released Docker task instances. The README
-points to the Hugging Face instance release, but those files have not been
-downloaded or materialized here.
+The released instance archive has been downloaded into ignored local cache and
+one task, `task_5279`, has been inspected. Docker is installed, but the task's
+base image is not present locally and the task-specific source-license row has
+not been resolved from `repo&license.jsonl`.
 
 Because of that, this lane cannot honestly claim:
 
 - task reset
-- Docker runtime setup
+- Docker runtime setup beyond host Docker availability
 - validator execution
 - replay
 - normalized real trace
@@ -79,6 +81,10 @@ The lane now includes a fixture-level contract test:
 
 - `source-pin.json`: upstream repo, commit, license, dataset pointers, and
   runtime blockers.
+- `task-manifest.json`: selected released task, file hashes, task prompt
+  summary, verifier shape, and unresolved license/runtime blockers.
+- `setup-receipt.json`: local setup evidence for archive download, extraction,
+  Docker availability, and missing base image.
 - `trace.schema.json`: normalized terminal/sandbox trace shape.
 - `trace.fixture.json`: non-runtime fixture trace that exercises the shape
   without claiming benchmark execution.
