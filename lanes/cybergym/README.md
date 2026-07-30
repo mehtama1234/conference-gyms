@@ -69,6 +69,9 @@ CyberGym adds fields that TerminalTraj does not cover:
   the second task is not promoted as exploit evidence.
 - `trace.real.json`: normalized real security task-manifest verifier trace for
   the fixture `arvo:10400` PoC.
+- `trace.discovery.real.json`: normalized independent discovery trajectory for
+  `arvo:10400`, including evidence policy, discovery observations/actions, PoC
+  artifact hash, verifier result, quality, and export gate.
 - `trace.second.real.json`: normalized second-task runtime trace for
   `arvo:1065`.
 - `export-decision.json`: explicit block on hosted conversion, SFT export, and

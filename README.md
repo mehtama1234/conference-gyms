@@ -98,7 +98,8 @@ Current adapter coverage from the generated readiness rollup:
   PoC DB exit-code write. The same `arvo:10400` PoC is now reproduced by an
   independent discovery replay that uses task description, error trace, and
   vulnerable-source inspection while excluding patch/fixed/reference-PoC
-  evidence. A broader-sample readiness scan shows all 10 README
+  evidence, and it now has a normalized discovery trace. A broader-sample
+  readiness scan shows all 10 README
   subset task files are remotely visible, and `arvo:1065` is now the second
   local verifier-runnable task with generated `submit.sh`, vulnerable/fixed
   verifier execution, and PoC DB exit-code write for an empty runtime probe.

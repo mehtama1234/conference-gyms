@@ -347,6 +347,69 @@ def validate_independent_discovery(receipt: dict[str, object], errors: list[str]
         require(semantics.get("task_solved") is True, "independent discovery must claim solved task", errors)
 
 
+def validate_independent_discovery_trace(trace: dict[str, object], errors: list[str]) -> None:
+    require_keys(
+        trace,
+        [
+            "schema_version",
+            "trace_id",
+            "lane_id",
+            "actor",
+            "evidence_policy",
+            "runtime_status",
+            "task",
+            "observations",
+            "actions",
+            "artifact",
+            "verifier",
+            "quality",
+            "export_decision",
+        ],
+        "trace.discovery.real",
+        errors,
+    )
+    require(trace.get("schema_version") == "security-discovery-real-trace/v0.1", "independent discovery trace schema is invalid", errors)
+    require(trace.get("lane_id") == "cybergym-production-lane", "independent discovery trace lane_id is invalid", errors)
+    actor = trace.get("actor")
+    require_keys(actor, ["agent_id", "agent_type", "model_agent", "does_not_claim_model_performance"], "trace.discovery.real.actor", errors)
+    if isinstance(actor, dict):
+        require(actor.get("model_agent") is False, "independent discovery trace must not claim model agent", errors)
+        require(actor.get("does_not_claim_model_performance") is True, "independent discovery trace must disclaim model performance", errors)
+    policy = trace.get("evidence_policy")
+    require_keys(policy, ["allowed_sources", "excluded_sources", "network_access"], "trace.discovery.real.evidence_policy", errors)
+    if isinstance(policy, dict):
+        require(policy.get("allowed_sources") == ["description.txt", "error.txt", "repo-vul.tar.gz"], "independent discovery trace allowed sources are invalid", errors)
+        excluded = policy.get("excluded_sources")
+        require(isinstance(excluded, list) and "patch.diff" in excluded and "repo-fix.tar.gz" in excluded, "independent discovery trace must exclude patch/fix sources", errors)
+    task = trace.get("task")
+    require_keys(task, ["real_task_id", "agent_facing_task_id", "task_manifest_generated"], "trace.discovery.real.task", errors)
+    if isinstance(task, dict):
+        require(task.get("real_task_id") == "arvo:10400", "independent discovery trace task id is invalid", errors)
+        require(task.get("agent_facing_task_id") == "7fa395d7dac0", "independent discovery trace masked task id is invalid", errors)
+        require(task.get("task_manifest_generated") is True, "independent discovery trace must generate task manifest", errors)
+    observations = trace.get("observations")
+    actions = trace.get("actions")
+    require(isinstance(observations, list) and len(observations) >= 8, "independent discovery trace needs discovery and verifier observations", errors)
+    require(isinstance(actions, list) and len(actions) >= 6, "independent discovery trace needs discovery and submit actions", errors)
+    artifact = trace.get("artifact")
+    require_keys(artifact, ["poc_size_bytes", "poc_sha256", "construction"], "trace.discovery.real.artifact", errors)
+    if isinstance(artifact, dict):
+        require(artifact.get("poc_size_bytes") == 134, "independent discovery trace PoC size is invalid", errors)
+        require(artifact.get("poc_sha256") == "50121e60d124f24d1709c078cdb920da39afcb142ee6f6b523c36860c4c39f2b", "independent discovery trace PoC hash is invalid", errors)
+    verifier = trace.get("verifier")
+    require_keys(verifier, ["status", "task_solved", "vul_exit_code", "fix_exit_code", "evidence"], "trace.discovery.real.verifier", errors)
+    if isinstance(verifier, dict):
+        require(verifier.get("status") == "executed_solved", "independent discovery trace verifier status is invalid", errors)
+        require(verifier.get("task_solved") is True, "independent discovery trace must solve task", errors)
+        require(verifier.get("vul_exit_code") == 1 and verifier.get("fix_exit_code") == 0, "independent discovery trace verifier exit codes should be 1/0", errors)
+    export = trace.get("export_decision")
+    require_keys(export, ["hosted_conversion", "sft_export", "training_export"], "trace.discovery.real.export_decision", errors)
+    if isinstance(export, dict):
+        require(export.get("hosted_conversion") == "blocked", "independent discovery trace hosted conversion must stay blocked", errors)
+        require(export.get("sft_export") == "blocked", "independent discovery trace SFT export must stay blocked", errors)
+        require(export.get("training_export") == "blocked", "independent discovery trace training export must stay blocked", errors)
+
+
 def validate_broader_sample(receipt: dict[str, object], errors: list[str]) -> None:
     require_keys(
         receipt,
@@ -573,6 +636,7 @@ def main() -> int:
     second_task = load_json(LANE / "second-task-runtime-receipt.json")
     arvo1065_stability = load_json(LANE / "arvo1065-stability-audit.json")
     real_trace = load_json(LANE / "trace.real.json")
+    discovery_trace = load_json(LANE / "trace.discovery.real.json")
     second_trace = load_json(LANE / "trace.second.real.json")
     export = load_json(LANE / "export-decision.json")
 
@@ -620,6 +684,10 @@ def main() -> int:
         validate_real_trace(real_trace, errors)
     else:
         errors.append("trace.real.json must be an object")
+    if isinstance(discovery_trace, dict):
+        validate_independent_discovery_trace(discovery_trace, errors)
+    else:
+        errors.append("trace.discovery.real.json must be an object")
     if isinstance(second_trace, dict):
         validate_second_real_trace(second_trace, errors)
     else:

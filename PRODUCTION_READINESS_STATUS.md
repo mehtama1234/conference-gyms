@@ -56,6 +56,7 @@ CyberGym proves the second family contract:
 - fixture PoC solution with vulnerable/fixed exit codes 1/0
 - independent `arvo:10400` discovery replay from description, error trace, and
   vulnerable-source inspection
+- normalized independent discovery trajectory for `arvo:10400`
 - README-subset broader-sample readiness scan
 - `arvo:1065` second-task materialization and verifier runtime trace
 - `arvo:1065` repeated-input stability audit, blocking exploit-evidence claims
