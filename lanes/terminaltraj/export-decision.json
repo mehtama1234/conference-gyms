@@ -2,7 +2,8 @@
   "lane_id": "terminaltraj-production-lane",
   "decision_id": "terminaltraj-export-decision-001",
   "applies_to": [
-    "trace.fixture.json"
+    "trace.fixture.json",
+    "trace.real.json"
   ],
   "local_contract_validation": "allowed",
   "hosted_conversion": "blocked",
@@ -10,9 +11,7 @@
   "training_export": "blocked",
   "blocking_reasons": [
     "fixture trace is bound to a selected TerminalTraj dataset instance but is not a real execution",
-    "Docker task instance is extracted only to ignored local cache",
-    "base Docker image is missing locally",
-    "validator was not executed",
+    "real local task execution passed but is only one selected task",
     "dataset row license has not been tied to a selected task",
     "privacy and split-integrity receipts do not exist"
   ],

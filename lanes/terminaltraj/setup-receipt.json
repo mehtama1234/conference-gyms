@@ -1,7 +1,7 @@
 {
   "lane_id": "terminaltraj-production-lane",
   "setup_receipt_id": "terminaltraj-task-5279-setup-001",
-  "status": "partial_blocked",
+  "status": "passed",
   "checked_at": "2026-07-30",
   "host_capabilities": {
     "docker": "Docker version 29.6.1, build 8900f1d",
@@ -24,19 +24,19 @@
   },
   "base_image": {
     "image": "yizhilll/tb_container-392402c50123e9f1ba672a157adc3750:tmux_asciinema_v2",
-    "local_status": "missing",
-    "pull_attempted": false
+    "local_status": "present",
+    "pull_attempted": true,
+    "digest": "sha256:e7345845cae552ee5255770ea6f81a476274c2ad03e01a47558b0b7327402eca"
   },
   "blockers": [
-    "base Docker image is missing locally",
-    "Docker task reset has not been run",
-    "task validator has not been run",
     "selected task source-license row is unresolved",
-    "no real normalized trace exists"
+    "training and hosted export approvals are not cleared"
   ],
   "next_commands_to_attempt_real_run": [
-    "docker pull yizhilll/tb_container-392402c50123e9f1ba672a157adc3750:tmux_asciinema_v2",
-    "cd .cache/terminaltraj/extract-one/5k_instances/task_5279",
-    "T_BENCH_TASK_DOCKER_CLIENT_IMAGE_NAME=terminaltraj-task-5279-client T_BENCH_TASK_DOCKER_CLIENT_CONTAINER_NAME=terminaltraj-task-5279-client T_BENCH_TEST_DIR=/tests T_BENCH_TASK_LOGS_PATH=$PWD/logs T_BENCH_CONTAINER_LOGS_PATH=/logs docker compose build"
+    "re-run docker compose build with TMPDIR=/home/manishmehta/ui-projects/gyms/.cache/tmp",
+    "re-run docker compose up -d with the task_5279 T_BENCH_* variables",
+    "apply the recorded action sequence",
+    "copy tests/test_outputs.py and run-tests.sh into /tests",
+    "run /tests/run-tests.sh with TEST_DIR=/tests"
   ]
 }

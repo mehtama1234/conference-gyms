@@ -1,0 +1,14 @@
+{
+  "lane_id": "terminaltraj-production-lane",
+  "cleanup_receipt_id": "terminaltraj-task-5279-cleanup-001",
+  "status": "passed",
+  "task_id": "task_5279",
+  "command": "docker compose down",
+  "removed": [
+    "container terminaltraj-task-5279-client",
+    "network task_5279_default"
+  ],
+  "post_check": {
+    "docker_ps_filter_name_terminaltraj_task_5279_client": "no running containers"
+  }
+}

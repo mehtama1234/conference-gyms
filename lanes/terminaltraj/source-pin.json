@@ -1,6 +1,6 @@
 {
   "lane_id": "terminaltraj-production-lane",
-  "status": "source_pinned_task_selected_runtime_blocked",
+  "status": "source_pinned_task_executed_export_blocked",
   "local_source_repo": "TerminalTraj",
   "upstream_remote": "https://github.com/multimodal-art-projection/TerminalTraj.git",
   "commit": "01305cbf0425b08b41cf8cfc3e30abb0f4953c27",
@@ -23,24 +23,17 @@
   "runtime_blockers": [
     "released Docker task archive is downloaded only to ignored local cache",
     "one task manifest has been selected but not run",
-    "selected task base Docker image is not present locally",
     "selected task source-license row is unresolved",
-    "no Docker reset receipt has been produced",
-    "no validator execution receipt exists",
-    "no normalized real trace exists",
     "training and hosted export approvals are not cleared"
   ],
   "next_required_artifacts": [
-    "task-manifest.json",
-    "setup-receipt.json",
-    "reset-receipt.json",
-    "trace.normalized.json",
-    "verifier-receipt.json",
-    "cleanup-receipt.json",
-    "export-decision.json"
+    "license-resolution-receipt.json",
+    "split-integrity-receipt.json",
+    "privacy-review-receipt.json",
+    "replay-receipt.json"
   ],
   "export_decision": {
-    "local_contract_validation": "blocked_until_fixture_or_instance_trace_exists",
+    "local_contract_validation": "allowed",
     "hosted_conversion": "blocked",
     "sft_export": "blocked",
     "training_export": "blocked"

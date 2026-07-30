@@ -1,0 +1,124 @@
+{
+  "schema_version": "terminal-sandbox-trace/v0.1",
+  "trace_id": "terminaltraj-task-5279-real-local-001",
+  "lane_id": "terminaltraj-production-lane",
+  "source": {
+    "local_repo": "TerminalTraj",
+    "upstream_remote": "https://github.com/multimodal-art-projection/TerminalTraj.git",
+    "commit": "01305cbf0425b08b41cf8cfc3e30abb0f4953c27",
+    "license": "Apache-2.0"
+  },
+  "runtime_status": {
+    "mode": "real_local_run",
+    "is_real_runtime": true,
+    "blockers": [
+      "selected task source-license row is unresolved",
+      "hosted conversion, SFT export, and training export remain blocked"
+    ]
+  },
+  "task": {
+    "task_id": "task_5279",
+    "prompt": "Modify TubeSync local_settings.py so the configured Path moves from /config/addons_config/tubesync to /config/custom_tubesync_data, preserve a backup, create the target directory, and write config_test.txt.",
+    "domain": "terminal_sandbox_contract",
+    "source_instance": "released TerminalTraj task_5279 from m-a-p/TerminalTraj-5k-instances"
+  },
+  "reset": {
+    "status": "passed",
+    "evidence": [
+      "container terminaltraj-task-5279-client started",
+      "/app/tubesync/local_settings.py existed",
+      "initial settings contained ROOT_DIR = Path('/config/addons_config/tubesync')"
+    ]
+  },
+  "observations": [
+    {
+      "step": 0,
+      "kind": "initial_state",
+      "content": "/app/tubesync/local_settings.py exists and contains ROOT_DIR = Path('/config/addons_config/tubesync'); /config exists.",
+      "evidence": [
+        "reset-receipt.json"
+      ]
+    },
+    {
+      "step": 2,
+      "kind": "command_output",
+      "content": "After actions, local_settings.py contains Path('/config/custom_tubesync_data') and local_settings_backup.py contains Path('/config/addons_config/tubesync').",
+      "evidence": [
+        "docker exec grep output captured before verification"
+      ]
+    },
+    {
+      "step": 3,
+      "kind": "verifier_output",
+      "content": "pytest collected 4 tests and all 4 passed.",
+      "evidence": [
+        "verifier-receipt.json"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "step": 1,
+      "action_type": "shell_command",
+      "raw": "cp /app/tubesync/local_settings.py /app/tubesync/local_settings_backup.py",
+      "expected_effect": "Create backup of the original configuration.",
+      "status": "passed"
+    },
+    {
+      "step": 2,
+      "action_type": "shell_command",
+      "raw": "python3 script replacing Path('/config/addons_config/tubesync') with Path('/config/custom_tubesync_data')",
+      "expected_effect": "Redirect TubeSync ROOT_DIR to the custom config directory.",
+      "status": "passed"
+    },
+    {
+      "step": 3,
+      "action_type": "shell_command",
+      "raw": "mkdir -p /config/custom_tubesync_data && printf sentinel text > /config/custom_tubesync_data/config_test.txt",
+      "expected_effect": "Create required directory and config_test.txt sentinel.",
+      "status": "passed"
+    },
+    {
+      "step": 4,
+      "action_type": "validator_invocation",
+      "raw": "/tests/run-tests.sh",
+      "expected_effect": "Run released pytest verifier.",
+      "status": "passed"
+    }
+  ],
+  "verifier": {
+    "status": "passed",
+    "kind": "executable_validator",
+    "passed": true,
+    "evidence": [
+      "verifier-receipt.json reports 4 collected, 4 passed, 0 failed"
+    ]
+  },
+  "final_state": {
+    "status": "passed",
+    "artifacts": [
+      "/app/tubesync/local_settings.py",
+      "/app/tubesync/local_settings_backup.py",
+      "/config/custom_tubesync_data/config_test.txt"
+    ]
+  },
+  "cleanup": {
+    "status": "passed",
+    "evidence": [
+      "cleanup-receipt.json reports container and compose network removed"
+    ]
+  },
+  "quality": {
+    "evidence_completeness": "partial",
+    "replay_confidence": "medium",
+    "failure_category": "none_for_local_task_execution",
+    "notes": "One released task ran locally and passed its executable verifier. Evidence remains partial because license resolution, split integrity, and replay receipt are not complete."
+  },
+  "export_decision": {
+    "local_contract_validation": "allowed",
+    "hosted_conversion": "blocked",
+    "sft_export": "blocked",
+    "training_export": "blocked",
+    "reason": "Real local verifier passed, but the selected task source-license row, privacy review, split-integrity receipt, and export approvals remain unresolved."
+  }
+}

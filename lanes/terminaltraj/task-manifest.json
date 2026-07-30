@@ -1,7 +1,7 @@
 {
   "lane_id": "terminaltraj-production-lane",
   "task_manifest_id": "terminaltraj-task-5279-manifest",
-  "status": "selected_not_run",
+  "status": "selected_real_local_run_passed_export_blocked",
   "source_dataset": {
     "dataset": "m-a-p/TerminalTraj-5k-instances",
     "archive": "5k_instances.tar.gz",
@@ -21,7 +21,7 @@
   },
   "runtime": {
     "dockerfile_base_image": "yizhilll/tb_container-392402c50123e9f1ba672a157adc3750:tmux_asciinema_v2",
-    "base_image_local_status": "missing",
+    "base_image_local_status": "present",
     "compose_service": "client",
     "test_entrypoint": "run-tests.sh",
     "verifier": "tests/test_outputs.py"
@@ -67,10 +67,10 @@
     "decision": "unresolved_for_selected_task"
   },
   "execution_status": {
-    "reset": "not_run",
-    "agent_actions": "not_run",
-    "verifier": "not_run",
-    "cleanup": "not_run"
+    "reset": "passed",
+    "agent_actions": "passed",
+    "verifier": "passed",
+    "cleanup": "passed"
   },
   "export_decision": "blocked"
 }

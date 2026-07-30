@@ -1,0 +1,26 @@
+{
+  "lane_id": "terminaltraj-production-lane",
+  "verifier_receipt_id": "terminaltraj-task-5279-verifier-001",
+  "status": "passed",
+  "task_id": "task_5279",
+  "verifier": "tests/test_outputs.py",
+  "parser": "pytest",
+  "command": "docker exec -e TEST_DIR=/tests terminaltraj-task-5279-client sh -lc 'chmod +x /tests/run-tests.sh && /tests/run-tests.sh'",
+  "result": {
+    "exit_code": 0,
+    "collected": 4,
+    "passed": 4,
+    "failed": 0
+  },
+  "passed_tests": [
+    "test_local_settings_backup_exists",
+    "test_local_settings_modified",
+    "test_custom_data_directory_exists",
+    "test_config_test_file_exists"
+  ],
+  "evidence_summary": [
+    "pytest collected 4 items",
+    "test_outputs.py .... [100%]",
+    "4 passed in 0.05s"
+  ]
+}

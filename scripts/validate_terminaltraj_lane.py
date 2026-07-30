@@ -68,6 +68,8 @@ def validate_trace(trace: dict[str, object], errors: list[str]) -> None:
         if runtime.get("mode") == "fixture_contract":
             require(runtime.get("is_real_runtime") is False, "fixture trace must set is_real_runtime=false", errors)
             require(bool(runtime.get("blockers")), "fixture trace must keep explicit blockers", errors)
+        if runtime.get("mode") == "real_local_run":
+            require(runtime.get("is_real_runtime") is True, "real trace must set is_real_runtime=true", errors)
 
     observations = trace.get("observations")
     require(isinstance(observations, list) and len(observations) >= 1, "trace must contain at least one observation", errors)
@@ -123,7 +125,11 @@ def validate_task_manifest(task_manifest: dict[str, object], errors: list[str]) 
         errors,
     )
     require(task_manifest.get("lane_id") == "terminaltraj-production-lane", "task manifest lane_id is invalid", errors)
-    require(task_manifest.get("status") == "selected_not_run", "task manifest must remain selected_not_run until execution receipts exist", errors)
+    require(
+        task_manifest.get("status") in {"selected_not_run", "selected_real_local_run_passed_export_blocked"},
+        "task manifest status is invalid",
+        errors,
+    )
     task = task_manifest.get("task")
     require_keys(task, ["task_id", "difficulty", "category", "parser_name", "summary"], "task-manifest.task", errors)
     if isinstance(task, dict):
@@ -132,7 +138,7 @@ def validate_task_manifest(task_manifest: dict[str, object], errors: list[str]) 
     runtime = task_manifest.get("runtime")
     require_keys(runtime, ["dockerfile_base_image", "base_image_local_status", "compose_service", "test_entrypoint", "verifier"], "task-manifest.runtime", errors)
     if isinstance(runtime, dict):
-        require(runtime.get("base_image_local_status") == "missing", "base image should stay marked missing until pulled", errors)
+        require(runtime.get("base_image_local_status") in {"missing", "present"}, "base image status is invalid", errors)
     license_status = task_manifest.get("license_status")
     require_keys(license_status, ["repo_level_license", "source_license_row_found", "decision"], "task-manifest.license_status", errors)
     if isinstance(license_status, dict):
@@ -141,8 +147,12 @@ def validate_task_manifest(task_manifest: dict[str, object], errors: list[str]) 
     execution_status = task_manifest.get("execution_status")
     require_keys(execution_status, ["reset", "agent_actions", "verifier", "cleanup"], "task-manifest.execution_status", errors)
     if isinstance(execution_status, dict):
+        allowed_execution_states = {"not_run", "passed"}
         for key, value in execution_status.items():
-            require(value == "not_run", f"task execution_status.{key} must remain not_run until real execution", errors)
+            require(value in allowed_execution_states, f"task execution_status.{key} has invalid state", errors)
+        if task_manifest.get("status") == "selected_real_local_run_passed_export_blocked":
+            for key, value in execution_status.items():
+                require(value == "passed", f"task execution_status.{key} must be passed after real local run", errors)
 
 
 def validate_setup_receipt(setup_receipt: dict[str, object], errors: list[str]) -> None:
@@ -163,12 +173,14 @@ def validate_setup_receipt(setup_receipt: dict[str, object], errors: list[str]) 
         errors,
     )
     require(setup_receipt.get("lane_id") == "terminaltraj-production-lane", "setup receipt lane_id is invalid", errors)
-    require(setup_receipt.get("status") == "partial_blocked", "setup receipt must remain partial_blocked", errors)
+    require(setup_receipt.get("status") in {"partial_blocked", "passed"}, "setup receipt status is invalid", errors)
     base_image = setup_receipt.get("base_image")
     require_keys(base_image, ["image", "local_status", "pull_attempted"], "setup-receipt.base_image", errors)
     if isinstance(base_image, dict):
-        require(base_image.get("local_status") == "missing", "setup receipt base image must be missing until pulled", errors)
-        require(base_image.get("pull_attempted") is False, "setup receipt must not claim a pull attempt", errors)
+        require(base_image.get("local_status") in {"missing", "present"}, "setup receipt base image status is invalid", errors)
+        if setup_receipt.get("status") == "passed":
+            require(base_image.get("local_status") == "present", "passed setup receipt must have present base image", errors)
+            require(base_image.get("pull_attempted") is True, "passed setup receipt must record pull attempt", errors)
 
 
 def validate_cross_artifacts(
@@ -195,35 +207,62 @@ def validate_cross_artifacts(
     require(export_decision.get("sft_export") == "blocked", "export decision must block SFT export", errors)
 
 
+def validate_receipts(reset_receipt: dict[str, object], verifier_receipt: dict[str, object], cleanup_receipt: dict[str, object], errors: list[str]) -> None:
+    require(reset_receipt.get("status") == "passed", "reset receipt must be passed", errors)
+    require(verifier_receipt.get("status") == "passed", "verifier receipt must be passed", errors)
+    result = verifier_receipt.get("result")
+    require_keys(result, ["exit_code", "collected", "passed", "failed"], "verifier-receipt.result", errors)
+    if isinstance(result, dict):
+        require(result.get("exit_code") == 0, "verifier exit_code must be 0", errors)
+        require(result.get("collected") == 4, "verifier must collect 4 tests for task_5279", errors)
+        require(result.get("passed") == 4, "verifier must pass 4 tests for task_5279", errors)
+        require(result.get("failed") == 0, "verifier must fail 0 tests for task_5279", errors)
+    require(cleanup_receipt.get("status") == "passed", "cleanup receipt must be passed", errors)
+
+
 def main() -> int:
     errors: list[str] = []
     source_pin = load_json(LANE / "source-pin.json")
     task_manifest = load_json(LANE / "task-manifest.json")
     setup_receipt = load_json(LANE / "setup-receipt.json")
-    trace = load_json(LANE / "trace.fixture.json")
+    fixture_trace = load_json(LANE / "trace.fixture.json")
+    real_trace = load_json(LANE / "trace.real.json")
+    reset_receipt = load_json(LANE / "reset-receipt.json")
+    verifier_receipt = load_json(LANE / "verifier-receipt.json")
+    cleanup_receipt = load_json(LANE / "cleanup-receipt.json")
     export_decision = load_json(LANE / "export-decision.json")
     load_json(LANE / "trace.schema.json")
 
     require(isinstance(source_pin, dict), "source-pin.json must be an object", errors)
     require(isinstance(task_manifest, dict), "task-manifest.json must be an object", errors)
     require(isinstance(setup_receipt, dict), "setup-receipt.json must be an object", errors)
-    require(isinstance(trace, dict), "trace.fixture.json must be an object", errors)
+    require(isinstance(fixture_trace, dict), "trace.fixture.json must be an object", errors)
+    require(isinstance(real_trace, dict), "trace.real.json must be an object", errors)
+    require(isinstance(reset_receipt, dict), "reset-receipt.json must be an object", errors)
+    require(isinstance(verifier_receipt, dict), "verifier-receipt.json must be an object", errors)
+    require(isinstance(cleanup_receipt, dict), "cleanup-receipt.json must be an object", errors)
     require(isinstance(export_decision, dict), "export-decision.json must be an object", errors)
 
     if isinstance(task_manifest, dict):
         validate_task_manifest(task_manifest, errors)
     if isinstance(setup_receipt, dict):
         validate_setup_receipt(setup_receipt, errors)
-    if isinstance(trace, dict):
-        validate_trace(trace, errors)
+    if isinstance(fixture_trace, dict):
+        validate_trace(fixture_trace, errors)
+    if isinstance(real_trace, dict):
+        validate_trace(real_trace, errors)
+    if isinstance(reset_receipt, dict) and isinstance(verifier_receipt, dict) and isinstance(cleanup_receipt, dict):
+        validate_receipts(reset_receipt, verifier_receipt, cleanup_receipt, errors)
     if (
         isinstance(source_pin, dict)
         and isinstance(task_manifest, dict)
         and isinstance(setup_receipt, dict)
-        and isinstance(trace, dict)
+        and isinstance(fixture_trace, dict)
+        and isinstance(real_trace, dict)
         and isinstance(export_decision, dict)
     ):
-        validate_cross_artifacts(source_pin, task_manifest, setup_receipt, trace, export_decision, errors)
+        validate_cross_artifacts(source_pin, task_manifest, setup_receipt, fixture_trace, export_decision, errors)
+        validate_cross_artifacts(source_pin, task_manifest, setup_receipt, real_trace, export_decision, errors)
 
     if errors:
         for error in errors:

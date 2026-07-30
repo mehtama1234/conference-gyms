@@ -2,8 +2,8 @@
 
 ## Current Status
 
-Status: source pinned, one released task selected, fixture contract valid,
-runtime blocked.
+Status: source pinned, one released task selected, real local verifier passed,
+export blocked.
 
 This lane is the first production-readiness proof target for terminal/sandbox
 gyms. The local checkout is enough to identify the paper, source repo, license,
@@ -46,17 +46,16 @@ That gives us the minimum serious gym contract:
 ## Current Blocker
 
 The released instance archive has been downloaded into ignored local cache and
-one task, `task_5279`, has been inspected. Docker is installed, but the task's
-base image is not present locally and the task-specific source-license row has
-not been resolved from `repo&license.jsonl`.
+one task, `task_5279`, has been run locally. Docker is installed, the task base
+image was pulled, the task image was built with `TMPDIR` redirected away from
+the full `/tmp`, the container was reset, task actions were applied, and the
+released pytest verifier passed all four checks. Export remains blocked because
+the task-specific source-license row has not been resolved from
+`repo&license.jsonl`.
 
-Because of that, this lane cannot honestly claim:
+Because of that, this lane can now claim local runtime validation for one task,
+but still cannot honestly claim:
 
-- task reset
-- Docker runtime setup beyond host Docker availability
-- validator execution
-- replay
-- normalized real trace
 - training/export readiness
 
 ## Next Action
@@ -84,10 +83,14 @@ The lane now includes a fixture-level contract test:
 - `task-manifest.json`: selected released task, file hashes, task prompt
   summary, verifier shape, and unresolved license/runtime blockers.
 - `setup-receipt.json`: local setup evidence for archive download, extraction,
-  Docker availability, and missing base image.
+  Docker availability, base image pull, and task image build.
+- `reset-receipt.json`: real container reset and initial state evidence.
+- `verifier-receipt.json`: released pytest verifier result, 4 passed.
+- `cleanup-receipt.json`: container and network cleanup evidence.
 - `trace.schema.json`: normalized terminal/sandbox trace shape.
 - `trace.fixture.json`: non-runtime fixture trace that exercises the shape
   without claiming benchmark execution.
+- `trace.real.json`: normalized real local trace for `task_5279`.
 - `export-decision.json`: explicit block on hosted conversion, SFT export, and
   training export.
 - `../../scripts/validate_terminaltraj_lane.py`: local validator for the lane
