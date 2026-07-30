@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Status: source pinned, runtime blocked.
+Status: source pinned, fixture contract valid, runtime blocked.
 
 This lane is the first production-readiness proof target for terminal/sandbox
 gyms. The local checkout is enough to identify the paper, source repo, license,
@@ -72,3 +72,29 @@ produce these artifacts:
 
 The first acceptable pass may be fixture-only, but it must say so explicitly and
 must keep training/export blocked.
+
+## Contract Artifacts
+
+The lane now includes a fixture-level contract test:
+
+- `source-pin.json`: upstream repo, commit, license, dataset pointers, and
+  runtime blockers.
+- `trace.schema.json`: normalized terminal/sandbox trace shape.
+- `trace.fixture.json`: non-runtime fixture trace that exercises the shape
+  without claiming benchmark execution.
+- `export-decision.json`: explicit block on hosted conversion, SFT export, and
+  training export.
+- `../../scripts/validate_terminaltraj_lane.py`: local validator for the lane
+  artifacts.
+
+Run:
+
+```bash
+python3 scripts/validate_terminaltraj_lane.py
+```
+
+Expected output:
+
+```text
+TerminalTraj lane artifacts validate
+```

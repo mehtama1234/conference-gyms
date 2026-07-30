@@ -1,0 +1,26 @@
+{
+  "lane_id": "terminaltraj-production-lane",
+  "decision_id": "terminaltraj-export-decision-001",
+  "applies_to": [
+    "trace.fixture.json"
+  ],
+  "local_contract_validation": "allowed",
+  "hosted_conversion": "blocked",
+  "sft_export": "blocked",
+  "training_export": "blocked",
+  "blocking_reasons": [
+    "fixture trace is not a real TerminalTraj dataset instance",
+    "Docker task instance is not materialized locally",
+    "validator was not executed",
+    "dataset row license has not been tied to a selected task",
+    "privacy and split-integrity receipts do not exist"
+  ],
+  "required_to_unblock_training_export": [
+    "select one released TerminalTraj task instance",
+    "record source repository and license row for that task",
+    "materialize the Docker task environment",
+    "record reset, action, verifier, final-state, cleanup, and replay receipts",
+    "record privacy and split-integrity decisions",
+    "rerun trace validation on the real normalized trace"
+  ]
+}

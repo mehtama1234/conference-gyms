@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/terminaltraj-normalized-trace.schema.json",
+  "title": "TerminalTraj normalized terminal/sandbox trace",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trace_id",
+    "lane_id",
+    "source",
+    "runtime_status",
+    "task",
+    "reset",
+    "observations",
+    "actions",
+    "verifier",
+    "final_state",
+    "cleanup",
+    "quality",
+    "export_decision"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "terminal-sandbox-trace/v0.1"
+    },
+    "trace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lane_id": {
+      "type": "string",
+      "const": "terminaltraj-production-lane"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "local_repo",
+        "upstream_remote",
+        "commit",
+        "license"
+      ],
+      "properties": {
+        "local_repo": {
+          "type": "string"
+        },
+        "upstream_remote": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "license": {
+          "type": "string"
+        }
+      }
+    },
+    "runtime_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "is_real_runtime",
+        "blockers"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "fixture_contract",
+            "real_local_run",
+            "hosted_run"
+          ]
+        },
+        "is_real_runtime": {
+          "type": "boolean"
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "prompt",
+        "domain",
+        "source_instance"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "source_instance": {
+          "type": "string"
+        }
+      }
+    },
+    "reset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_run",
+            "passed",
+            "failed"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/observation"
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action"
+      }
+    },
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "kind",
+        "passed",
+        "evidence"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_run",
+            "passed",
+            "failed"
+          ]
+        },
+        "kind": {
+          "type": "string"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "final_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "artifacts"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_completeness",
+        "replay_confidence",
+        "failure_category",
+        "notes"
+      ],
+      "properties": {
+        "evidence_completeness": {
+          "type": "string",
+          "enum": [
+            "contract_only",
+            "partial",
+            "complete"
+          ]
+        },
+        "replay_confidence": {
+          "type": "string",
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "failure_category": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "export_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "local_contract_validation",
+        "hosted_conversion",
+        "sft_export",
+        "training_export",
+        "reason"
+      ],
+      "properties": {
+        "local_contract_validation": {
+          "type": "string",
+          "enum": [
+            "allowed",
+            "blocked"
+          ]
+        },
+        "hosted_conversion": {
+          "type": "string",
+          "enum": [
+            "allowed",
+            "blocked"
+          ]
+        },
+        "sft_export": {
+          "type": "string",
+          "enum": [
+            "allowed",
+            "blocked"
+          ]
+        },
+        "training_export": {
+          "type": "string",
+          "enum": [
+            "allowed",
+            "blocked"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step",
+        "kind",
+        "content",
+        "evidence"
+      ],
+      "properties": {
+        "step": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "initial_state",
+            "command_output",
+            "file_state",
+            "verifier_output"
+          ]
+        },
+        "content": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step",
+        "action_type",
+        "raw",
+        "expected_effect",
+        "status"
+      ],
+      "properties": {
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "action_type": {
+          "type": "string",
+          "enum": [
+            "shell_command",
+            "file_edit",
+            "validator_invocation",
+            "other"
+          ]
+        },
+        "raw": {
+          "type": "string"
+        },
+        "expected_effect": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_run",
+            "passed",
+            "failed"
+          ]
+        }
+      }
+    }
+  }
+}

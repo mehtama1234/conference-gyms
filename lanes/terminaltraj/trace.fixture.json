@@ -1,0 +1,82 @@
+{
+  "schema_version": "terminal-sandbox-trace/v0.1",
+  "trace_id": "terminaltraj-fixture-contract-001",
+  "lane_id": "terminaltraj-production-lane",
+  "source": {
+    "local_repo": "TerminalTraj",
+    "upstream_remote": "https://github.com/multimodal-art-projection/TerminalTraj.git",
+    "commit": "01305cbf0425b08b41cf8cfc3e30abb0f4953c27",
+    "license": "Apache-2.0"
+  },
+  "runtime_status": {
+    "mode": "fixture_contract",
+    "is_real_runtime": false,
+    "blockers": [
+      "released Docker task instances are not present locally",
+      "no selected TerminalTraj task manifest exists",
+      "no validator was executed"
+    ]
+  },
+  "task": {
+    "task_id": "fixture-terminaltraj-contract-001",
+    "prompt": "Fixture placeholder for the minimal terminal task shape: inspect repository state, make a terminal action, and run an executable validator.",
+    "domain": "terminal_sandbox_contract",
+    "source_instance": "synthetic fixture derived from TerminalTraj README contract, not a released dataset instance"
+  },
+  "reset": {
+    "status": "not_run",
+    "evidence": [
+      "TerminalTraj source repo was pinned, but no Docker task instance was materialized."
+    ]
+  },
+  "observations": [
+    {
+      "step": 0,
+      "kind": "initial_state",
+      "content": "Fixture initial observation: a task container would expose a repository workspace, shell, task prompt, and validator entrypoint.",
+      "evidence": [
+        "TerminalTraj README describes Docker-aligned terminal trajectories and executable validation."
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "step": 1,
+      "action_type": "shell_command",
+      "raw": "pytest -q",
+      "expected_effect": "Run the task validator or test suite inside the task environment.",
+      "status": "not_run"
+    }
+  ],
+  "verifier": {
+    "status": "not_run",
+    "kind": "executable_validator",
+    "passed": false,
+    "evidence": [
+      "No released instance or validator file is present in the local checkout."
+    ]
+  },
+  "final_state": {
+    "status": "not_materialized",
+    "artifacts": []
+  },
+  "cleanup": {
+    "status": "not_needed_for_fixture",
+    "evidence": [
+      "No container, process, network service, or temporary task workspace was started."
+    ]
+  },
+  "quality": {
+    "evidence_completeness": "contract_only",
+    "replay_confidence": "none",
+    "failure_category": "runtime_materialization_missing",
+    "notes": "This fixture validates the normalized trace shape only. It is not benchmark evidence."
+  },
+  "export_decision": {
+    "local_contract_validation": "allowed",
+    "hosted_conversion": "blocked",
+    "sft_export": "blocked",
+    "training_export": "blocked",
+    "reason": "Fixture trace is allowed only to test the adapter contract. It cannot be exported as training or benchmark data because no real task execution, license row, split receipt, or validator output exists."
+  }
+}
