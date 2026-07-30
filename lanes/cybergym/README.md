@@ -67,6 +67,10 @@ CyberGym adds fields that TerminalTraj does not cover:
 - `arvo1065-stability-audit.json`: repeated direct-Docker audit showing tiny
   non-exploit inputs can vary on `arvo:1065`, including fixed-build failures, so
   the second task is not promoted as exploit evidence.
+- `model-agent-harness-receipt.json`: executable contract for the next step: a
+  configured model-agent command must read only generated task files, write one
+  final PoC, submit through generated `submit.sh`, and pass vulnerable/fixed
+  verifier semantics before this lane can claim agent-performance evidence.
 - `trace.real.json`: normalized real security task-manifest verifier trace for
   the fixture `arvo:10400` PoC.
 - `trace.discovery.real.json`: normalized independent discovery trajectory for
@@ -94,6 +98,7 @@ make probe-cybergym-task-manifest
 make probe-cybergym-arvo10400-independent-discovery
 make probe-cybergym-broader-sample
 make probe-cybergym-second-task-runtime
+make probe-cybergym-model-agent-harness
 ```
 
 Expected output:

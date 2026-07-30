@@ -623,6 +623,58 @@ def validate_arvo1065_stability(receipt: dict[str, object], errors: list[str]) -
                 require("139" in item.get("vul_unique_exit_codes", []) or "139" in item.get("fix_unique_exit_codes", []), "arvo1065 stability input should show at least one failure", errors)
 
 
+def validate_model_agent_harness(receipt: dict[str, object], errors: list[str]) -> None:
+    require_keys(
+        receipt,
+        [
+            "lane_id",
+            "receipt_id",
+            "status",
+            "script",
+            "command",
+            "selected_task",
+            "agent_command_contract",
+            "evidence_policy",
+            "success_semantics",
+            "does_not_claim",
+            "next_action",
+        ],
+        "model-agent-harness",
+        errors,
+    )
+    require(receipt.get("lane_id") == "cybergym-production-lane", "model-agent harness lane_id is invalid", errors)
+    require(receipt.get("receipt_id") == "cybergym-model-agent-harness-001", "model-agent harness receipt id is invalid", errors)
+    require(receipt.get("status") == "harness_ready_agent_command_missing", "model-agent harness status must be blocked on missing command", errors)
+    require(receipt.get("script") == "scripts/run_cybergym_model_agent_harness.py", "model-agent harness script is invalid", errors)
+    require(receipt.get("command") == "make probe-cybergym-model-agent-harness", "model-agent harness command is invalid", errors)
+    task = receipt.get("selected_task")
+    require_keys(task, ["real_task_id", "agent_facing_task_id", "agent_id", "difficulty"], "model-agent-harness.selected_task", errors)
+    if isinstance(task, dict):
+        require(task.get("real_task_id") == "arvo:10400", "model-agent harness task id must be arvo:10400", errors)
+        require(task.get("agent_facing_task_id") == "7fa395d7dac0", "model-agent harness masked task id is invalid", errors)
+        require(task.get("agent_id") == "cybergym-model-agent-harness-agent", "model-agent harness agent id is invalid", errors)
+    contract = receipt.get("agent_command_contract")
+    require_keys(contract, ["env_var", "working_directory", "required_output", "timeout_env_var", "default_timeout_seconds"], "model-agent-harness.agent_command_contract", errors)
+    if isinstance(contract, dict):
+        require(contract.get("env_var") == "CYBERGYM_AGENT_CMD", "model-agent harness must use CYBERGYM_AGENT_CMD", errors)
+        require(contract.get("working_directory") == "$CYBERGYM_TASK_DIR", "model-agent harness working directory is invalid", errors)
+        require(contract.get("required_output") == "$CYBERGYM_OUTPUT_POC", "model-agent harness output path is invalid", errors)
+        require(contract.get("default_timeout_seconds") == 900, "model-agent harness timeout is invalid", errors)
+    policy = receipt.get("evidence_policy")
+    require_keys(policy, ["allowed_agent_files", "forbidden_agent_files", "network_access"], "model-agent-harness.evidence_policy", errors)
+    if isinstance(policy, dict):
+        require(policy.get("allowed_agent_files") == ["README.md", "description.txt", "repo-vul.tar.gz", "submit.sh"], "model-agent harness allowed files are invalid", errors)
+        forbidden = policy.get("forbidden_agent_files")
+        require(isinstance(forbidden, list) and "patch.diff" in forbidden and "repo-fix.tar.gz" in forbidden, "model-agent harness must forbid patch/fix files", errors)
+        require(policy.get("network_access") == "blocked_by_default_no_policy_receipt", "model-agent harness network policy is invalid", errors)
+    semantics = receipt.get("success_semantics")
+    require_keys(semantics, ["task_solved", "reason"], "model-agent-harness.success_semantics", errors)
+    if isinstance(semantics, dict):
+        require(semantics.get("task_solved") is False, "model-agent harness receipt must not claim solved without agent command", errors)
+    does_not_claim = receipt.get("does_not_claim")
+    require(isinstance(does_not_claim, list) and "agent-performance evidence" in does_not_claim, "model-agent harness must disclaim agent-performance evidence", errors)
+
+
 def main() -> int:
     errors: list[str] = []
     source = load_json(LANE / "source-pin.json")
@@ -635,6 +687,7 @@ def main() -> int:
     broader_sample = load_json(LANE / "broader-sample-readiness.json")
     second_task = load_json(LANE / "second-task-runtime-receipt.json")
     arvo1065_stability = load_json(LANE / "arvo1065-stability-audit.json")
+    model_agent_harness = load_json(LANE / "model-agent-harness-receipt.json")
     real_trace = load_json(LANE / "trace.real.json")
     discovery_trace = load_json(LANE / "trace.discovery.real.json")
     second_trace = load_json(LANE / "trace.second.real.json")
@@ -680,6 +733,10 @@ def main() -> int:
         validate_arvo1065_stability(arvo1065_stability, errors)
     else:
         errors.append("arvo1065-stability-audit.json must be an object")
+    if isinstance(model_agent_harness, dict):
+        validate_model_agent_harness(model_agent_harness, errors)
+    else:
+        errors.append("model-agent-harness-receipt.json must be an object")
     if isinstance(real_trace, dict):
         validate_real_trace(real_trace, errors)
     else:
