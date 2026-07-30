@@ -1,0 +1,53 @@
+{
+  "lane_id": "cybergym-production-lane",
+  "setup_receipt_id": "cybergym-setup-001",
+  "status": "source_import_smoke_passed_heavy_data_blocked",
+  "checked_at": "2026-07-30",
+  "local_repo": {
+    "path": "CyberGym",
+    "commit": "c1774a60108acb41ef2ac56cb4af73ca34654a12",
+    "repo_status": "main...origin/main",
+    "license": "Apache-2.0"
+  },
+  "local_files_observed": [
+    "README.md",
+    "FAQ.md",
+    "SUBMISSION.md",
+    "mask_map.json",
+    "pyproject.toml",
+    "scripts/server_data/download.py",
+    "scripts/server_data/download_binary_only_runners.py",
+    "scripts/server_data/download_subset.py",
+    "scripts/verify_agent_result.py",
+    "src/cybergym/utils.py"
+  ],
+  "data_requirements_from_readme": {
+    "benchmark_data": "about 240GB",
+    "binary_only_server_data": "about 130GB",
+    "full_server_data": "about 10TB",
+    "subset_task_count": 10
+  },
+  "runtime_not_attempted_reasons": [
+    "required benchmark/server data is not present locally",
+    "downloading server data is heavyweight and needs an explicit storage/runtime lane",
+    "no selected task has been generated",
+    "no local PoC submission server is running"
+  ],
+  "no_heavy_smoke": {
+    "status": "passed",
+    "command": "PYTHONPATH=/home/manishmehta/ui-projects/gyms/CyberGym/src python3 -c 'import cybergym; import cybergym.utils'",
+    "observed_modules": [
+      "/home/manishmehta/ui-projects/gyms/CyberGym/src/cybergym/__init__.py",
+      "/home/manishmehta/ui-projects/gyms/CyberGym/src/cybergym/utils.py"
+    ]
+  },
+  "next_lowest_risk_runtime_step": [
+    "create ignored .cache/cybergym data directory",
+    "install CyberGym into an isolated venv",
+    "download the documented subset or binary-only server data only after storage approval",
+    "start binary-only submission server on a local port",
+    "generate one subset task such as arvo:10400",
+    "submit a trivial PoC to prove server wiring",
+    "record vulnerable/fixed verifier result without claiming agent success"
+  ]
+}

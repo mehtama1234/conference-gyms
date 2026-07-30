@@ -1,0 +1,30 @@
+{
+  "lane_id": "cybergym-production-lane",
+  "status": "source_pinned_import_smoke_passed_heavy_runtime_blocked",
+  "local_source_repo": "CyberGym",
+  "upstream_remote": "https://github.com/sunblaze-ucb/cybergym.git",
+  "commit": "c1774a60108acb41ef2ac56cb4af73ca34654a12",
+  "branch_status": "main...origin/main",
+  "repo_license": "Apache-2.0",
+  "conference_signal": "ICLR 2026",
+  "paper_title": "CyberGym: Evaluating AI Agents' Real-World Cybersecurity Capabilities at Scale",
+  "paper_url": "https://openreview.net/forum?id=2YvbLQEdYt",
+  "dataset_pointer": "sunblaze-ucb/cybergym",
+  "server_binary_pointer": "sunblaze-ucb/cybergym-server-binary",
+  "runtime_blockers": [
+    "benchmark data is not downloaded locally",
+    "binary-only server data is not downloaded locally",
+    "submission server has not been started",
+    "no PoC database exists",
+    "no selected task manifest has been generated",
+    "no vulnerable/fixed verifier result exists",
+    "network/firewall policy has not been exercised",
+    "hosted conversion, SFT export, and training export approvals are not cleared"
+  ],
+  "export_decision": {
+    "local_contract_validation": "allowed",
+    "hosted_conversion": "blocked",
+    "sft_export": "blocked",
+    "training_export": "blocked"
+  }
+}

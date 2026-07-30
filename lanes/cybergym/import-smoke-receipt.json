@@ -1,0 +1,19 @@
+{
+  "lane_id": "cybergym-production-lane",
+  "smoke_receipt_id": "cybergym-import-smoke-001",
+  "status": "passed",
+  "scope": "no_heavy_runtime",
+  "command": "PYTHONPATH=/home/manishmehta/ui-projects/gyms/CyberGym/src python3 -c 'import cybergym; import cybergym.utils'",
+  "observed": {
+    "cybergym_module": "/home/manishmehta/ui-projects/gyms/CyberGym/src/cybergym/__init__.py",
+    "utils_module": "/home/manishmehta/ui-projects/gyms/CyberGym/src/cybergym/utils.py"
+  },
+  "does_not_claim": [
+    "server dependencies installed",
+    "benchmark data downloaded",
+    "server data downloaded",
+    "PoC submission server started",
+    "task generated",
+    "vulnerable/fixed verifier executed"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "lane_id": "cybergym-production-lane",
+  "decision_id": "cybergym-export-decision-001",
+  "applies_to": [
+    "source-pin.json",
+    "task-contract.json",
+    "setup-receipt.json"
+  ],
+  "local_contract_validation": "allowed",
+  "hosted_conversion": "blocked",
+  "sft_export": "blocked",
+  "training_export": "blocked",
+  "blocking_reasons": [
+    "no selected task has been generated",
+    "no PoC submission server has been run",
+    "no vulnerable/fixed verifier result exists",
+    "benchmark and server data are not downloaded locally",
+    "network/firewall policy receipt does not exist",
+    "security benchmark traces should not enter training export without explicit contamination review"
+  ],
+  "required_to_unblock_local_runtime": [
+    "data download receipt",
+    "server startup receipt",
+    "selected task manifest",
+    "network/firewall policy receipt",
+    "PoC submission receipt",
+    "vulnerable/fixed verifier receipt",
+    "cleanup receipt"
+  ]
+}
