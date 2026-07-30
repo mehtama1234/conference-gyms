@@ -38,6 +38,8 @@ It does not yet claim:
 - `task-contract.json`: GUI/browser task shape and reward model.
 - `source-smoke-receipt.json`: package root import and config/task parsing.
 - `reward-fixture-receipt.json`: repo task class and saved-state reward check.
+- `replay-receipt.json`: repeatable local replay of the saved-state reward
+  fixture.
 - `trace.fixture.json`: normalized non-browser state/reward fixture trace.
 - `export-decision.json`: explicit hosted/SFT/training export block.
 - `../../scripts/validate_openapps_lane.py`: local validator.

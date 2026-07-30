@@ -102,6 +102,21 @@ def validate_reward_receipt(receipt: dict[str, object], errors: list[str]) -> No
     require(isinstance(does_not_claim, list) and "browser launched" in does_not_claim, "reward fixture must not claim browser launch", errors)
 
 
+def validate_replay_receipt(receipt: dict[str, object], errors: list[str]) -> None:
+    require_keys(receipt, ["lane_id", "replay_receipt_id", "status", "scope", "script", "command", "result", "does_not_claim"], "replay-receipt", errors)
+    require(receipt.get("lane_id") == "openapps-production-lane", "replay receipt lane_id is invalid", errors)
+    require(receipt.get("status") == "passed", "OpenApps replay receipt must pass", errors)
+    require(receipt.get("scope") == "non_browser_saved_state_reward", "OpenApps replay scope is invalid", errors)
+    result = receipt.get("result")
+    require_keys(result, ["task_id", "initial_todo_count", "current_todo_count", "state_comparison", "complete"], "replay-receipt.result", errors)
+    if isinstance(result, dict):
+        require(result.get("initial_todo_count") == 15, "OpenApps replay initial count should be 15", errors)
+        require(result.get("current_todo_count") == 16, "OpenApps replay current count should be 16", errors)
+        require(result.get("complete") is True, "OpenApps replay must complete", errors)
+    does_not_claim = receipt.get("does_not_claim")
+    require(isinstance(does_not_claim, list) and "browser launched" in does_not_claim, "OpenApps replay must not claim browser launch", errors)
+
+
 def validate_trace(trace: dict[str, object], errors: list[str]) -> None:
     require_keys(trace, ["schema_version", "trace_id", "lane_id", "source", "runtime_status", "task", "observations", "actions", "verifier", "quality", "export_decision"], "trace.fixture", errors)
     require(trace.get("schema_version") == "browser-gui-state-trace/v0.1", "OpenApps trace schema is invalid", errors)
@@ -136,6 +151,7 @@ def main() -> int:
         "contract": load_json(LANE / "task-contract.json"),
         "smoke": load_json(LANE / "source-smoke-receipt.json"),
         "reward": load_json(LANE / "reward-fixture-receipt.json"),
+        "replay": load_json(LANE / "replay-receipt.json"),
         "trace": load_json(LANE / "trace.fixture.json"),
         "export": load_json(LANE / "export-decision.json"),
     }
@@ -155,6 +171,10 @@ def main() -> int:
         validate_reward_receipt(artifacts["reward"], errors)
     else:
         errors.append("reward-fixture-receipt.json must be an object")
+    if isinstance(artifacts["replay"], dict):
+        validate_replay_receipt(artifacts["replay"], errors)
+    else:
+        errors.append("replay-receipt.json must be an object")
     if isinstance(artifacts["trace"], dict):
         validate_trace(artifacts["trace"], errors)
     else:

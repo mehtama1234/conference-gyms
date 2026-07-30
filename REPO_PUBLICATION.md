@@ -59,3 +59,9 @@ The TerminalTraj replay remains available locally:
 ```bash
 make replay-terminaltraj
 ```
+
+The OpenApps saved-state reward fixture replay is also local-only:
+
+```bash
+make replay-openapps-reward
+```

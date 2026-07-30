@@ -1,0 +1,27 @@
+{
+  "lane_id": "openapps-production-lane",
+  "replay_receipt_id": "openapps-add-todo-reward-replay-001",
+  "status": "passed",
+  "scope": "non_browser_saved_state_reward",
+  "script": "scripts/replay_openapps_reward_fixture.py",
+  "command": "make replay-openapps-reward",
+  "result": {
+    "task_id": "942cd8921fe9da123b4f59612ba8595f864b22ebc2f4898420e702c6295562ec",
+    "initial_todo_count": 15,
+    "current_todo_count": 16,
+    "state_comparison": "AppStateComparison",
+    "complete": true
+  },
+  "environment_notes": [
+    "Uses ignored .cache/openapps-reward-venv.",
+    "Sets PYTHONPATH to /home/manishmehta/ui-projects/gyms/OpenApps/src.",
+    "Sets TMPDIR to /home/manishmehta/ui-projects/gyms/.cache/tmp because host /tmp is nearly full."
+  ],
+  "does_not_claim": [
+    "browser launched",
+    "BrowserGym environment started",
+    "agent action was executed through the UI",
+    "Playwright trace exists",
+    "hosted conversion or training export is allowed"
+  ]
+}

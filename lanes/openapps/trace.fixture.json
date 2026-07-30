@@ -54,9 +54,9 @@
   },
   "quality": {
     "evidence_completeness": "partial",
-    "replay_confidence": "medium",
+    "replay_confidence": "high",
     "failure_category": "none_for_saved_state_reward_fixture",
-    "notes": "The saved-state reward fixture proves OpenApps task reward logic locally, but it is not a browser or agent execution trace."
+    "notes": "The saved-state reward fixture proves OpenApps task reward logic locally and replays through scripts/replay_openapps_reward_fixture.py, but it is not a browser or agent execution trace."
   },
   "export_decision": {
     "local_contract_validation": "allowed",
