@@ -1,0 +1,42 @@
+{
+  "lane_id": "openapps-production-lane",
+  "reward_receipt_id": "openapps-add-todo-reward-fixture-001",
+  "status": "passed",
+  "scope": "non_browser_saved_state_reward",
+  "task": {
+    "task_name": "add_call_mom_to_my_todo",
+    "task_class": "open_apps.tasks.tasks.AddToDoTask",
+    "task_id": "942cd8921fe9da123b4f59612ba8595f864b22ebc2f4898420e702c6295562ec",
+    "goal": "Add a to-do item to call mom",
+    "todo_name": "Call Mom",
+    "is_done": false
+  },
+  "environment": {
+    "venv": ".cache/openapps-reward-venv",
+    "installed_minimal_dependencies": [
+      "deepdiff",
+      "omegaconf",
+      "hydra-core"
+    ],
+    "pythonpath": "/home/manishmehta/ui-projects/gyms/OpenApps/src"
+  },
+  "inputs": {
+    "initial_state": "OpenApps/tests/states/initial_state.json",
+    "current_state": "OpenApps/tests/states/call_mom_todo_state.json",
+    "initial_todo_count": 15,
+    "current_todo_count": 16
+  },
+  "command": "PYTHONPATH=/home/manishmehta/ui-projects/gyms/OpenApps/src .cache/openapps-reward-venv/bin/python -c 'from open_apps.tasks.tasks import AddToDoTask; ...; task.check_if_task_is_complete(initial, current)'",
+  "result": {
+    "check_if_task_is_complete": true,
+    "verifier": "OpenApps AddToDoTask.check_if_task_is_complete",
+    "state_comparison": "open_apps.tasks.tasks.AppStateComparison"
+  },
+  "does_not_claim": [
+    "browser launched",
+    "BrowserGym environment started",
+    "agent action was executed through the UI",
+    "Playwright trace exists",
+    "hosted conversion or training export is allowed"
+  ]
+}

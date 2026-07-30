@@ -1,0 +1,68 @@
+{
+  "schema_version": "browser-gui-state-trace/v0.1",
+  "trace_id": "openapps-add-todo-state-fixture-001",
+  "lane_id": "openapps-production-lane",
+  "source": {
+    "local_repo": "OpenApps",
+    "upstream_remote": "https://github.com/facebookresearch/OpenApps.git",
+    "commit": "015715adca8e6c59627e21b7a72b4e555dcb18f1",
+    "license": "CC-BY-NC-4.0"
+  },
+  "runtime_status": {
+    "mode": "state_reward_fixture",
+    "is_browser_runtime": false,
+    "blockers": [
+      "Playwright/Chromium was not installed",
+      "BrowserGym environment was not launched",
+      "no UI action trace exists",
+      "hosted conversion, SFT export, and training export remain blocked"
+    ]
+  },
+  "task": {
+    "task_name": "add_call_mom_to_my_todo",
+    "task_class": "AddToDoTask",
+    "goal": "Add a to-do item to call mom",
+    "target_change": "todo list gains Call Mom with done=false"
+  },
+  "observations": [
+    {
+      "step": 0,
+      "kind": "initial_state_file",
+      "content": "OpenApps/tests/states/initial_state.json has 15 todo items."
+    },
+    {
+      "step": 1,
+      "kind": "current_state_file",
+      "content": "OpenApps/tests/states/call_mom_todo_state.json has 16 todo items including Call Mom."
+    }
+  ],
+  "actions": [
+    {
+      "step": 1,
+      "action_type": "state_fixture",
+      "raw": "Use saved current state with Call Mom added.",
+      "status": "passed"
+    }
+  ],
+  "verifier": {
+    "status": "passed",
+    "kind": "ground_truth_state_reward",
+    "passed": true,
+    "evidence": [
+      "reward-fixture-receipt.json reports AddToDoTask.check_if_task_is_complete returned true"
+    ]
+  },
+  "quality": {
+    "evidence_completeness": "partial",
+    "replay_confidence": "medium",
+    "failure_category": "none_for_saved_state_reward_fixture",
+    "notes": "The saved-state reward fixture proves OpenApps task reward logic locally, but it is not a browser or agent execution trace."
+  },
+  "export_decision": {
+    "local_contract_validation": "allowed",
+    "hosted_conversion": "blocked",
+    "sft_export": "blocked",
+    "training_export": "blocked",
+    "reason": "CC-BY-NC-4.0 license, no browser trace, no privacy/split receipt, and no export approval."
+  }
+}

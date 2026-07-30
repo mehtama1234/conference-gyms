@@ -29,7 +29,7 @@ Analysis artifacts:
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
   no-heavy import smoke, and heavy-runtime blockers.
 - `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
-  smoke, and dependency/browser blockers.
+  smoke, saved-state reward fixture, and dependency/browser blockers.
 
 Run the current production gate:
 

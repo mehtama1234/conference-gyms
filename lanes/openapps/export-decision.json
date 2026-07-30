@@ -12,9 +12,9 @@
   "training_export": "blocked",
   "blocking_reasons": [
     "repo license is CC-BY-NC-4.0",
-    "no selected task has been run",
+    "selected task has only been run as a saved-state reward fixture",
     "no browser trace exists",
-    "no reward verifier result exists",
+    "no browser reward verifier result exists",
     "no privacy or split receipt exists",
     "no export approval receipt exists"
   ],
@@ -22,7 +22,7 @@
     "install dependencies in an isolated environment",
     "install Playwright Chromium",
     "select one low-risk task such as add_call_mom_to_my_todo",
-    "run dummy agent or deterministic fixture against the app",
+    "run dummy agent or deterministic browser fixture against the app",
     "record app state before and after",
     "record reward/verifier result",
     "emit normalized GUI trace"

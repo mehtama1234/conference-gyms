@@ -1,6 +1,6 @@
 {
   "lane_id": "openapps-production-lane",
-  "status": "source_pinned_source_smoke_passed_runtime_blocked",
+  "status": "source_pinned_reward_fixture_passed_browser_runtime_blocked",
   "local_source_repo": "OpenApps",
   "upstream_remote": "https://github.com/facebookresearch/OpenApps.git",
   "commit": "015715adca8e6c59627e21b7a72b4e555dcb18f1",
@@ -11,11 +11,11 @@
   "paper_url": "https://arxiv.org/abs/2511.20766",
   "runtime_blockers": [
     "full OpenApps dependency environment is not installed in this repo",
-    "hydra is missing from the host Python environment",
+    "full runtime dependencies are installed only in ignored .cache/openapps-reward-venv for reward fixture validation",
     "Playwright/Chromium browser setup has not been run",
     "BrowserGym environment startup has not been exercised",
     "no dummy-agent task execution receipt exists",
-    "no reward verifier receipt exists",
+    "no browser reward verifier receipt exists",
     "hosted conversion, SFT export, and training export approvals are not cleared"
   ],
   "export_decision": {

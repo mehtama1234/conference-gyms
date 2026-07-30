@@ -37,11 +37,11 @@ LANES = [
         "lane_id": "openapps-production-lane",
         "name": "OpenApps",
         "validator": "scripts/validate_openapps_lane.py",
-        "status": "source_pinned_source_smoke_passed_runtime_blocked",
-        "runtime": "blocked_dependencies_browser",
+        "status": "source_pinned_reward_fixture_passed_browser_runtime_blocked",
+        "runtime": "state_reward_fixture_passed_browser_blocked",
         "replay": "not_attempted",
         "export": "blocked",
-        "summary": "OpenApps is source-pinned with package/config smoke, 8 app configs, and 28 parsed original tasks; browser/runtime execution remains blocked.",
+        "summary": "OpenApps is source-pinned with package/config smoke, 8 app configs, 28 parsed original tasks, and a non-browser saved-state reward fixture; browser/runtime execution remains blocked.",
     },
 ]
 

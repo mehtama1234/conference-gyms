@@ -8,7 +8,7 @@ The production proof now has three lanes.
 | --- | --- | --- | --- |
 | `TerminalTraj` | One released task, `task_5279`, ran locally, passed the released pytest verifier, replayed through a tracked wrapper, and produced `trace.real.json`. | Passed for one task. | Hosted conversion, SFT export, and training export blocked. |
 | `CyberGym` | Repo pinned, security task contract normalized, and no-heavy import smoke passed. | Heavy runtime blocked until data/server receipts exist. | Hosted conversion, SFT export, and training export blocked. |
-| `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, and 28 original tasks parsed. | Runtime blocked until dependencies, BrowserGym, and Playwright/Chromium are installed. | Hosted conversion, SFT export, and training export blocked. |
+| `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, 28 original tasks parsed, and `AddToDoTask` saved-state reward fixture passed. | Browser runtime blocked until full dependencies, BrowserGym, and Playwright/Chromium are installed. | Hosted conversion, SFT export, and training export blocked. |
 
 Run the aggregate gate:
 
@@ -55,6 +55,7 @@ OpenApps proves the third family contract:
 - ground-truth reward model
 - app config discovery
 - task YAML parsing
+- saved-state reward fixture
 - dependency/browser blockers
 
 ## What Is Not Proven Yet

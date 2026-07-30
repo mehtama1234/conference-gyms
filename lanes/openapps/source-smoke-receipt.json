@@ -30,7 +30,7 @@
     ]
   },
   "known_runtime_blockers": [
-    "import open_apps.tasks.tasks fails in host Python because hydra is not installed",
+    "host Python does not include hydra, deepdiff, or omegaconf; reward fixture uses ignored .cache/openapps-reward-venv",
     "Playwright/Chromium is not installed for this lane",
     "BrowserGym environment has not been launched"
   ],
