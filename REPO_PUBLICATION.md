@@ -23,24 +23,29 @@ Ignored scope:
 
 ## Push Target
 
-No remote is configured yet. The likely repo name should be one of:
+The local `origin` remote is configured as:
+
+```text
+https://github.com/mehtama1234/conference-gyms.git
+```
+
+As of the latest local check, that GitHub repo does not exist yet. The other
+checked candidates also did not exist:
 
 - `conference-gyms`
 - `gyms`
 - `conference-gym-readiness`
 
-Once the remote exists, run:
+Once `mehtama1234/conference-gyms` exists, run:
 
 ```bash
-git remote add origin git@github.com:mehtama1234/conference-gyms.git
 git push -u origin main
 ```
 
-If using HTTPS:
+Check publication readiness:
 
 ```bash
-git remote add origin https://github.com/mehtama1234/conference-gyms.git
-git push -u origin main
+make publication-check
 ```
 
 ## CI Gate

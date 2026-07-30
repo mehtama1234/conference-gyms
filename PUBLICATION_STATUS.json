@@ -1,0 +1,35 @@
+{
+  "status": "push_ready_remote_missing",
+  "checked_at": "2026-07-30",
+  "local_branch": "main",
+  "configured_origin": "https://github.com/mehtama1234/conference-gyms.git",
+  "remote_exists": false,
+  "auth_tooling": {
+    "gh_cli_available": false,
+    "github_token_available": false
+  },
+  "checked_remote_candidates": [
+    {
+      "url": "https://github.com/mehtama1234/conference-gyms.git",
+      "exists": false
+    },
+    {
+      "url": "https://github.com/mehtama1234/gyms.git",
+      "exists": false
+    },
+    {
+      "url": "https://github.com/mehtama1234/conference-gym-readiness.git",
+      "exists": false
+    }
+  ],
+  "tracked_validation_gate": {
+    "command": "make validate",
+    "last_observed_summary": {
+      "lane_count": 2,
+      "validated_lane_count": 2,
+      "real_local_run_lane_count": 1,
+      "export_blocked_lane_count": 2
+    }
+  },
+  "next_required_action": "Create https://github.com/mehtama1234/conference-gyms, then run git push -u origin main from /home/manishmehta/ui-projects/gyms."
+}
