@@ -39,6 +39,7 @@ def validate_source(source: dict[str, object], errors: list[str]) -> None:
             "source_pinned_heavy_runtime_blocked",
             "source_pinned_import_smoke_passed_heavy_runtime_blocked",
             "source_pinned_server_probe_passed_verifier_data_blocked",
+            "source_pinned_verifier_probe_passed_unsolved_export_blocked",
         },
         "source status must block heavy runtime",
         errors,
@@ -83,6 +84,7 @@ def validate_setup(setup: dict[str, object], errors: list[str]) -> None:
             "source_only_heavy_data_blocked",
             "source_import_smoke_passed_heavy_data_blocked",
             "server_probe_passed_heavy_data_blocked",
+            "verifier_probe_passed_manifest_blocked",
         },
         "setup status must block heavy data",
         errors,
@@ -131,10 +133,11 @@ def validate_server_probe(receipt: dict[str, object], errors: list[str]) -> None
             "script",
             "command",
             "runtime_environment",
+            "verifier_images",
             "server_startup",
             "selected_submission_probe",
             "poc_database",
-            "blocking_error",
+            "success_semantics",
             "cleanup",
             "does_not_claim",
         ],
@@ -142,9 +145,13 @@ def validate_server_probe(receipt: dict[str, object], errors: list[str]) -> None
         errors,
     )
     require(receipt.get("lane_id") == "cybergym-production-lane", "server probe lane_id is invalid", errors)
-    require(receipt.get("status") == "server_probe_passed_verifier_blocked", "server probe status is invalid", errors)
-    require(receipt.get("scope") == "submission_server_startup_and_valid_poc_route", "server probe scope is invalid", errors)
+    require(receipt.get("status") == "verifier_probe_passed_unsolved", "server probe status is invalid", errors)
+    require(receipt.get("scope") == "submission_server_startup_and_vulnerable_fixed_verifier_probe", "server probe scope is invalid", errors)
     require(receipt.get("script") == "scripts/probe_cybergym_server.py", "server probe script is invalid", errors)
+    images = receipt.get("verifier_images")
+    require_keys(images, ["status", "n132/arvo:10400-vul", "n132/arvo:10400-fix"], "server-probe.verifier_images", errors)
+    if isinstance(images, dict):
+        require(images.get("status") == "present", "server probe verifier images must be present", errors)
     startup = receipt.get("server_startup")
     require_keys(startup, ["status", "health_probe", "health_status", "mask_map_loaded"], "server-probe.server_startup", errors)
     if isinstance(startup, dict):
@@ -153,7 +160,7 @@ def validate_server_probe(receipt: dict[str, object], errors: list[str]) -> None
     probe = receipt.get("selected_submission_probe")
     require_keys(
         probe,
-        ["real_task_id", "agent_facing_task_id", "agent_id", "checksum_valid", "poc_bytes", "endpoint", "response_status", "response_error"],
+        ["real_task_id", "agent_facing_task_id", "agent_id", "checksum_valid", "poc_bytes", "submit_vul", "submit_fix"],
         "server-probe.selected_submission_probe",
         errors,
     )
@@ -162,26 +169,63 @@ def validate_server_probe(receipt: dict[str, object], errors: list[str]) -> None
         require(probe.get("agent_facing_task_id") == "7fa395d7dac0", "server probe masked task id is invalid", errors)
         require(probe.get("checksum_valid") is True, "server probe checksum must be valid", errors)
         require(probe.get("poc_bytes") == 4, "server probe PoC byte count should be 4", errors)
-        require(probe.get("response_status") == 500, "server probe should block at missing verifier image", errors)
-        require("No such image" in str(probe.get("response_error")), "server probe response must cite missing image", errors)
+        for key in ["submit_vul", "submit_fix"]:
+            result = probe.get(key)
+            require_keys(result, ["endpoint", "response_status", "exit_code", "output_evidence"], f"server-probe.selected_submission_probe.{key}", errors)
+            if isinstance(result, dict):
+                require(result.get("response_status") == 200, f"server probe {key} response must be 200", errors)
+                require(result.get("exit_code") == 0, f"server probe {key} exit code should be 0 for trivial PoC", errors)
     db = receipt.get("poc_database")
     require_keys(db, ["status", "record_count", "record"], "server-probe.poc_database", errors)
     if isinstance(db, dict):
-        require(db.get("status") == "written", "server probe DB status must be written", errors)
+        require(db.get("status") == "written_with_vulnerable_and_fixed_results", "server probe DB status must include verifier results", errors)
         require(db.get("record_count") == 1, "server probe DB should contain one record", errors)
         record = db.get("record")
         require_keys(record, ["agent_id", "task_id", "poc_hash", "poc_length", "vul_exit_code", "fix_exit_code"], "server-probe.poc_database.record", errors)
         if isinstance(record, dict):
             require(record.get("task_id") == "arvo:10400", "server probe DB task id should be unmasked", errors)
             require(record.get("poc_length") == 4, "server probe DB PoC length should be 4", errors)
-            require(record.get("vul_exit_code") is None, "server probe must not claim vulnerable verifier exit code", errors)
-            require(record.get("fix_exit_code") is None, "server probe must not claim fixed verifier exit code", errors)
-    blocker = receipt.get("blocking_error")
-    require_keys(blocker, ["stage", "error_type", "primary_error", "meaning"], "server-probe.blocking_error", errors)
-    if isinstance(blocker, dict):
-        require("n132/arvo:10400-vul" in str(blocker.get("primary_error")), "server probe blocker must cite missing arvo image", errors)
+            require(record.get("vul_exit_code") == 0, "server probe vulnerable exit code should be 0 for trivial PoC", errors)
+            require(record.get("fix_exit_code") == 0, "server probe fixed exit code should be 0 for trivial PoC", errors)
+    semantics = receipt.get("success_semantics")
+    require_keys(semantics, ["task_solved", "reason"], "server-probe.success_semantics", errors)
+    if isinstance(semantics, dict):
+        require(semantics.get("task_solved") is False, "server probe must not claim task solved", errors)
     does_not_claim = receipt.get("does_not_claim")
-    require(isinstance(does_not_claim, list) and "vulnerable verifier executed" in does_not_claim, "server probe must not claim vulnerable verifier execution", errors)
+    require(isinstance(does_not_claim, list) and "agent solved a CyberGym task" in does_not_claim, "server probe must not claim task solution", errors)
+
+
+def validate_real_trace(trace: dict[str, object], errors: list[str]) -> None:
+    require_keys(trace, ["schema_version", "trace_id", "lane_id", "source", "runtime_status", "task", "observations", "actions", "verifier", "quality", "export_decision"], "trace.real", errors)
+    require(trace.get("schema_version") == "security-verifier-real-trace/v0.1", "CyberGym real trace schema is invalid", errors)
+    require(trace.get("lane_id") == "cybergym-production-lane", "CyberGym real trace lane_id is invalid", errors)
+    runtime = trace.get("runtime_status")
+    require_keys(runtime, ["mode", "server_runtime", "docker_verifier_runtime", "verifier_images"], "trace.real.runtime_status", errors)
+    if isinstance(runtime, dict):
+        require(runtime.get("mode") == "real_security_verifier_probe", "CyberGym real trace mode is invalid", errors)
+        require(runtime.get("server_runtime") is True, "CyberGym real trace must include server runtime", errors)
+        require(runtime.get("docker_verifier_runtime") is True, "CyberGym real trace must include Docker verifier runtime", errors)
+    task = trace.get("task")
+    require_keys(task, ["real_task_id", "agent_facing_task_id", "task_manifest_generated"], "trace.real.task", errors)
+    if isinstance(task, dict):
+        require(task.get("real_task_id") == "arvo:10400", "CyberGym real trace task id must be arvo:10400", errors)
+        require(task.get("agent_facing_task_id") == "7fa395d7dac0", "CyberGym real trace masked task id is invalid", errors)
+        require(task.get("task_manifest_generated") is False, "CyberGym real trace must not claim task manifest generation", errors)
+    actions = trace.get("actions")
+    require(isinstance(actions, list) and len(actions) == 2, "CyberGym real trace must have vulnerable and fixed submissions", errors)
+    verifier = trace.get("verifier")
+    require_keys(verifier, ["status", "kind", "task_solved", "vul_exit_code", "fix_exit_code", "evidence"], "trace.real.verifier", errors)
+    if isinstance(verifier, dict):
+        require(verifier.get("status") == "executed_unsolved", "CyberGym verifier status must be executed_unsolved", errors)
+        require(verifier.get("task_solved") is False, "CyberGym real trace must not claim solved task", errors)
+        require(verifier.get("vul_exit_code") == 0, "CyberGym real trace vulnerable exit code should be 0", errors)
+        require(verifier.get("fix_exit_code") == 0, "CyberGym real trace fixed exit code should be 0", errors)
+    export = trace.get("export_decision")
+    require_keys(export, ["local_contract_validation", "hosted_conversion", "sft_export", "training_export", "reason"], "trace.real.export_decision", errors)
+    if isinstance(export, dict):
+        require(export.get("hosted_conversion") == "blocked", "CyberGym real trace hosted conversion must stay blocked", errors)
+        require(export.get("sft_export") == "blocked", "CyberGym real trace SFT export must stay blocked", errors)
+        require(export.get("training_export") == "blocked", "CyberGym real trace training export must stay blocked", errors)
 
 
 def main() -> int:
@@ -191,6 +235,7 @@ def main() -> int:
     setup = load_json(LANE / "setup-receipt.json")
     smoke = load_json(LANE / "import-smoke-receipt.json")
     server_probe = load_json(LANE / "server-probe-receipt.json")
+    real_trace = load_json(LANE / "trace.real.json")
     export = load_json(LANE / "export-decision.json")
 
     if isinstance(source, dict):
@@ -213,6 +258,10 @@ def main() -> int:
         validate_server_probe(server_probe, errors)
     else:
         errors.append("server-probe-receipt.json must be an object")
+    if isinstance(real_trace, dict):
+        validate_real_trace(real_trace, errors)
+    else:
+        errors.append("trace.real.json must be an object")
     if isinstance(export, dict):
         validate_export(export, errors)
     else:

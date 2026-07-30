@@ -27,11 +27,11 @@ LANES = [
         "lane_id": "cybergym-production-lane",
         "name": "CyberGym",
         "validator": "scripts/validate_cybergym_lane.py",
-        "status": "source_pinned_server_probe_passed_verifier_data_blocked",
-        "runtime": "server_probe_passed_verifier_data_blocked",
-        "replay": "server_probe_passed",
+        "status": "source_pinned_verifier_probe_passed_unsolved_export_blocked",
+        "runtime": "verifier_probe_passed_unsolved",
+        "replay": "server_and_verifier_probe_passed",
         "export": "blocked",
-        "summary": "CyberGym is source-pinned with a security task contract, no-heavy import smoke, local submission server startup, checksum-valid masked arvo:10400 PoC submission, and PoC DB write; vulnerable/fixed verifier execution remains blocked by missing Docker image/data.",
+        "summary": "CyberGym is source-pinned with a security task contract, local submission server startup, checksum-valid masked arvo:10400 PoC submission, vulnerable/fixed Docker verifier execution, and PoC DB exit codes; the trivial PoC is unsolved.",
     },
     {
         "lane_id": "openapps-production-lane",
@@ -68,7 +68,7 @@ def main() -> int:
         entry["validator_output"] = output
         results.append(entry)
 
-    real_runtimes = {"passed", "browser_runtime_passed_single_task"}
+    real_runtimes = {"passed", "browser_runtime_passed_single_task", "verifier_probe_passed_unsolved"}
     report = {
         "report_id": "gym-production-readiness-summary-v0-1",
         "lane_count": len(results),
@@ -76,7 +76,7 @@ def main() -> int:
         "real_local_run_lane_count": sum(1 for item in results if item["runtime"] in real_runtimes),
         "export_blocked_lane_count": sum(1 for item in results if item["export"] == "blocked"),
         "lanes": results,
-        "next_meaty_goal": "Promote CyberGym from server-probe to verifier run by materializing arvo:10400 image/data, rerunning the same submission path, recording vulnerable/fixed exit codes, cleanup, and a normalized security trace; keep export blocked.",
+        "next_meaty_goal": "Promote CyberGym from verifier probe to task-facing run by generating the arvo:10400 task manifest, running an exploit-producing fixture or agent, recording solved or meaningful failed vulnerable/fixed verifier output, cleanup, and export gates.",
     }
 
     print(json.dumps(report, indent=2))

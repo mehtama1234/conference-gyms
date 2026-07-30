@@ -7,7 +7,7 @@ The production proof now has three lanes.
 | Lane | Current proof | Runtime status | Export status |
 | --- | --- | --- | --- |
 | `TerminalTraj` | One released task, `task_5279`, ran locally, passed the released pytest verifier, replayed through a tracked wrapper, and produced `trace.real.json`. | Passed for one task. | Hosted conversion, SFT export, and training export blocked. |
-| `CyberGym` | Repo pinned, security task contract normalized, no-heavy import smoke passed, local submission server started, masked `arvo:10400` PoC submission accepted through checksum validation, and PoC DB write proved. | Server probe passed; vulnerable/fixed verifier blocked by missing `n132/arvo:10400-vul` image/data. | Hosted conversion, SFT export, and training export blocked. |
+| `CyberGym` | Repo pinned, security task contract normalized, local submission server started, masked `arvo:10400` PoC submission accepted through checksum validation, vulnerable/fixed Docker verifiers executed, and PoC DB stored exit codes. | Verifier probe passed; trivial 4-byte PoC is unsolved because vulnerable and fixed exits are both 0. | Hosted conversion, SFT export, and training export blocked. |
 | `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, 28 original tasks parsed, `AddToDoTask` saved-state reward fixture passed, reward fixture replay passed, no-sudo Chromium library extraction passed, and one real Playwright/Chromium browser GUI task added `Call Mom` with reward 1.0. | Passed for one selected GUI task with local compatibility shims. | Hosted conversion, SFT export, and training export blocked. |
 
 Run the aggregate gate:
@@ -19,7 +19,7 @@ python3 scripts/validate_production_lanes.py
 Expected result:
 
 - all lane validators pass
-- two lanes have real local runs
+- three lanes have real local runs
 - all lanes keep export blocked
 
 ## What Is Actually Proven
@@ -49,7 +49,9 @@ CyberGym proves the second family contract:
 - submission server startup
 - masked task checksum validation
 - PoC upload and database write
-- honest missing-image/data verifier blocker
+- vulnerable/fixed Docker verifier execution
+- normalized real security verifier trace
+- honest unsolved trivial-PoC result
 
 OpenApps proves the third family contract:
 
@@ -71,7 +73,7 @@ OpenApps proves the third family contract:
 The repo does not yet prove:
 
 - CyberGym selected task generation
-- CyberGym vulnerable/fixed verifier execution
+- CyberGym solved PoC or task-facing failed exploit attempt
 - OpenApps full 28-task browser coverage
 - OpenApps dummy-agent or model-agent task execution
 - upstream dependency policy that removes local OpenApps/FastHTML compatibility shims
@@ -89,13 +91,11 @@ to harden OpenApps or move to CyberGym:
 4. decide whether deterministic fixtures or dummy/model agents are the production proof
 5. keep export blocked unless license/privacy/split receipts explicitly clear it
 
-Promote CyberGym from server probe to one real local security verifier run if
-storage and runtime are acceptable:
+Promote CyberGym from verifier probe to one task-facing security run:
 
-1. materialize the documented `arvo:10400` vulnerable/fixed verifier image or binary data
-2. generate one selected task manifest for `arvo:10400`
-3. rerun the existing valid PoC submission path
-4. record vulnerable/fixed verifier output
-5. emit `trace.real.json` for CyberGym
-6. keep export blocked unless contamination, split, privacy, and security review
+1. generate one selected task manifest for `arvo:10400`
+2. run an exploit-producing fixture or agent against the generated task
+3. submit exactly one final PoC
+4. record solved or benchmark-meaningful vulnerable/fixed verifier output
+5. keep export blocked unless contamination, split, privacy, and security review
    receipts explicitly clear it
