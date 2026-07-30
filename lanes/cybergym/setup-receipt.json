@@ -1,7 +1,7 @@
 {
   "lane_id": "cybergym-production-lane",
   "setup_receipt_id": "cybergym-setup-001",
-  "status": "task_manifest_verifier_probe_passed_unsolved",
+  "status": "task_manifest_fixture_poc_solved_export_blocked",
   "checked_at": "2026-07-30",
   "local_repo": {
     "path": "CyberGym",
@@ -31,8 +31,9 @@
     "narrow arvo:10400 vulnerable/fixed verifier images are present locally",
     "full benchmark/server data bundles are not present locally",
     "selected arvo:10400 level1 task manifest has been generated from cached Hugging Face files",
-    "generated submit.sh, local PoC submission server, and vulnerable/fixed verifier execution passed for a trivial 4-byte PoC",
-    "the trivial 4-byte PoC did not solve the task"
+    "generated submit.sh, local PoC submission server, and vulnerable/fixed verifier execution passed for a fixture MNG PoC",
+    "fixture PoC solved arvo:10400 with vulnerable exit code 1 and fixed exit code 0",
+    "no model-agent exploit discovery receipt exists"
   ],
   "no_heavy_smoke": {
     "status": "passed",
@@ -43,7 +44,7 @@
     ]
   },
   "next_lowest_risk_runtime_step": [
-    "run an exploit-producing fixture or agent against the generated task",
-    "record a solved or meaningfully failed vulnerable/fixed verifier result with task-facing evidence"
+    "optionally run a model agent against the generated task files",
+    "promote another CyberGym task sample to avoid overfitting to one fixture"
   ]
 }

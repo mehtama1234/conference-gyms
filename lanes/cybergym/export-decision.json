@@ -15,9 +15,9 @@
   "sft_export": "blocked",
   "training_export": "blocked",
   "blocking_reasons": [
-    "selected task manifest has only been generated for one task, arvo:10400 level1",
-    "generated submit.sh and vulnerable/fixed verifiers have only been probed with a trivial 4-byte PoC",
-    "the trivial PoC does not solve arvo:10400 because vulnerable and fixed exit codes are both 0",
+    "selected task manifest and fixture PoC solution cover one task only, arvo:10400 level1",
+    "fixture PoC was generated from task description and patch/error evidence, not discovered by a model agent",
+    "no model-agent trajectory or independent exploit-discovery receipt exists",
     "full benchmark and server verifier data bundles are not downloaded locally",
     "network/firewall policy receipt does not exist",
     "security benchmark traces should not enter training export without explicit contamination review"
@@ -26,8 +26,8 @@
     "data download receipt",
     "selected task manifest",
     "network/firewall policy receipt",
-    "exploit-producing task-facing PoC submission receipt with generated task manifest",
-    "solved or benchmark-meaningful vulnerable/fixed verifier receipt",
+    "model-agent or independent exploit-discovery receipt if this is used as agent-performance evidence",
+    "broader selected-task sample beyond arvo:10400",
     "cleanup receipt"
   ]
 }

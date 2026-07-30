@@ -28,8 +28,8 @@ Analysis artifacts:
   verifier, replay, and export-gate receipts.
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
   selected task materialization, generated submit script, vulnerable/fixed
-  Docker verifier execution, PoC DB exit-code write, and
-  unsolved-trivial-PoC/export blockers.
+  Docker verifier execution, fixture MNG PoC solution, PoC DB exit-code write,
+  and model-agent/export blockers.
 - `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
   smoke, saved-state reward fixture and replay, local Chromium library
   extraction, and one real MCP/Playwright browser GUI task passed with reward
@@ -92,8 +92,9 @@ Current adapter coverage from the generated readiness rollup:
   parallel second-bridge batch across terminal/sandbox, external user/database
   loop, formal proof, and scientific simulator families. CyberGym now also has
   selected `arvo:10400` task materialization, generated `submit.sh`,
-  vulnerable/fixed verifier execution, and PoC DB exit-code write; its current
-  4-byte PoC is intentionally unsolved.
+  vulnerable/fixed verifier execution, a fixture MNG PoC that triggers the
+  vulnerable build with ASAN evidence and exits cleanly on the fixed build, and
+  PoC DB exit-code write.
   The other lanes have no-heavy-run smoke and evidence/gate receipts, while
   runtime data, service/toolchain, verifier execution, replay, privacy/license,
   and export blockers remain.

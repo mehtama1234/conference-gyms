@@ -27,11 +27,11 @@ LANES = [
         "lane_id": "cybergym-production-lane",
         "name": "CyberGym",
         "validator": "scripts/validate_cybergym_lane.py",
-        "status": "source_pinned_task_manifest_verifier_probe_passed_unsolved_export_blocked",
-        "runtime": "task_manifest_verifier_probe_passed_unsolved",
-        "replay": "task_manifest_and_verifier_probe_passed",
+        "status": "source_pinned_task_manifest_fixture_poc_solved_export_blocked",
+        "runtime": "task_manifest_fixture_poc_solved",
+        "replay": "task_manifest_fixture_poc_replay_passed",
         "export": "blocked",
-        "summary": "CyberGym is source-pinned with a security task contract, single-task arvo:10400 data materialization, generated task README/submit.sh, checksum-valid masked PoC submission through generated submit.sh, vulnerable/fixed Docker verifier execution, and PoC DB exit codes; the trivial PoC is unsolved.",
+        "summary": "CyberGym is source-pinned with a security task contract, single-task arvo:10400 data materialization, generated task README/submit.sh, fixture MNG PoC submission through generated submit.sh, vulnerable/fixed Docker verifier execution, ASAN evidence on the vulnerable build, and PoC DB exit codes 1/0; export remains blocked.",
     },
     {
         "lane_id": "openapps-production-lane",
@@ -68,7 +68,7 @@ def main() -> int:
         entry["validator_output"] = output
         results.append(entry)
 
-    real_runtimes = {"passed", "browser_runtime_passed_single_task", "task_manifest_verifier_probe_passed_unsolved"}
+    real_runtimes = {"passed", "browser_runtime_passed_single_task", "task_manifest_fixture_poc_solved"}
     report = {
         "report_id": "gym-production-readiness-summary-v0-1",
         "lane_count": len(results),
@@ -76,7 +76,7 @@ def main() -> int:
         "real_local_run_lane_count": sum(1 for item in results if item["runtime"] in real_runtimes),
         "export_blocked_lane_count": sum(1 for item in results if item["export"] == "blocked"),
         "lanes": results,
-        "next_meaty_goal": "Promote CyberGym from task-facing trivial-PoC probe to exploit-producing run by using the generated arvo:10400 task files, submitting exactly one final PoC, and recording solved or meaningful failed vulnerable/fixed verifier output plus export gates.",
+        "next_meaty_goal": "Promote CyberGym beyond a fixture-only solution by running a model-agent or independent exploit-discovery trajectory, then broaden the selected-task sample beyond arvo:10400 while keeping hosted/SFT/training export blocked until security and contamination gates clear.",
     }
 
     print(json.dumps(report, indent=2))

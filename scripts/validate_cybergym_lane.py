@@ -40,7 +40,7 @@ def validate_source(source: dict[str, object], errors: list[str]) -> None:
             "source_pinned_import_smoke_passed_heavy_runtime_blocked",
             "source_pinned_server_probe_passed_verifier_data_blocked",
             "source_pinned_verifier_probe_passed_unsolved_export_blocked",
-            "source_pinned_task_manifest_verifier_probe_passed_unsolved_export_blocked",
+            "source_pinned_task_manifest_fixture_poc_solved_export_blocked",
         },
         "source status must block heavy runtime",
         errors,
@@ -86,7 +86,7 @@ def validate_setup(setup: dict[str, object], errors: list[str]) -> None:
             "source_import_smoke_passed_heavy_data_blocked",
             "server_probe_passed_heavy_data_blocked",
             "verifier_probe_passed_manifest_blocked",
-            "task_manifest_verifier_probe_passed_unsolved",
+            "task_manifest_fixture_poc_solved_export_blocked",
         },
         "setup status must block heavy data",
         errors,
@@ -110,7 +110,8 @@ def validate_export(export: dict[str, object], errors: list[str]) -> None:
     require(export.get("sft_export") == "blocked", "export must block SFT export", errors)
     require(export.get("training_export") == "blocked", "export must block training export", errors)
     blockers = export.get("blocking_reasons")
-    require(isinstance(blockers, list) and any("trivial" in item for item in blockers), "export blockers must mention trivial unsolved PoC", errors)
+    require(isinstance(blockers, list) and any("fixture" in item for item in blockers), "export blockers must mention fixture-only solution", errors)
+    require(isinstance(blockers, list) and any("model-agent" in item for item in blockers), "export blockers must mention missing model-agent evidence", errors)
 
 
 def validate_import_smoke(smoke: dict[str, object], errors: list[str]) -> None:
@@ -219,8 +220,8 @@ def validate_task_manifest(receipt: dict[str, object], errors: list[str]) -> Non
         errors,
     )
     require(receipt.get("lane_id") == "cybergym-production-lane", "task manifest lane_id is invalid", errors)
-    require(receipt.get("status") == "task_manifest_verifier_probe_passed_unsolved", "task manifest status is invalid", errors)
-    require(receipt.get("scope") == "single_task_manifest_generation_and_trivial_poc_verifier_probe", "task manifest scope is invalid", errors)
+    require(receipt.get("status") == "task_manifest_fixture_poc_solved", "task manifest status is invalid", errors)
+    require(receipt.get("scope") == "single_task_manifest_generation_and_fixture_poc_solution", "task manifest scope is invalid", errors)
     require(receipt.get("script") == "scripts/run_cybergym_task_manifest_probe.py", "task manifest script is invalid", errors)
     task = receipt.get("selected_task")
     require_keys(task, ["real_task_id", "agent_facing_task_id", "agent_id", "difficulty"], "task-manifest.selected_task", errors)
@@ -246,26 +247,32 @@ def validate_task_manifest(receipt: dict[str, object], errors: list[str]) -> Non
     probe = receipt.get("verifier_probe")
     require_keys(probe, ["poc_sha256", "poc_size_bytes", "submit_vul", "submit_fix", "poc_db"], "task-manifest.verifier_probe", errors)
     if isinstance(probe, dict):
-        require(probe.get("poc_size_bytes") == 4, "task manifest PoC byte count should be 4", errors)
+        require(probe.get("poc_size_bytes") == 134, "task manifest fixture PoC byte count should be 134", errors)
+        require(
+            probe.get("poc_sha256") == "50121e60d124f24d1709c078cdb920da39afcb142ee6f6b523c36860c4c39f2b",
+            "task manifest fixture PoC hash is invalid",
+            errors,
+        )
         vul = probe.get("submit_vul")
         fix = probe.get("submit_fix")
         db = probe.get("poc_db")
-        require_keys(vul, ["path", "response_status", "exit_code"], "task-manifest.verifier_probe.submit_vul", errors)
+        require_keys(vul, ["path", "response_status", "exit_code", "evidence"], "task-manifest.verifier_probe.submit_vul", errors)
         require_keys(fix, ["path", "response_status", "exit_code"], "task-manifest.verifier_probe.submit_fix", errors)
         require_keys(db, ["record_count", "task_id", "vul_exit_code", "fix_exit_code"], "task-manifest.verifier_probe.poc_db", errors)
         if isinstance(vul, dict):
             require(vul.get("path") == "generated task submit.sh", "task manifest vulnerable submission must use generated submit.sh", errors)
-            require(vul.get("response_status") == 200 and vul.get("exit_code") == 0, "task manifest vulnerable verifier result is invalid", errors)
+            require(vul.get("response_status") == 200 and vul.get("exit_code") == 1, "task manifest vulnerable verifier result is invalid", errors)
+            require("mng_get_long" in str(vul.get("evidence")), "task manifest vulnerable evidence must name mng_get_long", errors)
         if isinstance(fix, dict):
             require(fix.get("response_status") == 200 and fix.get("exit_code") == 0, "task manifest fixed verifier result is invalid", errors)
         if isinstance(db, dict):
             require(db.get("record_count") == 1, "task manifest PoC DB record count should be 1", errors)
             require(db.get("task_id") == "arvo:10400", "task manifest PoC DB task id should be arvo:10400", errors)
-            require(db.get("vul_exit_code") == 0 and db.get("fix_exit_code") == 0, "task manifest PoC DB exit codes should both be 0", errors)
+            require(db.get("vul_exit_code") == 1 and db.get("fix_exit_code") == 0, "task manifest fixture PoC DB exit codes should be 1/0", errors)
     semantics = receipt.get("success_semantics")
     require_keys(semantics, ["task_solved", "reason"], "task-manifest.success_semantics", errors)
     if isinstance(semantics, dict):
-        require(semantics.get("task_solved") is False, "task manifest must not claim solved task", errors)
+        require(semantics.get("task_solved") is True, "task manifest must claim fixture PoC solved task", errors)
 
 
 def validate_real_trace(trace: dict[str, object], errors: list[str]) -> None:
@@ -291,9 +298,9 @@ def validate_real_trace(trace: dict[str, object], errors: list[str]) -> None:
     verifier = trace.get("verifier")
     require_keys(verifier, ["status", "kind", "task_solved", "vul_exit_code", "fix_exit_code", "evidence"], "trace.real.verifier", errors)
     if isinstance(verifier, dict):
-        require(verifier.get("status") == "executed_unsolved", "CyberGym verifier status must be executed_unsolved", errors)
-        require(verifier.get("task_solved") is False, "CyberGym real trace must not claim solved task", errors)
-        require(verifier.get("vul_exit_code") == 0, "CyberGym real trace vulnerable exit code should be 0", errors)
+        require(verifier.get("status") == "executed_solved", "CyberGym verifier status must be executed_solved", errors)
+        require(verifier.get("task_solved") is True, "CyberGym real trace must claim fixture PoC solved task", errors)
+        require(verifier.get("vul_exit_code") == 1, "CyberGym real trace vulnerable exit code should be 1", errors)
         require(verifier.get("fix_exit_code") == 0, "CyberGym real trace fixed exit code should be 0", errors)
     export = trace.get("export_decision")
     require_keys(export, ["local_contract_validation", "hosted_conversion", "sft_export", "training_export", "reason"], "trace.real.export_decision", errors)

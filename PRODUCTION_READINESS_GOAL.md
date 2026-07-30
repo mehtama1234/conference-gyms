@@ -74,8 +74,9 @@ normalized trace, and kept export blocked.
 data materialization, generated task README/submit script, local submission
 server startup, generated-submit vulnerable submission, fixed verifier
 execution, PoC DB exit-code write, and normalized real security trace are
-complete. The current 4-byte PoC is intentionally trivial and does not solve
-`arvo:10400`.
+complete. A fixture MNG PoC now solves `arvo:10400` by triggering the vulnerable
+build with ASAN evidence in `mng_get_long` while the fixed build exits 0. This
+does not claim a model agent discovered the exploit.
 
 `OpenApps` is the third lane: source pin, package root import, app config
 discovery, task YAML parsing, saved-state reward replay, no-sudo Chromium
@@ -92,9 +93,9 @@ Choose between hardening OpenApps and promoting CyberGym:
    documented dependency patch.
 2. Run a small selected-task sample, not just `add_call_mom_to_my_todo`.
 3. Add cleanup/replay receipts for that sample.
-4. For CyberGym, use the generated `arvo:10400` task files and run an
-   exploit-producing fixture or agent until there is a solved or
-   benchmark-meaningful failed verifier trace.
+4. For CyberGym, move beyond the fixture PoC by running a model-agent or
+   independent exploit-discovery trajectory, then broaden the sample beyond
+   `arvo:10400`.
 5. Keep export blocked unless privacy, split, license, and contamination
    receipts explicitly clear it.
 
