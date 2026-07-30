@@ -25,10 +25,10 @@
   "tracked_validation_gate": {
     "command": "make validate",
     "last_observed_summary": {
-      "lane_count": 2,
-      "validated_lane_count": 2,
+      "lane_count": 3,
+      "validated_lane_count": 3,
       "real_local_run_lane_count": 1,
-      "export_blocked_lane_count": 2
+      "export_blocked_lane_count": 3
     }
   },
   "published_repo": "https://github.com/mehtama1234/conference-gyms",

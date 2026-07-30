@@ -72,7 +72,6 @@ The repo does not yet prove:
 - OpenApps reward verifier execution
 - hosted conversion approval
 - SFT or training export approval
-- a public remote push for this gym analysis repo
 
 ## Next Meaty Goal
 
