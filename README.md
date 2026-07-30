@@ -29,8 +29,8 @@ Analysis artifacts:
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
   no-heavy import smoke, and heavy-runtime blockers.
 - `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
-  smoke, saved-state reward fixture and replay, and dependency/browser
-  blockers.
+  smoke, saved-state reward fixture and replay, and a tracked MCP/Playwright
+  browser attempt blocked by missing host Chromium libraries.
 
 Run the current production gate:
 
@@ -58,7 +58,9 @@ Current adapter coverage from the generated readiness rollup:
 - 1 dataset approval receipt-template set: `Agent-Data-Protocol`.
 - 1 generated ADP approval override template with 280 editable receipt entries.
 - `OpenApps` source-specific projection is ready and its no-heavy-run adapter
-  smoke and evidence/gate receipts are complete; heavy-run blockers remain.
+  smoke and evidence/gate receipts are complete. Its production lane now has a
+  saved-state reward replay plus an MCP/Playwright browser attempt; Chromium
+  launch is blocked on host libraries `libnss3`, `libnspr4`, and `libasound2`.
 - `Agent-Data-Protocol` source-specific projection is ready and its no-heavy-run
   adapter smoke and evidence/gate receipts are complete; full dataset
   conversion, split integrity, and training-export blockers remain. It is now

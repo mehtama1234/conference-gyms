@@ -1,4 +1,4 @@
-.PHONY: validate validate-lanes validate-terminaltraj validate-cybergym validate-openapps publication-check replay-terminaltraj replay-openapps-reward
+.PHONY: validate validate-lanes validate-terminaltraj validate-cybergym validate-openapps publication-check replay-terminaltraj replay-openapps-reward replay-openapps-browser
 
 validate: validate-lanes
 
@@ -22,3 +22,6 @@ replay-terminaltraj:
 
 replay-openapps-reward:
 	@python3 scripts/replay_openapps_reward_fixture.py
+
+replay-openapps-browser:
+	@python3 scripts/replay_openapps_browser_task.py

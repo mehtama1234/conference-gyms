@@ -69,22 +69,23 @@ normalized trace, and kept export blocked.
 smoke are complete; heavyweight data/server runtime remains blocked.
 
 `OpenApps` is the third lane: source pin, package root import, app config
-discovery, and task YAML parsing are complete; dependency/browser runtime
-remains blocked.
+discovery, task YAML parsing, saved-state reward replay, and a tracked
+MCP/Playwright browser attempt are complete. Chromium launch is blocked on
+host libraries `libnss3`, `libnspr4`, and `libasound2`.
 
 ## Next Concrete Work Item
 
 Promote OpenApps first, then CyberGym:
 
-1. For OpenApps, install dependencies in an isolated environment.
-2. Install Playwright Chromium.
-3. Select a low-risk task such as `add_call_mom_to_my_todo`.
-4. Reset app state and apply a deterministic fixture action.
-5. Record reward/verifier output.
-6. Emit a normalized OpenApps GUI trace.
-7. Keep export blocked unless privacy, split, license, and contamination
+1. For OpenApps, install host Chromium libraries `libnss3`, `libnspr4`, and
+   `libasound2`.
+2. Rerun `make replay-openapps-browser`.
+3. Reset app state and apply the deterministic AddToDo browser action path.
+4. Record reward/verifier output.
+5. Emit a normalized OpenApps GUI trace.
+6. Keep export blocked unless privacy, split, license, and contamination
    receipts explicitly clear it.
-8. Then return to CyberGym and attempt one local security task if storage allows.
+7. Then return to CyberGym and attempt one local security task if storage allows.
 
 ## What This Does Not Claim
 

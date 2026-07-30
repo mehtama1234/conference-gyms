@@ -1,0 +1,58 @@
+{
+  "lane_id": "openapps-production-lane",
+  "attempt_receipt_id": "openapps-browser-runtime-attempt-001",
+  "status": "blocked_host_browser_dependencies",
+  "scope": "browser_gui_runtime_attempt",
+  "script": "scripts/replay_openapps_browser_task.py",
+  "command": "make replay-openapps-browser",
+  "selected_task": {
+    "task_name": "add_call_mom_to_my_todo",
+    "task_class": "open_apps.tasks.tasks.AddToDoTask",
+    "goal": "Add 'Call Mom' to my todo list.",
+    "expected_action_path": [
+      "start todo app",
+      "reset app state",
+      "click #new-title",
+      "type Call Mom",
+      "press Enter",
+      "check ground-truth reward"
+    ]
+  },
+  "runtime_environment": {
+    "python": "python3.12",
+    "venv": ".cache/openapps-browser-venv",
+    "pythonpath": "/home/manishmehta/ui-projects/gyms/OpenApps/src",
+    "playwright_browsers_path": ".cache/ms-playwright",
+    "minimal_dependency_strategy": "install browsergym-core and the OpenApps MCP/session imports, not the full browsergym/OpenApps meta dependency graph"
+  },
+  "observed_progress": [
+    "minimal Python 3.12 browser venv created in ignored .cache",
+    "browsergym-core, playwright, python-fasthtml, hydra-core, deepdiff, omegaconf, uvicorn, requests, pytest, pillow, fastapi, feedgen, jinja2, python-multipart, and thefuzz installed",
+    "Playwright Chromium 125.0.6422.26 build v1117 downloaded into ignored .cache/ms-playwright",
+    "OpenApps app server initialization reached messages, todo, codeeditor, and map setup",
+    "todo app state was seeded before browser launch",
+    "runtime compatibility shims were required for current python-fasthtml: builtins.picolink and builtins.database"
+  ],
+  "blocking_error": {
+    "stage": "Playwright chromium launch",
+    "error_type": "playwright._impl._errors.Error",
+    "missing_host_libraries": [
+      "libnss3",
+      "libnspr4",
+      "libasound2"
+    ],
+    "playwright_recommended_command": "sudo playwright install-deps",
+    "apt_fallback": "sudo apt-get install libnss3 libnspr4 libasound2",
+    "sudo_attempt_result": "blocked: sudo requires an interactive terminal to authenticate",
+    "host_probe_result": "no system chromium, google-chrome, libnss3, libnspr4, or libasound shared libraries found in standard paths"
+  },
+  "does_not_claim": [
+    "Chromium launched successfully",
+    "BrowserGym or Playwright action was executed",
+    "browser screenshot exists",
+    "browser reward verifier passed",
+    "normalized real GUI trace exists",
+    "hosted conversion or training export is allowed"
+  ],
+  "next_action": "Install libnss3, libnspr4, and libasound2 on the host, then rerun make replay-openapps-browser to promote this receipt from blocked to passed and emit trace.real.json."
+}

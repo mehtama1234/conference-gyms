@@ -37,6 +37,7 @@ def validate_source(source: dict[str, object], errors: list[str]) -> None:
         source.get("status") in {
             "source_pinned_source_smoke_passed_runtime_blocked",
             "source_pinned_reward_fixture_passed_browser_runtime_blocked",
+            "source_pinned_reward_fixture_passed_browser_attempt_blocked",
         },
         "source status is invalid",
         errors,
@@ -46,6 +47,7 @@ def validate_source(source: dict[str, object], errors: list[str]) -> None:
     require(source.get("repo_license") == "CC-BY-NC-4.0", "OpenApps license must be CC-BY-NC-4.0", errors)
     blockers = source.get("runtime_blockers")
     require(isinstance(blockers, list) and any("Playwright" in item for item in blockers), "source blockers must mention Playwright/browser runtime", errors)
+    require(isinstance(blockers, list) and any("libnss3" in item for item in blockers), "source blockers must mention missing host browser libraries", errors)
 
 
 def validate_contract(contract: dict[str, object], errors: list[str]) -> None:
@@ -117,6 +119,57 @@ def validate_replay_receipt(receipt: dict[str, object], errors: list[str]) -> No
     require(isinstance(does_not_claim, list) and "browser launched" in does_not_claim, "OpenApps replay must not claim browser launch", errors)
 
 
+def validate_browser_attempt(receipt: dict[str, object], errors: list[str]) -> None:
+    require_keys(
+        receipt,
+        [
+            "lane_id",
+            "attempt_receipt_id",
+            "status",
+            "scope",
+            "script",
+            "command",
+            "selected_task",
+            "runtime_environment",
+            "observed_progress",
+            "blocking_error",
+            "does_not_claim",
+            "next_action",
+        ],
+        "browser-runtime-attempt",
+        errors,
+    )
+    require(receipt.get("lane_id") == "openapps-production-lane", "browser attempt lane_id is invalid", errors)
+    require(receipt.get("status") == "blocked_host_browser_dependencies", "browser attempt must be blocked on host browser dependencies", errors)
+    require(receipt.get("scope") == "browser_gui_runtime_attempt", "browser attempt scope is invalid", errors)
+    require(receipt.get("script") == "scripts/replay_openapps_browser_task.py", "browser attempt script is invalid", errors)
+    task = receipt.get("selected_task")
+    require_keys(task, ["task_name", "task_class", "goal", "expected_action_path"], "browser-runtime-attempt.selected_task", errors)
+    if isinstance(task, dict):
+        require(task.get("task_name") == "add_call_mom_to_my_todo", "browser attempt task name is invalid", errors)
+        require(task.get("task_class") == "open_apps.tasks.tasks.AddToDoTask", "browser attempt task class is invalid", errors)
+    runtime = receipt.get("runtime_environment")
+    require_keys(runtime, ["python", "venv", "pythonpath", "playwright_browsers_path", "minimal_dependency_strategy"], "browser-runtime-attempt.runtime_environment", errors)
+    if isinstance(runtime, dict):
+        require(runtime.get("python") == "python3.12", "browser attempt must use Python 3.12", errors)
+        require(runtime.get("venv") == ".cache/openapps-browser-venv", "browser attempt venv is invalid", errors)
+    progress = receipt.get("observed_progress")
+    require(isinstance(progress, list) and any("Chromium" in item for item in progress), "browser attempt must record Chromium download/setup progress", errors)
+    blocker = receipt.get("blocking_error")
+    require_keys(blocker, ["stage", "error_type", "missing_host_libraries", "sudo_attempt_result", "host_probe_result"], "browser-runtime-attempt.blocking_error", errors)
+    if isinstance(blocker, dict):
+        missing = blocker.get("missing_host_libraries")
+        require(
+            isinstance(missing, list)
+            and {"libnss3", "libnspr4", "libasound2"}.issubset(set(missing)),
+            "browser attempt must identify libnss3/libnspr4/libasound2",
+            errors,
+        )
+        require(blocker.get("stage") == "Playwright chromium launch", "browser attempt blocker stage is invalid", errors)
+    does_not_claim = receipt.get("does_not_claim")
+    require(isinstance(does_not_claim, list) and "Chromium launched successfully" in does_not_claim, "browser attempt must not claim Chromium launch", errors)
+
+
 def validate_trace(trace: dict[str, object], errors: list[str]) -> None:
     require_keys(trace, ["schema_version", "trace_id", "lane_id", "source", "runtime_status", "task", "observations", "actions", "verifier", "quality", "export_decision"], "trace.fixture", errors)
     require(trace.get("schema_version") == "browser-gui-state-trace/v0.1", "OpenApps trace schema is invalid", errors)
@@ -142,6 +195,7 @@ def validate_export(export: dict[str, object], errors: list[str]) -> None:
     require(export.get("training_export") == "blocked", "training export must be blocked", errors)
     blockers = export.get("blocking_reasons")
     require(isinstance(blockers, list) and any("CC-BY-NC" in item for item in blockers), "export blockers must cite CC-BY-NC license", errors)
+    require(isinstance(blockers, list) and any("libnss3" in item for item in blockers), "export blockers must cite missing browser host libraries", errors)
 
 
 def main() -> int:
@@ -152,6 +206,7 @@ def main() -> int:
         "smoke": load_json(LANE / "source-smoke-receipt.json"),
         "reward": load_json(LANE / "reward-fixture-receipt.json"),
         "replay": load_json(LANE / "replay-receipt.json"),
+        "browser_attempt": load_json(LANE / "browser-runtime-attempt-receipt.json"),
         "trace": load_json(LANE / "trace.fixture.json"),
         "export": load_json(LANE / "export-decision.json"),
     }
@@ -175,6 +230,10 @@ def main() -> int:
         validate_replay_receipt(artifacts["replay"], errors)
     else:
         errors.append("replay-receipt.json must be an object")
+    if isinstance(artifacts["browser_attempt"], dict):
+        validate_browser_attempt(artifacts["browser_attempt"], errors)
+    else:
+        errors.append("browser-runtime-attempt-receipt.json must be an object")
     if isinstance(artifacts["trace"], dict):
         validate_trace(artifacts["trace"], errors)
     else:

@@ -8,7 +8,7 @@ The production proof now has three lanes.
 | --- | --- | --- | --- |
 | `TerminalTraj` | One released task, `task_5279`, ran locally, passed the released pytest verifier, replayed through a tracked wrapper, and produced `trace.real.json`. | Passed for one task. | Hosted conversion, SFT export, and training export blocked. |
 | `CyberGym` | Repo pinned, security task contract normalized, and no-heavy import smoke passed. | Heavy runtime blocked until data/server receipts exist. | Hosted conversion, SFT export, and training export blocked. |
-| `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, 28 original tasks parsed, `AddToDoTask` saved-state reward fixture passed, and reward fixture replay passed. | Browser runtime blocked until full dependencies, BrowserGym, and Playwright/Chromium are installed. | Hosted conversion, SFT export, and training export blocked. |
+| `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, 28 original tasks parsed, `AddToDoTask` saved-state reward fixture passed, reward fixture replay passed, and MCP/Playwright browser startup was attempted. | Browser runtime blocked by missing host libraries `libnss3`, `libnspr4`, and `libasound2`. | Hosted conversion, SFT export, and training export blocked. |
 
 Run the aggregate gate:
 
@@ -57,7 +57,8 @@ OpenApps proves the third family contract:
 - task YAML parsing
 - saved-state reward fixture
 - saved-state reward replay
-- dependency/browser blockers
+- attempted MCP/Playwright browser runtime
+- exact host dependency blocker
 
 ## What Is Not Proven Yet
 
@@ -67,7 +68,8 @@ The repo does not yet prove:
 - CyberGym selected task generation
 - CyberGym PoC submission
 - CyberGym vulnerable/fixed verifier execution
-- OpenApps BrowserGym startup
+- OpenApps Chromium launch on a host with `libnss3`, `libnspr4`, and `libasound2`
+- OpenApps BrowserGym/Playwright action execution
 - OpenApps dummy-agent or fixture task execution
 - OpenApps reward verifier execution
 - hosted conversion approval
@@ -78,15 +80,14 @@ The repo does not yet prove:
 Promote OpenApps from source/config smoke to one real local GUI task first,
 because it is lower infrastructure than CyberGym:
 
-1. install OpenApps dependencies in an isolated environment
-2. install Playwright Chromium
-3. select one low-risk task, such as `add_call_mom_to_my_todo`
-4. reset the app state
-5. run a deterministic fixture or dummy agent action
-6. record the app state before and after
-7. run the ground-truth reward/verifier
-8. emit a normalized GUI trace
-9. keep export blocked unless license/privacy/split receipts explicitly clear it
+1. install host libraries `libnss3`, `libnspr4`, and `libasound2`
+2. rerun `make replay-openapps-browser`
+3. reset the app state
+4. run the deterministic AddToDo browser action sequence
+5. record the app state before and after
+6. run the ground-truth reward/verifier
+7. emit a normalized GUI trace
+8. keep export blocked unless license/privacy/split receipts explicitly clear it
 
 After that, promote CyberGym from contract-only to one real local security task
 if storage and runtime are acceptable:
