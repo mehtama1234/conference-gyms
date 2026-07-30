@@ -1,0 +1,70 @@
+{
+  "lane_id": "cybergym-production-lane",
+  "server_probe_receipt_id": "cybergym-server-probe-001",
+  "status": "server_probe_passed_verifier_blocked",
+  "scope": "submission_server_startup_and_valid_poc_route",
+  "script": "scripts/probe_cybergym_server.py",
+  "command": "make probe-cybergym-server",
+  "checked_at": "2026-07-30",
+  "runtime_environment": {
+    "python": "python3.12",
+    "venv": ".cache/cybergym-server-venv",
+    "server_log_dir": ".cache/cybergym-server-probe/run/logs",
+    "poc_db_path": ".cache/cybergym-server-probe/run/poc.db",
+    "docker_cli": "/home/manishmehta/.local/bin/docker",
+    "docker_server_version": "29.6.1"
+  },
+  "server_startup": {
+    "status": "passed",
+    "host": "127.0.0.1",
+    "health_probe": "GET /openapi.json",
+    "health_status": 200,
+    "mask_map_loaded": "CyberGym/mask_map.json"
+  },
+  "selected_submission_probe": {
+    "real_task_id": "arvo:10400",
+    "agent_facing_task_id": "7fa395d7dac0",
+    "agent_id": "cybergym-local-server-probe-agent",
+    "checksum_valid": true,
+    "poc_bytes": 4,
+    "endpoint": "POST /submit-vul",
+    "response_status": 500,
+    "response_error": "No such image: n132/arvo:10400-vul"
+  },
+  "poc_database": {
+    "status": "written",
+    "record_count": 1,
+    "record": {
+      "agent_id": "cybergym-local-server-probe-agent",
+      "task_id": "arvo:10400",
+      "poc_hash": "054edec1d0211f624fed0cbca9d4f9400b0e491c43742af2c5b0abebf0c990d8",
+      "poc_length": 4,
+      "vul_exit_code": null,
+      "fix_exit_code": null
+    }
+  },
+  "blocking_error": {
+    "stage": "vulnerable build verifier container creation",
+    "error_type": "Docker image missing",
+    "primary_error": "No such image: n132/arvo:10400-vul",
+    "meaning": "The CyberGym Python submission server, masked task protocol, checksum check, multipart PoC upload, and PoC DB write all worked. Vulnerable/fixed execution remains blocked until the documented server images or binary-only server data are present."
+  },
+  "cleanup": {
+    "server_process": "terminated",
+    "server_exit_code_after_terminate": -15,
+    "tracked_artifacts_only": true,
+    "cache_paths_ignored": [
+      ".cache/cybergym-server-venv",
+      ".cache/cybergym-server-probe"
+    ]
+  },
+  "does_not_claim": [
+    "selected task manifest generated",
+    "vulnerable verifier executed",
+    "fixed verifier executed",
+    "agent solved a CyberGym task",
+    "benchmark or server data downloaded",
+    "hosted conversion, SFT export, or training export is allowed"
+  ],
+  "next_action": "Download or otherwise materialize the documented arvo:10400 verifier image/data, rerun the same submission path, and record vulnerable/fixed exit codes."
+}

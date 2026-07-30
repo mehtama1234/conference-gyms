@@ -70,8 +70,10 @@ The first concrete work item is now complete for `TerminalTraj`: one released
 task ran locally, passed its executable verifier, replayed, produced a
 normalized trace, and kept export blocked.
 
-`CyberGym` is the second lane: source pin, task contract, and no-heavy import
-smoke are complete; heavyweight data/server runtime remains blocked.
+`CyberGym` is the second lane: source pin, task contract, no-heavy import
+smoke, local submission server startup, checksum-valid masked PoC submission,
+and PoC DB write are complete. Vulnerable/fixed verifier execution remains
+blocked until the documented `arvo:10400` image/data is present.
 
 `OpenApps` is the third lane: source pin, package root import, app config
 discovery, task YAML parsing, saved-state reward replay, no-sudo Chromium
@@ -88,8 +90,8 @@ Choose between hardening OpenApps and promoting CyberGym:
    documented dependency patch.
 2. Run a small selected-task sample, not just `add_call_mom_to_my_todo`.
 3. Add cleanup/replay receipts for that sample.
-4. For CyberGym, attempt one local security task with server/data setup and PoC
-   verifier output.
+4. For CyberGym, materialize the `arvo:10400` verifier image/data and rerun the
+   existing server-probe path until vulnerable/fixed exit codes are recorded.
 5. Keep export blocked unless privacy, split, license, and contamination
    receipts explicitly clear it.
 

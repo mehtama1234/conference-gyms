@@ -34,7 +34,12 @@ def validate_source(source: dict[str, object], errors: list[str]) -> None:
     require_keys(source, ["lane_id", "status", "upstream_remote", "commit", "repo_license", "runtime_blockers", "export_decision"], "source-pin", errors)
     require(source.get("lane_id") == "cybergym-production-lane", "source lane_id is invalid", errors)
     require(
-        source.get("status") in {"source_pinned_heavy_runtime_blocked", "source_pinned_import_smoke_passed_heavy_runtime_blocked"},
+        source.get("status")
+        in {
+            "source_pinned_heavy_runtime_blocked",
+            "source_pinned_import_smoke_passed_heavy_runtime_blocked",
+            "source_pinned_server_probe_passed_verifier_data_blocked",
+        },
         "source status must block heavy runtime",
         errors,
     )
@@ -73,7 +78,12 @@ def validate_setup(setup: dict[str, object], errors: list[str]) -> None:
     require_keys(setup, ["lane_id", "setup_receipt_id", "status", "local_repo", "data_requirements_from_readme", "runtime_not_attempted_reasons"], "setup-receipt", errors)
     require(setup.get("lane_id") == "cybergym-production-lane", "setup lane_id is invalid", errors)
     require(
-        setup.get("status") in {"source_only_heavy_data_blocked", "source_import_smoke_passed_heavy_data_blocked"},
+        setup.get("status")
+        in {
+            "source_only_heavy_data_blocked",
+            "source_import_smoke_passed_heavy_data_blocked",
+            "server_probe_passed_heavy_data_blocked",
+        },
         "setup status must block heavy data",
         errors,
     )
@@ -96,7 +106,7 @@ def validate_export(export: dict[str, object], errors: list[str]) -> None:
     require(export.get("sft_export") == "blocked", "export must block SFT export", errors)
     require(export.get("training_export") == "blocked", "export must block training export", errors)
     blockers = export.get("blocking_reasons")
-    require(isinstance(blockers, list) and any("server" in item for item in blockers), "export blockers must mention missing server execution", errors)
+    require(isinstance(blockers, list) and any("verifier" in item for item in blockers), "export blockers must mention missing verifier execution", errors)
 
 
 def validate_import_smoke(smoke: dict[str, object], errors: list[str]) -> None:
@@ -110,12 +120,77 @@ def validate_import_smoke(smoke: dict[str, object], errors: list[str]) -> None:
     require(isinstance(does_not_claim, list) and "vulnerable/fixed verifier executed" in does_not_claim, "import smoke must not claim verifier execution", errors)
 
 
+def validate_server_probe(receipt: dict[str, object], errors: list[str]) -> None:
+    require_keys(
+        receipt,
+        [
+            "lane_id",
+            "server_probe_receipt_id",
+            "status",
+            "scope",
+            "script",
+            "command",
+            "runtime_environment",
+            "server_startup",
+            "selected_submission_probe",
+            "poc_database",
+            "blocking_error",
+            "cleanup",
+            "does_not_claim",
+        ],
+        "server-probe",
+        errors,
+    )
+    require(receipt.get("lane_id") == "cybergym-production-lane", "server probe lane_id is invalid", errors)
+    require(receipt.get("status") == "server_probe_passed_verifier_blocked", "server probe status is invalid", errors)
+    require(receipt.get("scope") == "submission_server_startup_and_valid_poc_route", "server probe scope is invalid", errors)
+    require(receipt.get("script") == "scripts/probe_cybergym_server.py", "server probe script is invalid", errors)
+    startup = receipt.get("server_startup")
+    require_keys(startup, ["status", "health_probe", "health_status", "mask_map_loaded"], "server-probe.server_startup", errors)
+    if isinstance(startup, dict):
+        require(startup.get("status") == "passed", "server startup must pass", errors)
+        require(startup.get("health_status") == 200, "server startup health status must be 200", errors)
+    probe = receipt.get("selected_submission_probe")
+    require_keys(
+        probe,
+        ["real_task_id", "agent_facing_task_id", "agent_id", "checksum_valid", "poc_bytes", "endpoint", "response_status", "response_error"],
+        "server-probe.selected_submission_probe",
+        errors,
+    )
+    if isinstance(probe, dict):
+        require(probe.get("real_task_id") == "arvo:10400", "server probe real task id must be arvo:10400", errors)
+        require(probe.get("agent_facing_task_id") == "7fa395d7dac0", "server probe masked task id is invalid", errors)
+        require(probe.get("checksum_valid") is True, "server probe checksum must be valid", errors)
+        require(probe.get("poc_bytes") == 4, "server probe PoC byte count should be 4", errors)
+        require(probe.get("response_status") == 500, "server probe should block at missing verifier image", errors)
+        require("No such image" in str(probe.get("response_error")), "server probe response must cite missing image", errors)
+    db = receipt.get("poc_database")
+    require_keys(db, ["status", "record_count", "record"], "server-probe.poc_database", errors)
+    if isinstance(db, dict):
+        require(db.get("status") == "written", "server probe DB status must be written", errors)
+        require(db.get("record_count") == 1, "server probe DB should contain one record", errors)
+        record = db.get("record")
+        require_keys(record, ["agent_id", "task_id", "poc_hash", "poc_length", "vul_exit_code", "fix_exit_code"], "server-probe.poc_database.record", errors)
+        if isinstance(record, dict):
+            require(record.get("task_id") == "arvo:10400", "server probe DB task id should be unmasked", errors)
+            require(record.get("poc_length") == 4, "server probe DB PoC length should be 4", errors)
+            require(record.get("vul_exit_code") is None, "server probe must not claim vulnerable verifier exit code", errors)
+            require(record.get("fix_exit_code") is None, "server probe must not claim fixed verifier exit code", errors)
+    blocker = receipt.get("blocking_error")
+    require_keys(blocker, ["stage", "error_type", "primary_error", "meaning"], "server-probe.blocking_error", errors)
+    if isinstance(blocker, dict):
+        require("n132/arvo:10400-vul" in str(blocker.get("primary_error")), "server probe blocker must cite missing arvo image", errors)
+    does_not_claim = receipt.get("does_not_claim")
+    require(isinstance(does_not_claim, list) and "vulnerable verifier executed" in does_not_claim, "server probe must not claim vulnerable verifier execution", errors)
+
+
 def main() -> int:
     errors: list[str] = []
     source = load_json(LANE / "source-pin.json")
     contract = load_json(LANE / "task-contract.json")
     setup = load_json(LANE / "setup-receipt.json")
     smoke = load_json(LANE / "import-smoke-receipt.json")
+    server_probe = load_json(LANE / "server-probe-receipt.json")
     export = load_json(LANE / "export-decision.json")
 
     if isinstance(source, dict):
@@ -134,6 +209,10 @@ def main() -> int:
         validate_import_smoke(smoke, errors)
     else:
         errors.append("import-smoke-receipt.json must be an object")
+    if isinstance(server_probe, dict):
+        validate_server_probe(server_probe, errors)
+    else:
+        errors.append("server-probe-receipt.json must be an object")
     if isinstance(export, dict):
         validate_export(export, errors)
     else:

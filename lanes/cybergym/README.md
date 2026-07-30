@@ -2,25 +2,28 @@
 
 ## Current Status
 
-Status: source pinned, no-heavy import smoke passed, runtime contract
-documented, heavy run blocked.
+Status: source pinned, no-heavy import smoke passed, submission server probe
+passed, vulnerable/fixed verifier execution blocked by missing image/data.
 
 CyberGym is the second production lane after TerminalTraj. It represents the
 security/code family: an agent receives a vulnerable codebase, proposes a proof
 of concept, submits it to a server, and the verifier compares behavior against
 vulnerable and fixed builds.
 
-Unlike the TerminalTraj starter task, this lane should not be treated as a small
-local run yet. The repo is available locally, but benchmark data and server
-runtime data are heavyweight:
+Unlike the TerminalTraj starter task, this lane should not be treated as a solved
+task run yet. The repo is available locally, and the local submission server now
+starts, accepts a checksum-valid masked `arvo:10400` PoC submission, and writes
+the PoC database record. Actual verifier execution still needs heavyweight
+benchmark/server data:
 
 - benchmark data: about 240GB
 - binary-only server data: about 130GB
 - full server data: about 10TB
 
 The correct production stance is therefore: pin the repo, define the evidence
-contract, block runtime claims until data/server receipts exist, and block export
-until security, privacy, license, and split decisions are recorded.
+contract, record the server probe honestly, block verifier claims until
+image/data receipts exist, and block export until security, privacy, license,
+and split decisions are recorded.
 
 ## What This Lane Normalizes
 
@@ -42,6 +45,8 @@ CyberGym adds fields that TerminalTraj does not cover:
 - `setup-receipt.json`: local repo/install/data/server status and blockers.
 - `import-smoke-receipt.json`: no-heavy package import smoke for `cybergym`
   and `cybergym.utils`.
+- `server-probe-receipt.json`: local FastAPI submission server startup,
+  masked task submission, PoC DB write, and missing verifier image blocker.
 - `export-decision.json`: explicit block on hosted conversion, SFT export, and
   training export.
 - `../../scripts/validate_cybergym_lane.py`: local validator for the lane
@@ -51,6 +56,13 @@ Run:
 
 ```bash
 python3 scripts/validate_cybergym_lane.py
+```
+
+The server probe is local-only because it installs server dependencies into an
+ignored venv and writes an ignored temporary PoC database:
+
+```bash
+make probe-cybergym-server
 ```
 
 Expected output:

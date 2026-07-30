@@ -1,7 +1,7 @@
 {
   "lane_id": "cybergym-production-lane",
   "setup_receipt_id": "cybergym-setup-001",
-  "status": "source_import_smoke_passed_heavy_data_blocked",
+  "status": "server_probe_passed_heavy_data_blocked",
   "checked_at": "2026-07-30",
   "local_repo": {
     "path": "CyberGym",
@@ -28,10 +28,10 @@
     "subset_task_count": 10
   },
   "runtime_not_attempted_reasons": [
-    "required benchmark/server data is not present locally",
+    "required benchmark/server verifier data is not present locally",
     "downloading server data is heavyweight and needs an explicit storage/runtime lane",
     "no selected task has been generated",
-    "no local PoC submission server is running"
+    "local PoC submission server has started, but vulnerable/fixed verifier execution is blocked by missing n132/arvo:10400-vul image/data"
   ],
   "no_heavy_smoke": {
     "status": "passed",
@@ -42,12 +42,9 @@
     ]
   },
   "next_lowest_risk_runtime_step": [
-    "create ignored .cache/cybergym data directory",
-    "install CyberGym into an isolated venv",
-    "download the documented subset or binary-only server data only after storage approval",
-    "start binary-only submission server on a local port",
-    "generate one subset task such as arvo:10400",
-    "submit a trivial PoC to prove server wiring",
+    "download or otherwise materialize the documented arvo:10400 verifier image/data",
+    "generate one selected task manifest for arvo:10400",
+    "rerun make probe-cybergym-server or a narrower verifier replay",
     "record vulnerable/fixed verifier result without claiming agent success"
   ]
 }

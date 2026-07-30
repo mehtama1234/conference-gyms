@@ -27,7 +27,8 @@ Analysis artifacts:
 - `lanes/terminaltraj/`: first real local run lane, with normalized trace,
   verifier, replay, and export-gate receipts.
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
-  no-heavy import smoke, and heavy-runtime blockers.
+  no-heavy import smoke, local submission server probe, PoC DB write, and
+  missing verifier image/data blockers.
 - `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
   smoke, saved-state reward fixture and replay, local Chromium library
   extraction, and one real MCP/Playwright browser GUI task passed with reward
@@ -88,9 +89,12 @@ Current adapter coverage from the generated readiness rollup:
   execution, privacy review, and training-export blockers remain.
 - `CyberGym`, `BIRD-Interact`, `VERINA`, and `RealPDEBench` were added as the
   parallel second-bridge batch across terminal/sandbox, external user/database
-  loop, formal proof, and scientific simulator families; each has no-heavy-run
-  smoke and evidence/gate receipts, while runtime data, service/toolchain,
-  verifier execution, replay, privacy/license, and export blockers remain.
+  loop, formal proof, and scientific simulator families. CyberGym now also has
+  a local submission server probe and PoC DB write for masked `arvo:10400`;
+  its vulnerable/fixed verifier execution remains blocked by missing image/data.
+  The other lanes have no-heavy-run smoke and evidence/gate receipts, while
+  runtime data, service/toolchain, verifier execution, replay, privacy/license,
+  and export blockers remain.
 - `TerminalTraj` now has a real local production-lane proof in
   `lanes/terminaltraj`: one released task was materialized, run in Docker,
   verified with the released pytest verifier, replayed through a tracked

@@ -7,7 +7,7 @@ The production proof now has three lanes.
 | Lane | Current proof | Runtime status | Export status |
 | --- | --- | --- | --- |
 | `TerminalTraj` | One released task, `task_5279`, ran locally, passed the released pytest verifier, replayed through a tracked wrapper, and produced `trace.real.json`. | Passed for one task. | Hosted conversion, SFT export, and training export blocked. |
-| `CyberGym` | Repo pinned, security task contract normalized, and no-heavy import smoke passed. | Heavy runtime blocked until data/server receipts exist. | Hosted conversion, SFT export, and training export blocked. |
+| `CyberGym` | Repo pinned, security task contract normalized, no-heavy import smoke passed, local submission server started, masked `arvo:10400` PoC submission accepted through checksum validation, and PoC DB write proved. | Server probe passed; vulnerable/fixed verifier blocked by missing `n132/arvo:10400-vul` image/data. | Hosted conversion, SFT export, and training export blocked. |
 | `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, 28 original tasks parsed, `AddToDoTask` saved-state reward fixture passed, reward fixture replay passed, no-sudo Chromium library extraction passed, and one real Playwright/Chromium browser GUI task added `Call Mom` with reward 1.0. | Passed for one selected GUI task with local compatibility shims. | Hosted conversion, SFT export, and training export blocked. |
 
 Run the aggregate gate:
@@ -46,7 +46,10 @@ CyberGym proves the second family contract:
 - PoC submission fields
 - anti-leakage and network policy requirements
 - no-heavy package import
-- honest data/server blockers
+- submission server startup
+- masked task checksum validation
+- PoC upload and database write
+- honest missing-image/data verifier blocker
 
 OpenApps proves the third family contract:
 
@@ -67,9 +70,7 @@ OpenApps proves the third family contract:
 
 The repo does not yet prove:
 
-- CyberGym server startup
 - CyberGym selected task generation
-- CyberGym PoC submission
 - CyberGym vulnerable/fixed verifier execution
 - OpenApps full 28-task browser coverage
 - OpenApps dummy-agent or model-agent task execution
@@ -88,15 +89,13 @@ to harden OpenApps or move to CyberGym:
 4. decide whether deterministic fixtures or dummy/model agents are the production proof
 5. keep export blocked unless license/privacy/split receipts explicitly clear it
 
-Or promote CyberGym from contract-only to one real local security task if
+Promote CyberGym from server probe to one real local security verifier run if
 storage and runtime are acceptable:
 
-1. install CyberGym server dependencies into an isolated venv
-2. download only the documented subset or binary-only server data
-3. start the local PoC submission server
-4. generate one subset task, such as `arvo:10400`
-5. submit a trivial PoC to prove server wiring
-6. record vulnerable/fixed verifier output
-7. emit `trace.real.json` for CyberGym
-8. keep export blocked unless contamination, split, privacy, and security review
+1. materialize the documented `arvo:10400` vulnerable/fixed verifier image or binary data
+2. generate one selected task manifest for `arvo:10400`
+3. rerun the existing valid PoC submission path
+4. record vulnerable/fixed verifier output
+5. emit `trace.real.json` for CyberGym
+6. keep export blocked unless contamination, split, privacy, and security review
    receipts explicitly clear it

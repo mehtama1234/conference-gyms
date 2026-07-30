@@ -27,11 +27,11 @@ LANES = [
         "lane_id": "cybergym-production-lane",
         "name": "CyberGym",
         "validator": "scripts/validate_cybergym_lane.py",
-        "status": "source_pinned_import_smoke_passed_heavy_runtime_blocked",
-        "runtime": "blocked_heavy_data",
-        "replay": "not_attempted",
+        "status": "source_pinned_server_probe_passed_verifier_data_blocked",
+        "runtime": "server_probe_passed_verifier_data_blocked",
+        "replay": "server_probe_passed",
         "export": "blocked",
-        "summary": "CyberGym is source-pinned with a security task contract and no-heavy import smoke; server/data runtime remains blocked.",
+        "summary": "CyberGym is source-pinned with a security task contract, no-heavy import smoke, local submission server startup, checksum-valid masked arvo:10400 PoC submission, and PoC DB write; vulnerable/fixed verifier execution remains blocked by missing Docker image/data.",
     },
     {
         "lane_id": "openapps-production-lane",
@@ -76,7 +76,7 @@ def main() -> int:
         "real_local_run_lane_count": sum(1 for item in results if item["runtime"] in real_runtimes),
         "export_blocked_lane_count": sum(1 for item in results if item["export"] == "blocked"),
         "lanes": results,
-        "next_meaty_goal": "Either harden OpenApps by removing local compatibility shims and sampling more GUI tasks, or promote CyberGym to one real local security task with server/data setup, PoC submission, vulnerable/fixed verifier output, cleanup, and normalized trace.",
+        "next_meaty_goal": "Promote CyberGym from server-probe to verifier run by materializing arvo:10400 image/data, rerunning the same submission path, recording vulnerable/fixed exit codes, cleanup, and a normalized security trace; keep export blocked.",
     }
 
     print(json.dumps(report, indent=2))
