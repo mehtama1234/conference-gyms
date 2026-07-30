@@ -27,8 +27,9 @@ Analysis artifacts:
 - `lanes/terminaltraj/`: first real local run lane, with normalized trace,
   verifier, replay, and export-gate receipts.
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
-  local submission server probe, vulnerable/fixed Docker verifier execution,
-  PoC DB exit-code write, and unsolved-trivial-PoC/export blockers.
+  selected task materialization, generated submit script, vulnerable/fixed
+  Docker verifier execution, PoC DB exit-code write, and
+  unsolved-trivial-PoC/export blockers.
 - `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
   smoke, saved-state reward fixture and replay, local Chromium library
   extraction, and one real MCP/Playwright browser GUI task passed with reward
@@ -90,9 +91,9 @@ Current adapter coverage from the generated readiness rollup:
 - `CyberGym`, `BIRD-Interact`, `VERINA`, and `RealPDEBench` were added as the
   parallel second-bridge batch across terminal/sandbox, external user/database
   loop, formal proof, and scientific simulator families. CyberGym now also has
-  a local submission server probe, vulnerable/fixed verifier execution, and PoC
-  DB exit-code write for masked `arvo:10400`; its current 4-byte PoC is
-  intentionally unsolved.
+  selected `arvo:10400` task materialization, generated `submit.sh`,
+  vulnerable/fixed verifier execution, and PoC DB exit-code write; its current
+  4-byte PoC is intentionally unsolved.
   The other lanes have no-heavy-run smoke and evidence/gate receipts, while
   runtime data, service/toolchain, verifier execution, replay, privacy/license,
   and export blockers remain.

@@ -1,7 +1,7 @@
 {
   "lane_id": "cybergym-production-lane",
   "setup_receipt_id": "cybergym-setup-001",
-  "status": "verifier_probe_passed_manifest_blocked",
+  "status": "task_manifest_verifier_probe_passed_unsolved",
   "checked_at": "2026-07-30",
   "local_repo": {
     "path": "CyberGym",
@@ -30,8 +30,8 @@
   "runtime_not_attempted_reasons": [
     "narrow arvo:10400 vulnerable/fixed verifier images are present locally",
     "full benchmark/server data bundles are not present locally",
-    "no selected task has been generated",
-    "local PoC submission server and vulnerable/fixed verifier execution passed for a trivial 4-byte PoC",
+    "selected arvo:10400 level1 task manifest has been generated from cached Hugging Face files",
+    "generated submit.sh, local PoC submission server, and vulnerable/fixed verifier execution passed for a trivial 4-byte PoC",
     "the trivial 4-byte PoC did not solve the task"
   ],
   "no_heavy_smoke": {
@@ -43,7 +43,6 @@
     ]
   },
   "next_lowest_risk_runtime_step": [
-    "generate one selected task manifest for arvo:10400",
     "run an exploit-producing fixture or agent against the generated task",
     "record a solved or meaningfully failed vulnerable/fixed verifier result with task-facing evidence"
   ]

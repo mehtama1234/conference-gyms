@@ -7,6 +7,7 @@
     "setup-receipt.json",
     "import-smoke-receipt.json",
     "server-probe-receipt.json",
+    "task-manifest-receipt.json",
     "trace.real.json"
   ],
   "local_contract_validation": "allowed",
@@ -14,8 +15,8 @@
   "sft_export": "blocked",
   "training_export": "blocked",
   "blocking_reasons": [
-    "no selected task manifest has been generated",
-    "PoC submission server and vulnerable/fixed verifiers have only been probed with a trivial 4-byte PoC",
+    "selected task manifest has only been generated for one task, arvo:10400 level1",
+    "generated submit.sh and vulnerable/fixed verifiers have only been probed with a trivial 4-byte PoC",
     "the trivial PoC does not solve arvo:10400 because vulnerable and fixed exit codes are both 0",
     "full benchmark and server verifier data bundles are not downloaded locally",
     "network/firewall policy receipt does not exist",
@@ -25,7 +26,7 @@
     "data download receipt",
     "selected task manifest",
     "network/firewall policy receipt",
-    "task-facing PoC submission receipt with generated task manifest",
+    "exploit-producing task-facing PoC submission receipt with generated task manifest",
     "solved or benchmark-meaningful vulnerable/fixed verifier receipt",
     "cleanup receipt"
   ]

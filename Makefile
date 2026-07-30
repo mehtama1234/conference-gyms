@@ -1,4 +1,4 @@
-.PHONY: validate validate-lanes validate-terminaltraj validate-cybergym validate-openapps publication-check replay-terminaltraj replay-openapps-reward replay-openapps-browser probe-cybergym-server
+.PHONY: validate validate-lanes validate-terminaltraj validate-cybergym validate-openapps publication-check replay-terminaltraj replay-openapps-reward replay-openapps-browser probe-cybergym-server probe-cybergym-task-manifest
 
 validate: validate-lanes
 
@@ -28,3 +28,6 @@ replay-openapps-browser:
 
 probe-cybergym-server:
 	@python3 scripts/probe_cybergym_server.py
+
+probe-cybergym-task-manifest:
+	@python3 scripts/run_cybergym_task_manifest_probe.py

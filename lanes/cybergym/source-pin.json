@@ -1,6 +1,6 @@
 {
   "lane_id": "cybergym-production-lane",
-  "status": "source_pinned_verifier_probe_passed_unsolved_export_blocked",
+  "status": "source_pinned_task_manifest_verifier_probe_passed_unsolved_export_blocked",
   "local_source_repo": "CyberGym",
   "upstream_remote": "https://github.com/sunblaze-ucb/cybergym.git",
   "commit": "c1774a60108acb41ef2ac56cb4af73ca34654a12",
@@ -16,8 +16,8 @@
     "narrow verifier images for arvo:10400 are present locally: n132/arvo:10400-vul and n132/arvo:10400-fix",
     "binary-only server data bundle is not downloaded locally",
     "submission server startup passed locally through scripts/probe_cybergym_server.py",
-    "masked task checksum validation, PoC database write, and vulnerable/fixed verifier execution passed for arvo:10400",
-    "no selected task manifest has been generated",
+    "selected task manifest generation passed for arvo:10400 level1",
+    "masked task checksum validation, generated submit.sh, PoC database write, and vulnerable/fixed verifier execution passed for arvo:10400",
     "trivial 4-byte PoC does not solve the task because both vulnerable and fixed builds exit 0",
     "network/firewall policy has not been exercised",
     "hosted conversion, SFT export, and training export approvals are not cleared"

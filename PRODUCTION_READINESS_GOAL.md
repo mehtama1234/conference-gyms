@@ -70,10 +70,11 @@ The first concrete work item is now complete for `TerminalTraj`: one released
 task ran locally, passed its executable verifier, replayed, produced a
 normalized trace, and kept export blocked.
 
-`CyberGym` is the second lane: source pin, task contract, local submission
-server startup, checksum-valid masked PoC submission, vulnerable/fixed Docker
-verifier execution, PoC DB exit-code write, and normalized real security trace
-are complete. The current 4-byte PoC is intentionally trivial and does not solve
+`CyberGym` is the second lane: source pin, task contract, selected `arvo:10400`
+data materialization, generated task README/submit script, local submission
+server startup, generated-submit vulnerable submission, fixed verifier
+execution, PoC DB exit-code write, and normalized real security trace are
+complete. The current 4-byte PoC is intentionally trivial and does not solve
 `arvo:10400`.
 
 `OpenApps` is the third lane: source pin, package root import, app config
@@ -91,9 +92,9 @@ Choose between hardening OpenApps and promoting CyberGym:
    documented dependency patch.
 2. Run a small selected-task sample, not just `add_call_mom_to_my_todo`.
 3. Add cleanup/replay receipts for that sample.
-4. For CyberGym, generate the `arvo:10400` task manifest and run an
-   exploit-producing fixture or agent until there is a task-facing solved or
-   meaningfully failed verifier trace.
+4. For CyberGym, use the generated `arvo:10400` task files and run an
+   exploit-producing fixture or agent until there is a solved or
+   benchmark-meaningful failed verifier trace.
 5. Keep export blocked unless privacy, split, license, and contamination
    receipts explicitly clear it.
 

@@ -2,8 +2,9 @@
 
 ## Current Status
 
-Status: source pinned, no-heavy import smoke passed, submission server probe
-passed, vulnerable/fixed verifier execution passed for a trivial unsolved PoC.
+Status: source pinned, no-heavy import smoke passed, selected task manifest
+generated, and vulnerable/fixed verifier execution passed for a trivial
+unsolved PoC.
 
 CyberGym is the second production lane after TerminalTraj. It represents the
 security/code family: an agent receives a vulnerable codebase, proposes a proof
@@ -11,11 +12,12 @@ of concept, submits it to a server, and the verifier compares behavior against
 vulnerable and fixed builds.
 
 Unlike the TerminalTraj starter task, this lane should not be treated as a solved
-task run yet. The repo is available locally, and the local submission server now
-starts, accepts a checksum-valid masked `arvo:10400` PoC submission, executes
-both vulnerable and fixed Docker verifiers, and writes the PoC database exit
-codes. The selected `arvo:10400` verifier images are local, but broader
-benchmark/server data remains heavyweight:
+task run yet. The repo is available locally, the single `arvo:10400` data files
+were materialized from Hugging Face, CyberGym generated the task README and
+`submit.sh`, the generated `submit.sh` reached the vulnerable verifier, the
+fixed verifier also executed, and the PoC database stored exit codes. The
+selected `arvo:10400` verifier images are local, but broader benchmark/server
+data remains heavyweight:
 
 - benchmark data: about 240GB
 - binary-only server data: about 130GB
@@ -48,8 +50,10 @@ CyberGym adds fields that TerminalTraj does not cover:
   and `cybergym.utils`.
 - `server-probe-receipt.json`: local FastAPI submission server startup,
   masked task submission, vulnerable/fixed verifier execution, and PoC DB write.
-- `trace.real.json`: normalized real security verifier trace for the trivial
-  `arvo:10400` PoC.
+- `task-manifest-receipt.json`: single-task data materialization, generated
+  task files, generated `submit.sh` use, and unsolved verifier result.
+- `trace.real.json`: normalized real security task-manifest verifier trace for
+  the trivial `arvo:10400` PoC.
 - `export-decision.json`: explicit block on hosted conversion, SFT export, and
   training export.
 - `../../scripts/validate_cybergym_lane.py`: local validator for the lane
@@ -61,11 +65,12 @@ Run:
 python3 scripts/validate_cybergym_lane.py
 ```
 
-The server probe is local-only because it installs server dependencies into an
-ignored venv and writes an ignored temporary PoC database:
+The probes are local-only because they install server dependencies into an
+ignored venv and write ignored task/data/PoC cache files:
 
 ```bash
 make probe-cybergym-server
+make probe-cybergym-task-manifest
 ```
 
 Expected output:
