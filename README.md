@@ -21,6 +21,18 @@ Analysis artifacts:
 - `agent-data-protocol-approval-overrides.template.json`: generated ADP
   approval override template with one editable entry per dataset approval
   receipt.
+- `PRODUCTION_READINESS_GOAL.md`: end-to-end production proof target.
+- `PRODUCTION_READINESS_STATUS.md`: current lane status and aggregate gate.
+- `lanes/terminaltraj/`: first real local run lane, with normalized trace,
+  verifier, replay, and export-gate receipts.
+- `lanes/cybergym/`: second security/code lane, with source pin, task contract,
+  no-heavy import smoke, and heavy-runtime blockers.
+
+Run the current production gate:
+
+```bash
+python3 scripts/validate_production_lanes.py
+```
 
 Current adapter coverage from the generated readiness rollup:
 
@@ -65,9 +77,11 @@ Current adapter coverage from the generated readiness rollup:
   loop, formal proof, and scientific simulator families; each has no-heavy-run
   smoke and evidence/gate receipts, while runtime data, service/toolchain,
   verifier execution, replay, privacy/license, and export blockers remain.
-- `TerminalTraj` source-specific projection is ready and its no-heavy-run
-  adapter smoke and evidence/gate receipts are complete; Docker/materialization,
-  validator, sandbox isolation, and training-export blockers remain.
+- `TerminalTraj` now has a real local production-lane proof in
+  `lanes/terminaltraj`: one released task was materialized, run in Docker,
+  verified with the released pytest verifier, replayed through a tracked
+  wrapper, normalized into `trace.real.json`, and kept blocked for hosted/SFT/
+  training export.
 - `Gaia2-ARE` source-specific projection is ready and its no-heavy-run adapter
   smoke and evidence/gate receipts are complete; scenario materialization,
   model credentials, runtime lifecycle, replay, and training-export blockers
@@ -170,6 +184,6 @@ bridge and the first cross-platform CUA bridge, so it now acts as the platform
 config, model endpoint, screenshot/action trace, WebArenaLiteV2/AndroidWorld
 evaluator, privacy, and export-gate pattern for later computer-use worlds.
 
-The next decision is which remaining inventory world should receive the next
-source-specific bridge, such as `MedAgentGym`, `CVE-Factory`, `AstaBench`,
-`CausalGame`, `World-In-World`, `RedTeamCUA`, or `Vision2Web`.
+The next decision is whether to promote `CyberGym` from no-heavy import smoke to
+one real security task run, or add a third low-infrastructure real-run lane if
+CyberGym data/server setup remains too heavy.

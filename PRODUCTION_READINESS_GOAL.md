@@ -59,22 +59,30 @@ these:
 | Quality assessment | failure category, evidence completeness, replay confidence |
 | Export decision | allowed/blocked for local validation, hosted conversion, SFT, training |
 
+## Current Proof
+
+The first concrete work item is now complete for `TerminalTraj`: one released
+task ran locally, passed its executable verifier, replayed, produced a
+normalized trace, and kept export blocked.
+
+`CyberGym` is the second lane: source pin, task contract, and no-heavy import
+smoke are complete; heavyweight data/server runtime remains blocked.
+
 ## Next Concrete Work Item
 
-Create a `TerminalTraj` production-lane fixture:
+Promote CyberGym or add another low-infrastructure real-run lane:
 
-1. inspect the local `TerminalTraj` repo for its task and validator format
-2. choose one tiny task that can run without downloading large data
-3. write a source-pin receipt
-4. write a setup receipt
-5. run or fixture one reset/action/verifier cycle
-6. emit one normalized trace JSON
-7. validate the trace against the adapter readiness expectations
-8. record blockers honestly if runtime execution cannot happen locally
+1. For CyberGym, download only the smallest acceptable subset/server data.
+2. Start a local PoC submission server.
+3. Generate one documented subset task.
+4. Submit one PoC to prove server wiring.
+5. Record vulnerable/fixed verifier output.
+6. Emit a normalized CyberGym trace.
+7. Keep export blocked unless privacy, split, security, and contamination
+   receipts explicitly clear it.
 
-If `TerminalTraj` cannot run locally without heavyweight dependencies, fall
-back to a fixture-only trace with an explicit blocker receipt, then use that as
-the contract test for the later real run.
+If CyberGym remains too heavy, use the TerminalTraj lane as the pattern for a
+third real-run lane from another terminal/code benchmark.
 
 ## What This Does Not Claim
 
