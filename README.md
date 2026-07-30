@@ -28,6 +28,8 @@ Analysis artifacts:
   verifier, replay, and export-gate receipts.
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
   no-heavy import smoke, and heavy-runtime blockers.
+- `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
+  smoke, and dependency/browser blockers.
 
 Run the current production gate:
 
@@ -191,6 +193,5 @@ bridge and the first cross-platform CUA bridge, so it now acts as the platform
 config, model endpoint, screenshot/action trace, WebArenaLiteV2/AndroidWorld
 evaluator, privacy, and export-gate pattern for later computer-use worlds.
 
-The next decision is whether to promote `CyberGym` from no-heavy import smoke to
-one real security task run, or add a third low-infrastructure real-run lane if
-CyberGym data/server setup remains too heavy.
+The next decision is whether to promote `OpenApps` from source/config smoke to
+one real GUI task run before returning to CyberGym's heavier server/data setup.

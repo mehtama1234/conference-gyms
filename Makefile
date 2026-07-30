@@ -1,4 +1,4 @@
-.PHONY: validate validate-lanes validate-terminaltraj validate-cybergym publication-check replay-terminaltraj
+.PHONY: validate validate-lanes validate-terminaltraj validate-cybergym validate-openapps publication-check replay-terminaltraj
 
 validate: validate-lanes
 
@@ -10,6 +10,9 @@ validate-terminaltraj:
 
 validate-cybergym:
 	@python3 scripts/validate_cybergym_lane.py
+
+validate-openapps:
+	@python3 scripts/validate_openapps_lane.py
 
 publication-check:
 	@python3 scripts/check_publication_ready.py

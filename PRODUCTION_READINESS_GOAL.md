@@ -68,21 +68,23 @@ normalized trace, and kept export blocked.
 `CyberGym` is the second lane: source pin, task contract, and no-heavy import
 smoke are complete; heavyweight data/server runtime remains blocked.
 
+`OpenApps` is the third lane: source pin, package root import, app config
+discovery, and task YAML parsing are complete; dependency/browser runtime
+remains blocked.
+
 ## Next Concrete Work Item
 
-Promote CyberGym or add another low-infrastructure real-run lane:
+Promote OpenApps first, then CyberGym:
 
-1. For CyberGym, download only the smallest acceptable subset/server data.
-2. Start a local PoC submission server.
-3. Generate one documented subset task.
-4. Submit one PoC to prove server wiring.
-5. Record vulnerable/fixed verifier output.
-6. Emit a normalized CyberGym trace.
-7. Keep export blocked unless privacy, split, security, and contamination
+1. For OpenApps, install dependencies in an isolated environment.
+2. Install Playwright Chromium.
+3. Select a low-risk task such as `add_call_mom_to_my_todo`.
+4. Reset app state and apply a deterministic fixture action.
+5. Record reward/verifier output.
+6. Emit a normalized OpenApps GUI trace.
+7. Keep export blocked unless privacy, split, license, and contamination
    receipts explicitly clear it.
-
-If CyberGym remains too heavy, use the TerminalTraj lane as the pattern for a
-third real-run lane from another terminal/code benchmark.
+8. Then return to CyberGym and attempt one local security task if storage allows.
 
 ## What This Does Not Claim
 

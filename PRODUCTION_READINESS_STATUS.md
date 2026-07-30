@@ -2,12 +2,13 @@
 
 ## Current State
 
-The production proof now has two lanes.
+The production proof now has three lanes.
 
 | Lane | Current proof | Runtime status | Export status |
 | --- | --- | --- | --- |
 | `TerminalTraj` | One released task, `task_5279`, ran locally, passed the released pytest verifier, replayed through a tracked wrapper, and produced `trace.real.json`. | Passed for one task. | Hosted conversion, SFT export, and training export blocked. |
 | `CyberGym` | Repo pinned, security task contract normalized, and no-heavy import smoke passed. | Heavy runtime blocked until data/server receipts exist. | Hosted conversion, SFT export, and training export blocked. |
+| `OpenApps` | Repo pinned, package root import passed, 8 app configs discovered, and 28 original tasks parsed. | Runtime blocked until dependencies, BrowserGym, and Playwright/Chromium are installed. | Hosted conversion, SFT export, and training export blocked. |
 
 Run the aggregate gate:
 
@@ -17,9 +18,9 @@ python3 scripts/validate_production_lanes.py
 
 Expected result:
 
-- both lane validators pass
+- all lane validators pass
 - one lane has a real local run
-- both lanes keep export blocked
+- all lanes keep export blocked
 
 ## What Is Actually Proven
 
@@ -47,6 +48,15 @@ CyberGym proves the second family contract:
 - no-heavy package import
 - honest data/server blockers
 
+OpenApps proves the third family contract:
+
+- browser/GUI app world
+- transparent Python app state
+- ground-truth reward model
+- app config discovery
+- task YAML parsing
+- dependency/browser blockers
+
 ## What Is Not Proven Yet
 
 The repo does not yet prove:
@@ -55,14 +65,30 @@ The repo does not yet prove:
 - CyberGym selected task generation
 - CyberGym PoC submission
 - CyberGym vulnerable/fixed verifier execution
+- OpenApps BrowserGym startup
+- OpenApps dummy-agent or fixture task execution
+- OpenApps reward verifier execution
 - hosted conversion approval
 - SFT or training export approval
 - a public remote push for this gym analysis repo
 
 ## Next Meaty Goal
 
-Promote CyberGym from contract-only to one real local security task if storage
-and runtime are acceptable:
+Promote OpenApps from source/config smoke to one real local GUI task first,
+because it is lower infrastructure than CyberGym:
+
+1. install OpenApps dependencies in an isolated environment
+2. install Playwright Chromium
+3. select one low-risk task, such as `add_call_mom_to_my_todo`
+4. reset the app state
+5. run a deterministic fixture or dummy agent action
+6. record the app state before and after
+7. run the ground-truth reward/verifier
+8. emit a normalized GUI trace
+9. keep export blocked unless license/privacy/split receipts explicitly clear it
+
+After that, promote CyberGym from contract-only to one real local security task
+if storage and runtime are acceptable:
 
 1. install CyberGym server dependencies into an isolated venv
 2. download only the documented subset or binary-only server data
@@ -73,7 +99,3 @@ and runtime are acceptable:
 7. emit `trace.real.json` for CyberGym
 8. keep export blocked unless contamination, split, privacy, and security review
    receipts explicitly clear it
-
-If CyberGym data remains too heavy, the fallback is a third low-infrastructure
-real-run lane from another terminal/code benchmark, using the TerminalTraj
-evidence contract.

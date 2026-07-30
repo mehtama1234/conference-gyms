@@ -1,0 +1,66 @@
+{
+  "lane_id": "openapps-production-lane",
+  "contract_id": "openapps-browser-gui-task-contract-v0-1",
+  "status": "contract_only_runtime_blocked",
+  "world_family": "browser_gui",
+  "task_shape": {
+    "apps_observed": [
+      "calendar",
+      "code_editor",
+      "maps",
+      "messenger",
+      "onlineshop",
+      "pop_ups",
+      "start_page",
+      "todo"
+    ],
+    "original_task_count": 28,
+    "example_tasks": [
+      "add_meeting_with_dennis",
+      "add_call_mom_to_my_todo",
+      "mark_water_plants_as_done",
+      "message_bob_to_meet",
+      "save_eiffel_tower_to_my_favorite_places",
+      "navigate_from_todo_to_calendar"
+    ],
+    "agent_inputs": [
+      "goal text",
+      "browser page state",
+      "DOM or accessibility tree",
+      "screenshot",
+      "app state"
+    ],
+    "agent_actions": [
+      "click",
+      "type",
+      "scroll",
+      "navigate between apps",
+      "submit or modify app state"
+    ],
+    "verifier_outputs": [
+      "task reward",
+      "state diff",
+      "current app state",
+      "target app state",
+      "browser trace",
+      "console errors"
+    ]
+  },
+  "success_semantics": {
+    "preferred_metric": "ground_truth_reward",
+    "success_condition": "the transparent Python app state matches the task target state under the task-specific reward/checker",
+    "note": "The current lane has not yet executed the reward checker because full runtime dependencies are not installed."
+  },
+  "normalized_trace_required_fields": [
+    "source pin",
+    "selected task id",
+    "app config",
+    "initial app state",
+    "browser observation",
+    "agent action trace",
+    "final app state",
+    "reward/verifier result",
+    "cleanup receipt",
+    "privacy/license/export gates"
+  ]
+}

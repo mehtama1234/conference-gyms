@@ -1,0 +1,30 @@
+{
+  "lane_id": "openapps-production-lane",
+  "decision_id": "openapps-export-decision-001",
+  "applies_to": [
+    "source-pin.json",
+    "task-contract.json",
+    "source-smoke-receipt.json"
+  ],
+  "local_contract_validation": "allowed",
+  "hosted_conversion": "blocked",
+  "sft_export": "blocked",
+  "training_export": "blocked",
+  "blocking_reasons": [
+    "repo license is CC-BY-NC-4.0",
+    "no selected task has been run",
+    "no browser trace exists",
+    "no reward verifier result exists",
+    "no privacy or split receipt exists",
+    "no export approval receipt exists"
+  ],
+  "required_to_unblock_local_runtime": [
+    "install dependencies in an isolated environment",
+    "install Playwright Chromium",
+    "select one low-risk task such as add_call_mom_to_my_todo",
+    "run dummy agent or deterministic fixture against the app",
+    "record app state before and after",
+    "record reward/verifier result",
+    "emit normalized GUI trace"
+  ]
+}

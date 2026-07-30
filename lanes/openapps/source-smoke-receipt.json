@@ -1,0 +1,44 @@
+{
+  "lane_id": "openapps-production-lane",
+  "smoke_receipt_id": "openapps-source-smoke-001",
+  "status": "passed",
+  "scope": "source_config_only",
+  "commands": [
+    "PYTHONPATH=/home/manishmehta/ui-projects/gyms/OpenApps/src python3 -c 'import open_apps'",
+    "python3 parse OpenApps/config/apps/*/default.yaml and OpenApps/config/tasks/original_tasks.yaml"
+  ],
+  "observed": {
+    "open_apps_module": "/home/manishmehta/ui-projects/gyms/OpenApps/src/open_apps/__init__.py",
+    "app_count": 8,
+    "apps": [
+      "calendar",
+      "code_editor",
+      "maps",
+      "messenger",
+      "onlineshop",
+      "pop_ups",
+      "start_page",
+      "todo"
+    ],
+    "original_task_count": 28,
+    "first_task_keys": [
+      "add_meeting_with_dennis",
+      "add_christmas_shopping_event",
+      "add_paper_reading_meeting_with_einstein",
+      "remove_wacv_abstract_deadline",
+      "add_call_mom_to_my_todo"
+    ]
+  },
+  "known_runtime_blockers": [
+    "import open_apps.tasks.tasks fails in host Python because hydra is not installed",
+    "Playwright/Chromium is not installed for this lane",
+    "BrowserGym environment has not been launched"
+  ],
+  "does_not_claim": [
+    "full dependency installation",
+    "browser environment startup",
+    "agent execution",
+    "reward verifier execution",
+    "normalized real GUI trace"
+  ]
+}

@@ -33,6 +33,16 @@ LANES = [
         "export": "blocked",
         "summary": "CyberGym is source-pinned with a security task contract and no-heavy import smoke; server/data runtime remains blocked.",
     },
+    {
+        "lane_id": "openapps-production-lane",
+        "name": "OpenApps",
+        "validator": "scripts/validate_openapps_lane.py",
+        "status": "source_pinned_source_smoke_passed_runtime_blocked",
+        "runtime": "blocked_dependencies_browser",
+        "replay": "not_attempted",
+        "export": "blocked",
+        "summary": "OpenApps is source-pinned with package/config smoke, 8 app configs, and 28 parsed original tasks; browser/runtime execution remains blocked.",
+    },
 ]
 
 
@@ -65,7 +75,7 @@ def main() -> int:
         "real_local_run_lane_count": sum(1 for item in results if item["runtime"] == "passed"),
         "export_blocked_lane_count": sum(1 for item in results if item["export"] == "blocked"),
         "lanes": results,
-        "next_meaty_goal": "Promote CyberGym from no-heavy import smoke to one selected task with server startup, PoC submission, vulnerable/fixed verifier receipt, cleanup, and normalized security trace, or add a third low-infrastructure real-run lane if CyberGym data remains too heavy.",
+        "next_meaty_goal": "Promote OpenApps from source/config smoke to one deterministic local GUI task with app-state reset, dummy or fixture action, reward verifier receipt, cleanup, and normalized GUI trace; then revisit CyberGym heavy server runtime.",
     }
 
     print(json.dumps(report, indent=2))
