@@ -54,6 +54,8 @@ CyberGym proves the second family contract:
 - vulnerable/fixed Docker verifier execution
 - normalized real security verifier trace
 - fixture PoC solution with vulnerable/fixed exit codes 1/0
+- README-subset broader-sample readiness scan
+- explicit blocker that only `arvo:10400` has local verifier images
 
 OpenApps proves the third family contract:
 
@@ -99,5 +101,6 @@ Promote CyberGym from fixture-only solution to agent-performance evidence:
 2. run a model agent or independent exploit-discovery process against those files
 3. submit exactly one final PoC through generated `submit.sh`
 4. record solved or benchmark-meaningful vulnerable/fixed verifier output with discovery trace
-5. keep export blocked unless contamination, split, privacy, and security review
+5. pull or install at least one more README-subset vulnerable/fixed verifier pair
+6. keep export blocked unless contamination, split, privacy, and security review
    receipts explicitly clear it

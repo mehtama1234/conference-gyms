@@ -95,7 +95,8 @@ Choose between hardening OpenApps and promoting CyberGym:
 3. Add cleanup/replay receipts for that sample.
 4. For CyberGym, move beyond the fixture PoC by running a model-agent or
    independent exploit-discovery trajectory, then broaden the sample beyond
-   `arvo:10400`.
+   `arvo:10400`. The README-subset readiness scan now shows that broadening
+   requires one more local vulnerable/fixed verifier image pair.
 5. Keep export blocked unless privacy, split, license, and contamination
    receipts explicitly clear it.
 

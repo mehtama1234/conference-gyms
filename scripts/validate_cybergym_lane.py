@@ -275,6 +275,42 @@ def validate_task_manifest(receipt: dict[str, object], errors: list[str]) -> Non
         require(semantics.get("task_solved") is True, "task manifest must claim fixture PoC solved task", errors)
 
 
+def validate_broader_sample(receipt: dict[str, object], errors: list[str]) -> None:
+    require_keys(
+        receipt,
+        [
+            "receipt_id",
+            "checked_at",
+            "script",
+            "command",
+            "scope",
+            "task_count",
+            "locally_runnable_task_count",
+            "locally_runnable_tasks",
+            "remote_visible_but_missing_local_verifier_images",
+            "status",
+            "does_not_download",
+            "evidence_summary",
+            "next_action",
+        ],
+        "broader-sample-readiness",
+        errors,
+    )
+    require(receipt.get("receipt_id") == "cybergym-broader-sample-readiness-001", "broader sample receipt id is invalid", errors)
+    require(receipt.get("script") == "scripts/probe_cybergym_broader_sample_readiness.py", "broader sample script is invalid", errors)
+    require(receipt.get("command") == "make probe-cybergym-broader-sample", "broader sample command is invalid", errors)
+    require(receipt.get("scope") == "readme_subset_no_heavy_download_readiness", "broader sample scope is invalid", errors)
+    require(receipt.get("task_count") == 10, "broader sample should cover 10 README-subset tasks", errors)
+    require(receipt.get("locally_runnable_task_count") == 1, "broader sample should record one locally runnable task", errors)
+    runnable = receipt.get("locally_runnable_tasks")
+    require(runnable == ["arvo:10400"], "broader sample locally runnable tasks are invalid", errors)
+    missing = receipt.get("remote_visible_but_missing_local_verifier_images")
+    require(isinstance(missing, list) and len(missing) == 9, "broader sample should record nine remote-visible tasks missing images", errors)
+    require(receipt.get("status") == "blocked_missing_local_verifier_images", "broader sample status is invalid", errors)
+    skips = receipt.get("does_not_download")
+    require(isinstance(skips, list) and "additional Docker verifier images" in skips, "broader sample must avoid downloading verifier images", errors)
+
+
 def validate_real_trace(trace: dict[str, object], errors: list[str]) -> None:
     require_keys(trace, ["schema_version", "trace_id", "lane_id", "source", "runtime_status", "task", "observations", "actions", "verifier", "quality", "export_decision"], "trace.real", errors)
     require(trace.get("schema_version") == "security-verifier-real-trace/v0.1", "CyberGym real trace schema is invalid", errors)
@@ -318,6 +354,7 @@ def main() -> int:
     smoke = load_json(LANE / "import-smoke-receipt.json")
     server_probe = load_json(LANE / "server-probe-receipt.json")
     task_manifest = load_json(LANE / "task-manifest-receipt.json")
+    broader_sample = load_json(LANE / "broader-sample-readiness.json")
     real_trace = load_json(LANE / "trace.real.json")
     export = load_json(LANE / "export-decision.json")
 
@@ -345,6 +382,10 @@ def main() -> int:
         validate_task_manifest(task_manifest, errors)
     else:
         errors.append("task-manifest-receipt.json must be an object")
+    if isinstance(broader_sample, dict):
+        validate_broader_sample(broader_sample, errors)
+    else:
+        errors.append("broader-sample-readiness.json must be an object")
     if isinstance(real_trace, dict):
         validate_real_trace(real_trace, errors)
     else:

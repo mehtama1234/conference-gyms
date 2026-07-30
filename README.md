@@ -29,7 +29,7 @@ Analysis artifacts:
 - `lanes/cybergym/`: second security/code lane, with source pin, task contract,
   selected task materialization, generated submit script, vulnerable/fixed
   Docker verifier execution, fixture MNG PoC solution, PoC DB exit-code write,
-  and model-agent/export blockers.
+  README-subset broader-sample readiness scan, and model-agent/export blockers.
 - `lanes/openapps/`: third browser/GUI lane, with source pin, app/task config
   smoke, saved-state reward fixture and replay, local Chromium library
   extraction, and one real MCP/Playwright browser GUI task passed with reward
@@ -94,7 +94,9 @@ Current adapter coverage from the generated readiness rollup:
   selected `arvo:10400` task materialization, generated `submit.sh`,
   vulnerable/fixed verifier execution, a fixture MNG PoC that triggers the
   vulnerable build with ASAN evidence and exits cleanly on the fixed build, and
-  PoC DB exit-code write.
+  PoC DB exit-code write. A broader-sample readiness scan shows all 10 README
+  subset task files are remotely visible, but only `arvo:10400` has local
+  vulnerable/fixed verifier images.
   The other lanes have no-heavy-run smoke and evidence/gate receipts, while
   runtime data, service/toolchain, verifier execution, replay, privacy/license,
   and export blockers remain.
