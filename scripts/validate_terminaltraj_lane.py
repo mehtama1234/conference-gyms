@@ -207,7 +207,13 @@ def validate_cross_artifacts(
     require(export_decision.get("sft_export") == "blocked", "export decision must block SFT export", errors)
 
 
-def validate_receipts(reset_receipt: dict[str, object], verifier_receipt: dict[str, object], cleanup_receipt: dict[str, object], errors: list[str]) -> None:
+def validate_receipts(
+    reset_receipt: dict[str, object],
+    verifier_receipt: dict[str, object],
+    cleanup_receipt: dict[str, object],
+    replay_receipt: dict[str, object],
+    errors: list[str],
+) -> None:
     require(reset_receipt.get("status") == "passed", "reset receipt must be passed", errors)
     require(verifier_receipt.get("status") == "passed", "verifier receipt must be passed", errors)
     result = verifier_receipt.get("result")
@@ -218,6 +224,20 @@ def validate_receipts(reset_receipt: dict[str, object], verifier_receipt: dict[s
         require(result.get("passed") == 4, "verifier must pass 4 tests for task_5279", errors)
         require(result.get("failed") == 0, "verifier must fail 0 tests for task_5279", errors)
     require(cleanup_receipt.get("status") == "passed", "cleanup receipt must be passed", errors)
+    require(replay_receipt.get("status") == "passed", "replay receipt must be passed", errors)
+    replay_result = replay_receipt.get("verifier_result")
+    require_keys(replay_result, ["exit_code", "collected", "passed", "failed", "summary"], "replay-receipt.verifier_result", errors)
+    if isinstance(replay_result, dict):
+        require(replay_result.get("exit_code") == 0, "replay verifier exit_code must be 0", errors)
+        require(replay_result.get("collected") == 4, "replay verifier must collect 4 tests", errors)
+        require(replay_result.get("passed") == 4, "replay verifier must pass 4 tests", errors)
+        require(replay_result.get("failed") == 0, "replay verifier must fail 0 tests", errors)
+    replay_export = replay_receipt.get("export_decision")
+    require_keys(replay_export, ["local_contract_validation", "hosted_conversion", "sft_export", "training_export", "reason"], "replay-receipt.export_decision", errors)
+    if isinstance(replay_export, dict):
+        require(replay_export.get("hosted_conversion") == "blocked", "replay hosted conversion must remain blocked", errors)
+        require(replay_export.get("sft_export") == "blocked", "replay SFT export must remain blocked", errors)
+        require(replay_export.get("training_export") == "blocked", "replay training export must remain blocked", errors)
 
 
 def main() -> int:
@@ -230,6 +250,7 @@ def main() -> int:
     reset_receipt = load_json(LANE / "reset-receipt.json")
     verifier_receipt = load_json(LANE / "verifier-receipt.json")
     cleanup_receipt = load_json(LANE / "cleanup-receipt.json")
+    replay_receipt = load_json(LANE / "replay-receipt.json")
     export_decision = load_json(LANE / "export-decision.json")
     load_json(LANE / "trace.schema.json")
 
@@ -241,6 +262,7 @@ def main() -> int:
     require(isinstance(reset_receipt, dict), "reset-receipt.json must be an object", errors)
     require(isinstance(verifier_receipt, dict), "verifier-receipt.json must be an object", errors)
     require(isinstance(cleanup_receipt, dict), "cleanup-receipt.json must be an object", errors)
+    require(isinstance(replay_receipt, dict), "replay-receipt.json must be an object", errors)
     require(isinstance(export_decision, dict), "export-decision.json must be an object", errors)
 
     if isinstance(task_manifest, dict):
@@ -251,8 +273,13 @@ def main() -> int:
         validate_trace(fixture_trace, errors)
     if isinstance(real_trace, dict):
         validate_trace(real_trace, errors)
-    if isinstance(reset_receipt, dict) and isinstance(verifier_receipt, dict) and isinstance(cleanup_receipt, dict):
-        validate_receipts(reset_receipt, verifier_receipt, cleanup_receipt, errors)
+    if (
+        isinstance(reset_receipt, dict)
+        and isinstance(verifier_receipt, dict)
+        and isinstance(cleanup_receipt, dict)
+        and isinstance(replay_receipt, dict)
+    ):
+        validate_receipts(reset_receipt, verifier_receipt, cleanup_receipt, replay_receipt, errors)
     if (
         isinstance(source_pin, dict)
         and isinstance(task_manifest, dict)

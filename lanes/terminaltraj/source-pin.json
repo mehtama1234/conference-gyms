@@ -29,8 +29,7 @@
   "next_required_artifacts": [
     "license-resolution-receipt.json",
     "split-integrity-receipt.json",
-    "privacy-review-receipt.json",
-    "replay-receipt.json"
+    "privacy-review-receipt.json"
   ],
   "export_decision": {
     "local_contract_validation": "allowed",

@@ -1,0 +1,37 @@
+{
+  "lane_id": "terminaltraj-production-lane",
+  "replay_receipt_id": "terminaltraj-task-5279-replay-001",
+  "status": "passed",
+  "task_id": "task_5279",
+  "script": "scripts/replay_terminaltraj_task_5279.py",
+  "command": "python3 scripts/replay_terminaltraj_task_5279.py",
+  "environment_notes": [
+    "TMPDIR is set to /home/manishmehta/ui-projects/gyms/.cache/tmp inside the replay wrapper because host /tmp is full.",
+    "Task archive and extracted task files are stored in ignored .cache paths.",
+    "The wrapper always runs docker compose down unless --keep-container is passed."
+  ],
+  "observed_steps": [
+    "docker pull confirmed base image yizhilll/tb_container-392402c50123e9f1ba672a157adc3750:tmux_asciinema_v2",
+    "docker compose build completed for terminaltraj-task-5279-client",
+    "docker compose up -d started terminaltraj-task-5279-client",
+    "initial observation found ROOT_DIR = Path('/config/addons_config/tubesync')",
+    "recorded actions created backup, rewrote ROOT_DIR, created /config/custom_tubesync_data/config_test.txt, and py-compiled both Python files",
+    "released pytest verifier ran via /tests/run-tests.sh",
+    "docker compose down removed the container and compose network",
+    "post-cleanup docker ps filter found no running terminaltraj-task-5279-client container"
+  ],
+  "verifier_result": {
+    "exit_code": 0,
+    "collected": 4,
+    "passed": 4,
+    "failed": 0,
+    "summary": "4 passed in 0.03s"
+  },
+  "export_decision": {
+    "local_contract_validation": "allowed",
+    "hosted_conversion": "blocked",
+    "sft_export": "blocked",
+    "training_export": "blocked",
+    "reason": "Replay proves local reproducibility for one task, but license resolution, privacy, split integrity, and export approvals remain unresolved."
+  }
+}

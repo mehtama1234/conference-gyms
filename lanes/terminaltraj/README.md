@@ -87,6 +87,7 @@ The lane now includes a fixture-level contract test:
 - `reset-receipt.json`: real container reset and initial state evidence.
 - `verifier-receipt.json`: released pytest verifier result, 4 passed.
 - `cleanup-receipt.json`: container and network cleanup evidence.
+- `replay-receipt.json`: repeat replay wrapper result, 4 passed, cleanup clear.
 - `trace.schema.json`: normalized terminal/sandbox trace shape.
 - `trace.fixture.json`: non-runtime fixture trace that exercises the shape
   without claiming benchmark execution.
@@ -95,6 +96,8 @@ The lane now includes a fixture-level contract test:
   training export.
 - `../../scripts/validate_terminaltraj_lane.py`: local validator for the lane
   artifacts.
+- `../../scripts/replay_terminaltraj_task_5279.py`: repeatable local replay
+  wrapper for the selected released task.
 
 Run:
 

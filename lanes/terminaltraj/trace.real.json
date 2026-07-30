@@ -110,9 +110,9 @@
   },
   "quality": {
     "evidence_completeness": "partial",
-    "replay_confidence": "medium",
+    "replay_confidence": "high",
     "failure_category": "none_for_local_task_execution",
-    "notes": "One released task ran locally and passed its executable verifier. Evidence remains partial because license resolution, split integrity, and replay receipt are not complete."
+    "notes": "One released task ran locally and passed its executable verifier, then replayed successfully through scripts/replay_terminaltraj_task_5279.py. Evidence remains partial because license resolution and split integrity are not complete."
   },
   "export_decision": {
     "local_contract_validation": "allowed",
