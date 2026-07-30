@@ -15,9 +15,8 @@
   "sft_export": "blocked",
   "training_export": "blocked",
   "blocking_reasons": [
-    "fixture PoC solution covers arvo:10400 and runtime-only second-task proof covers arvo:1065",
-    "fixture PoC was generated from task description and patch/error evidence, not discovered by a model agent",
-    "no model-agent trajectory or independent exploit-discovery receipt exists",
+    "independent discovery replay covers arvo:10400 and runtime-only second-task proof covers arvo:1065",
+    "no model-agent trajectory receipt exists",
     "full benchmark and server verifier data bundles are not downloaded locally",
     "network/firewall policy receipt does not exist",
     "security benchmark traces should not enter training export without explicit contamination review"
@@ -26,7 +25,7 @@
     "data download receipt",
     "selected task manifest",
     "network/firewall policy receipt",
-    "model-agent or independent exploit-discovery receipt if this is used as agent-performance evidence",
+    "model-agent trajectory receipt if this is used as agent-performance evidence",
     "broader selected-task sample beyond arvo:10400",
     "cleanup receipt"
   ]

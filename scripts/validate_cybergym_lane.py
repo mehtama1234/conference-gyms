@@ -110,8 +110,9 @@ def validate_export(export: dict[str, object], errors: list[str]) -> None:
     require(export.get("sft_export") == "blocked", "export must block SFT export", errors)
     require(export.get("training_export") == "blocked", "export must block training export", errors)
     blockers = export.get("blocking_reasons")
-    require(isinstance(blockers, list) and any("fixture" in item for item in blockers), "export blockers must mention fixture-only solution", errors)
+    require(isinstance(blockers, list) and any("independent discovery replay" in item for item in blockers), "export blockers must mention independent discovery replay scope", errors)
     require(isinstance(blockers, list) and any("model-agent" in item for item in blockers), "export blockers must mention missing model-agent evidence", errors)
+    require(isinstance(blockers, list) and not any("no model-agent trajectory or independent" in item for item in blockers), "export blockers must not deny independent discovery receipt", errors)
 
 
 def validate_import_smoke(smoke: dict[str, object], errors: list[str]) -> None:
@@ -273,6 +274,77 @@ def validate_task_manifest(receipt: dict[str, object], errors: list[str]) -> Non
     require_keys(semantics, ["task_solved", "reason"], "task-manifest.success_semantics", errors)
     if isinstance(semantics, dict):
         require(semantics.get("task_solved") is True, "task manifest must claim fixture PoC solved task", errors)
+
+
+def validate_independent_discovery(receipt: dict[str, object], errors: list[str]) -> None:
+    require_keys(
+        receipt,
+        [
+            "lane_id",
+            "receipt_id",
+            "status",
+            "script",
+            "command",
+            "selected_task",
+            "allowed_evidence_sources",
+            "excluded_evidence_sources",
+            "discovery",
+            "generated_task_manifest",
+            "verifier_result",
+            "success_semantics",
+            "does_not_claim",
+        ],
+        "independent-discovery",
+        errors,
+    )
+    require(receipt.get("lane_id") == "cybergym-production-lane", "independent discovery lane_id is invalid", errors)
+    require(receipt.get("status") == "independent_discovery_solved", "independent discovery status is invalid", errors)
+    require(receipt.get("script") == "scripts/run_cybergym_arvo10400_independent_discovery.py", "independent discovery script is invalid", errors)
+    require(receipt.get("command") == "make probe-cybergym-arvo10400-independent-discovery", "independent discovery command is invalid", errors)
+    allowed = receipt.get("allowed_evidence_sources")
+    excluded = receipt.get("excluded_evidence_sources")
+    require(isinstance(allowed, list) and allowed == ["description.txt", "error.txt", "repo-vul.tar.gz"], "independent discovery allowed sources are invalid", errors)
+    require(isinstance(excluded, list) and "patch.diff" in excluded and "repo-fix.tar.gz" in excluded, "independent discovery must exclude patch/fixed sources", errors)
+    discovery = receipt.get("discovery")
+    require_keys(discovery, ["status", "evidence_checks", "poc_plan", "poc_builder"], "independent-discovery.discovery", errors)
+    if isinstance(discovery, dict):
+        require(discovery.get("status") == "poc_plan_derived", "independent discovery plan status is invalid", errors)
+        checks = discovery.get("evidence_checks")
+        require(isinstance(checks, list) and len(checks) == 4, "independent discovery should have four evidence checks", errors)
+        if isinstance(checks, list):
+            require(all(isinstance(item, dict) and item.get("passed") is True for item in checks), "independent discovery evidence checks must pass", errors)
+        plan = discovery.get("poc_plan")
+        require(isinstance(plan, list) and any("one-byte LOOP" in item for item in plan), "independent discovery plan must mention one-byte LOOP", errors)
+    manifest = receipt.get("generated_task_manifest")
+    require_keys(manifest, ["generated_files", "readme_sha256", "submit_sha256", "uses_generated_submit_sh"], "independent-discovery.generated_task_manifest", errors)
+    if isinstance(manifest, dict):
+        require(manifest.get("generated_files") == ["README.md", "description.txt", "repo-vul.tar.gz", "submit.sh"], "independent discovery generated files are invalid", errors)
+        require(manifest.get("uses_generated_submit_sh") is True, "independent discovery must use generated submit.sh", errors)
+    verifier = receipt.get("verifier_result")
+    require_keys(verifier, ["poc_sha256", "poc_size_bytes", "submit_vul", "submit_fix", "poc_db"], "independent-discovery.verifier_result", errors)
+    if isinstance(verifier, dict):
+        require(verifier.get("poc_size_bytes") == 134, "independent discovery PoC size is invalid", errors)
+        require(verifier.get("poc_sha256") == "50121e60d124f24d1709c078cdb920da39afcb142ee6f6b523c36860c4c39f2b", "independent discovery PoC hash is invalid", errors)
+        vul = verifier.get("submit_vul")
+        fix = verifier.get("submit_fix")
+        db = verifier.get("poc_db")
+        require_keys(vul, ["path", "response_status", "exit_code", "evidence"], "independent-discovery.submit_vul", errors)
+        require_keys(fix, ["path", "response_status", "exit_code"], "independent-discovery.submit_fix", errors)
+        require_keys(db, ["record_count", "task_id", "agent_id", "vul_exit_code", "fix_exit_code"], "independent-discovery.poc_db", errors)
+        if isinstance(vul, dict):
+            require(vul.get("path") == "generated task submit.sh", "independent discovery vulnerable submission must use generated submit.sh", errors)
+            require(vul.get("response_status") == 200 and vul.get("exit_code") == 1, "independent discovery vulnerable result is invalid", errors)
+            require("mng_get_long" in str(vul.get("evidence")), "independent discovery vulnerable evidence must name mng_get_long", errors)
+        if isinstance(fix, dict):
+            require(fix.get("response_status") == 200 and fix.get("exit_code") == 0, "independent discovery fixed result is invalid", errors)
+        if isinstance(db, dict):
+            require(db.get("record_count") == 1, "independent discovery DB record count is invalid", errors)
+            require(db.get("task_id") == "arvo:10400", "independent discovery DB task id is invalid", errors)
+            require(db.get("vul_exit_code") == 1 and db.get("fix_exit_code") == 0, "independent discovery DB exit codes should be 1/0", errors)
+    semantics = receipt.get("success_semantics")
+    require_keys(semantics, ["task_solved", "reason"], "independent-discovery.success_semantics", errors)
+    if isinstance(semantics, dict):
+        require(semantics.get("task_solved") is True, "independent discovery must claim solved task", errors)
 
 
 def validate_broader_sample(receipt: dict[str, object], errors: list[str]) -> None:
@@ -496,6 +568,7 @@ def main() -> int:
     smoke = load_json(LANE / "import-smoke-receipt.json")
     server_probe = load_json(LANE / "server-probe-receipt.json")
     task_manifest = load_json(LANE / "task-manifest-receipt.json")
+    independent_discovery = load_json(LANE / "independent-discovery-receipt.json")
     broader_sample = load_json(LANE / "broader-sample-readiness.json")
     second_task = load_json(LANE / "second-task-runtime-receipt.json")
     arvo1065_stability = load_json(LANE / "arvo1065-stability-audit.json")
@@ -527,6 +600,10 @@ def main() -> int:
         validate_task_manifest(task_manifest, errors)
     else:
         errors.append("task-manifest-receipt.json must be an object")
+    if isinstance(independent_discovery, dict):
+        validate_independent_discovery(independent_discovery, errors)
+    else:
+        errors.append("independent-discovery-receipt.json must be an object")
     if isinstance(broader_sample, dict):
         validate_broader_sample(broader_sample, errors)
     else:

@@ -55,6 +55,9 @@ CyberGym adds fields that TerminalTraj does not cover:
   masked task submission, vulnerable/fixed verifier execution, and PoC DB write.
 - `task-manifest-receipt.json`: single-task data materialization, generated
   task files, generated `submit.sh` use, and fixture PoC verifier result.
+- `independent-discovery-receipt.json`: task-facing independent discovery replay
+  for `arvo:10400`, derived from description, error trace, and vulnerable
+  source inspection, with vulnerable/fixed verifier result 1/0.
 - `broader-sample-readiness.json`: README-subset readiness scan showing that
   all 10 sample task files are remotely visible and `arvo:10400` plus
   `arvo:1065` have local vulnerable/fixed verifier images.
@@ -85,6 +88,7 @@ ignored venv and write ignored task/data/PoC cache files:
 ```bash
 make probe-cybergym-server
 make probe-cybergym-task-manifest
+make probe-cybergym-arvo10400-independent-discovery
 make probe-cybergym-broader-sample
 make probe-cybergym-second-task-runtime
 ```

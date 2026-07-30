@@ -1,4 +1,4 @@
-.PHONY: validate validate-lanes validate-terminaltraj validate-cybergym validate-openapps publication-check replay-terminaltraj replay-openapps-reward replay-openapps-browser probe-cybergym-server probe-cybergym-task-manifest probe-cybergym-broader-sample probe-cybergym-second-task-runtime audit-cybergym-arvo1065-stability
+.PHONY: validate validate-lanes validate-terminaltraj validate-cybergym validate-openapps publication-check replay-terminaltraj replay-openapps-reward replay-openapps-browser probe-cybergym-server probe-cybergym-task-manifest probe-cybergym-broader-sample probe-cybergym-second-task-runtime audit-cybergym-arvo1065-stability probe-cybergym-arvo10400-independent-discovery
 
 validate: validate-lanes
 
@@ -40,3 +40,6 @@ probe-cybergym-second-task-runtime:
 
 audit-cybergym-arvo1065-stability:
 	@python3 scripts/audit_cybergym_arvo1065_stability.py
+
+probe-cybergym-arvo10400-independent-discovery:
+	@python3 scripts/run_cybergym_arvo10400_independent_discovery.py
