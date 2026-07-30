@@ -15,7 +15,7 @@
   "sft_export": "blocked",
   "training_export": "blocked",
   "blocking_reasons": [
-    "selected task manifest and fixture PoC solution cover one task only, arvo:10400 level1",
+    "fixture PoC solution covers arvo:10400 and runtime-only second-task proof covers arvo:1065",
     "fixture PoC was generated from task description and patch/error evidence, not discovered by a model agent",
     "no model-agent trajectory or independent exploit-discovery receipt exists",
     "full benchmark and server verifier data bundles are not downloaded locally",

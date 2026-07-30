@@ -301,14 +301,87 @@ def validate_broader_sample(receipt: dict[str, object], errors: list[str]) -> No
     require(receipt.get("command") == "make probe-cybergym-broader-sample", "broader sample command is invalid", errors)
     require(receipt.get("scope") == "readme_subset_no_heavy_download_readiness", "broader sample scope is invalid", errors)
     require(receipt.get("task_count") == 10, "broader sample should cover 10 README-subset tasks", errors)
-    require(receipt.get("locally_runnable_task_count") == 1, "broader sample should record one locally runnable task", errors)
+    require(receipt.get("locally_runnable_task_count") == 2, "broader sample should record two locally runnable tasks", errors)
     runnable = receipt.get("locally_runnable_tasks")
-    require(runnable == ["arvo:10400"], "broader sample locally runnable tasks are invalid", errors)
+    require(runnable == ["arvo:1065", "arvo:10400"], "broader sample locally runnable tasks are invalid", errors)
     missing = receipt.get("remote_visible_but_missing_local_verifier_images")
-    require(isinstance(missing, list) and len(missing) == 9, "broader sample should record nine remote-visible tasks missing images", errors)
-    require(receipt.get("status") == "blocked_missing_local_verifier_images", "broader sample status is invalid", errors)
+    require(isinstance(missing, list) and len(missing) == 8, "broader sample should record eight remote-visible tasks missing images", errors)
+    require(receipt.get("status") == "ready_for_broader_sample_probe", "broader sample status is invalid", errors)
     skips = receipt.get("does_not_download")
     require(isinstance(skips, list) and "additional Docker verifier images" in skips, "broader sample must avoid downloading verifier images", errors)
+
+
+def validate_second_task_runtime(receipt: dict[str, object], errors: list[str]) -> None:
+    require_keys(
+        receipt,
+        [
+            "lane_id",
+            "receipt_id",
+            "status",
+            "script",
+            "command",
+            "selected_task",
+            "local_verifier_images",
+            "downloaded_task_data",
+            "generated_task_manifest",
+            "verifier_probe",
+            "success_semantics",
+            "does_not_claim",
+        ],
+        "second-task-runtime",
+        errors,
+    )
+    require(receipt.get("lane_id") == "cybergym-production-lane", "second task lane_id is invalid", errors)
+    require(receipt.get("status") == "second_task_runtime_probe_passed_unsolved", "second task status is invalid", errors)
+    require(receipt.get("script") == "scripts/run_cybergym_second_task_runtime_probe.py", "second task script is invalid", errors)
+    require(receipt.get("command") == "make probe-cybergym-second-task-runtime", "second task command is invalid", errors)
+    task = receipt.get("selected_task")
+    require_keys(task, ["real_task_id", "agent_facing_task_id", "agent_id", "difficulty"], "second-task.selected_task", errors)
+    if isinstance(task, dict):
+        require(task.get("real_task_id") == "arvo:1065", "second task real id must be arvo:1065", errors)
+        require(task.get("agent_facing_task_id") == "9c73e92e52b7", "second task masked id is invalid", errors)
+    images = receipt.get("local_verifier_images")
+    require_keys(images, ["n132/arvo:1065-vul", "n132/arvo:1065-fix", "pulled_during_lane"], "second-task.local_verifier_images", errors)
+    if isinstance(images, dict):
+        require(images.get("n132/arvo:1065-vul") is True and images.get("n132/arvo:1065-fix") is True, "second task verifier images must be local", errors)
+    data = receipt.get("downloaded_task_data")
+    require_keys(data, ["source", "cache_dir", "files"], "second-task.downloaded_task_data", errors)
+    if isinstance(data, dict):
+        files = data.get("files")
+        require(isinstance(files, list) and len(files) == 5, "second task must record five downloaded data files", errors)
+    manifest = receipt.get("generated_task_manifest")
+    require_keys(manifest, ["generated_files", "readme_sha256", "submit_sha256", "uses_generated_submit_sh"], "second-task.generated_task_manifest", errors)
+    if isinstance(manifest, dict):
+        require(manifest.get("generated_files") == ["README.md", "description.txt", "repo-vul.tar.gz", "submit.sh"], "second task generated files are invalid", errors)
+        require(manifest.get("uses_generated_submit_sh") is True, "second task must use generated submit.sh", errors)
+    probe = receipt.get("verifier_probe")
+    require_keys(probe, ["poc_sha256", "poc_size_bytes", "submit_vul", "submit_fix", "poc_db"], "second-task.verifier_probe", errors)
+    if isinstance(probe, dict):
+        require(probe.get("poc_size_bytes") == 0, "second task PoC byte count should be 0", errors)
+        require(
+            probe.get("poc_sha256") == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "second task empty PoC hash is invalid",
+            errors,
+        )
+        vul = probe.get("submit_vul")
+        fix = probe.get("submit_fix")
+        db = probe.get("poc_db")
+        require_keys(vul, ["path", "response_status", "exit_code"], "second-task.verifier_probe.submit_vul", errors)
+        require_keys(fix, ["path", "response_status", "exit_code"], "second-task.verifier_probe.submit_fix", errors)
+        require_keys(db, ["record_count", "task_id", "vul_exit_code", "fix_exit_code"], "second-task.verifier_probe.poc_db", errors)
+        if isinstance(vul, dict):
+            require(vul.get("path") == "generated task submit.sh", "second task vulnerable submission must use generated submit.sh", errors)
+            require(vul.get("response_status") == 200 and vul.get("exit_code") == 0, "second task vulnerable result is invalid", errors)
+        if isinstance(fix, dict):
+            require(fix.get("response_status") == 200 and fix.get("exit_code") == 0, "second task fixed result is invalid", errors)
+        if isinstance(db, dict):
+            require(db.get("record_count") == 1, "second task DB record count should be 1", errors)
+            require(db.get("task_id") == "arvo:1065", "second task DB task id should be arvo:1065", errors)
+            require(db.get("vul_exit_code") == 0 and db.get("fix_exit_code") == 0, "second task DB exit codes should be 0/0 for empty runtime probe", errors)
+    semantics = receipt.get("success_semantics")
+    require_keys(semantics, ["task_solved", "reason"], "second-task.success_semantics", errors)
+    if isinstance(semantics, dict):
+        require(semantics.get("task_solved") is False, "second task must not claim solved task", errors)
 
 
 def validate_real_trace(trace: dict[str, object], errors: list[str]) -> None:
@@ -346,6 +419,31 @@ def validate_real_trace(trace: dict[str, object], errors: list[str]) -> None:
         require(export.get("training_export") == "blocked", "CyberGym real trace training export must stay blocked", errors)
 
 
+def validate_second_real_trace(trace: dict[str, object], errors: list[str]) -> None:
+    require_keys(trace, ["schema_version", "trace_id", "lane_id", "runtime_status", "task", "observations", "actions", "verifier", "quality", "export_decision"], "trace.second.real", errors)
+    require(trace.get("schema_version") == "security-verifier-real-trace/v0.1", "second CyberGym trace schema is invalid", errors)
+    require(trace.get("lane_id") == "cybergym-production-lane", "second CyberGym trace lane_id is invalid", errors)
+    runtime = trace.get("runtime_status")
+    require_keys(runtime, ["mode", "server_runtime", "docker_verifier_runtime", "verifier_images"], "trace.second.real.runtime_status", errors)
+    if isinstance(runtime, dict):
+        require(runtime.get("mode") == "real_security_second_task_verifier_probe", "second CyberGym trace mode is invalid", errors)
+        require(runtime.get("server_runtime") is True, "second CyberGym trace must include server runtime", errors)
+        require(runtime.get("docker_verifier_runtime") is True, "second CyberGym trace must include Docker verifier runtime", errors)
+    task = trace.get("task")
+    require_keys(task, ["real_task_id", "agent_facing_task_id", "task_manifest_generated"], "trace.second.real.task", errors)
+    if isinstance(task, dict):
+        require(task.get("real_task_id") == "arvo:1065", "second CyberGym trace task id must be arvo:1065", errors)
+        require(task.get("agent_facing_task_id") == "9c73e92e52b7", "second CyberGym trace masked task id is invalid", errors)
+        require(task.get("task_manifest_generated") is True, "second CyberGym trace must claim task manifest generation", errors)
+    verifier = trace.get("verifier")
+    require_keys(verifier, ["status", "kind", "task_solved", "vul_exit_code", "fix_exit_code", "evidence"], "trace.second.real.verifier", errors)
+    if isinstance(verifier, dict):
+        require(verifier.get("status") == "executed_unsolved", "second CyberGym verifier status must be executed_unsolved", errors)
+        require(verifier.get("task_solved") is False, "second CyberGym trace must not claim solved task", errors)
+        require(verifier.get("vul_exit_code") == 0, "second CyberGym trace vulnerable exit code should be 0", errors)
+        require(verifier.get("fix_exit_code") == 0, "second CyberGym trace fixed exit code should be 0", errors)
+
+
 def main() -> int:
     errors: list[str] = []
     source = load_json(LANE / "source-pin.json")
@@ -355,7 +453,9 @@ def main() -> int:
     server_probe = load_json(LANE / "server-probe-receipt.json")
     task_manifest = load_json(LANE / "task-manifest-receipt.json")
     broader_sample = load_json(LANE / "broader-sample-readiness.json")
+    second_task = load_json(LANE / "second-task-runtime-receipt.json")
     real_trace = load_json(LANE / "trace.real.json")
+    second_trace = load_json(LANE / "trace.second.real.json")
     export = load_json(LANE / "export-decision.json")
 
     if isinstance(source, dict):
@@ -386,10 +486,18 @@ def main() -> int:
         validate_broader_sample(broader_sample, errors)
     else:
         errors.append("broader-sample-readiness.json must be an object")
+    if isinstance(second_task, dict):
+        validate_second_task_runtime(second_task, errors)
+    else:
+        errors.append("second-task-runtime-receipt.json must be an object")
     if isinstance(real_trace, dict):
         validate_real_trace(real_trace, errors)
     else:
         errors.append("trace.real.json must be an object")
+    if isinstance(second_trace, dict):
+        validate_second_real_trace(second_trace, errors)
+    else:
+        errors.append("trace.second.real.json must be an object")
     if isinstance(export, dict):
         validate_export(export, errors)
     else:

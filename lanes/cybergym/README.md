@@ -4,7 +4,8 @@
 
 Status: source pinned, no-heavy import smoke passed, selected task manifest
 generated, and vulnerable/fixed verifier execution passed for a fixture MNG PoC
-solution.
+solution. A second README-subset task, `arvo:1065`, is also materialized and
+verifier-runnable locally with an empty runtime probe.
 
 CyberGym is the second production lane after TerminalTraj. It represents the
 security/code family: an agent receives a vulnerable codebase, proposes a proof
@@ -17,8 +18,9 @@ model-agent performance evidence yet. The repo is available locally, the single
 the task README and `submit.sh`, the generated `submit.sh` reached the
 vulnerable verifier, the fixed verifier also executed, and the PoC database
 stored vulnerable/fixed exit codes 1/0 for a fixture MNG PoC. The selected
-`arvo:10400` verifier images are local, but broader benchmark/server data
-remains heavyweight:
+`arvo:1065` verifier images are also local and its generated task has a
+second-task runtime trace with vulnerable/fixed exit codes 0/0 for an empty
+probe. Broader benchmark/server data remains heavyweight:
 
 - benchmark data: about 240GB
 - binary-only server data: about 130GB
@@ -54,10 +56,15 @@ CyberGym adds fields that TerminalTraj does not cover:
 - `task-manifest-receipt.json`: single-task data materialization, generated
   task files, generated `submit.sh` use, and fixture PoC verifier result.
 - `broader-sample-readiness.json`: README-subset readiness scan showing that
-  all 10 sample task files are remotely visible, but only `arvo:10400` has local
-  vulnerable/fixed verifier images.
+  all 10 sample task files are remotely visible and `arvo:10400` plus
+  `arvo:1065` have local vulnerable/fixed verifier images.
+- `second-task-runtime-receipt.json`: generated `arvo:1065` task manifest,
+  generated `submit.sh` use, vulnerable/fixed verifier execution, and PoC DB
+  write for an empty runtime probe.
 - `trace.real.json`: normalized real security task-manifest verifier trace for
   the fixture `arvo:10400` PoC.
+- `trace.second.real.json`: normalized second-task runtime trace for
+  `arvo:1065`.
 - `export-decision.json`: explicit block on hosted conversion, SFT export, and
   training export.
 - `../../scripts/validate_cybergym_lane.py`: local validator for the lane
@@ -76,6 +83,7 @@ ignored venv and write ignored task/data/PoC cache files:
 make probe-cybergym-server
 make probe-cybergym-task-manifest
 make probe-cybergym-broader-sample
+make probe-cybergym-second-task-runtime
 ```
 
 Expected output:

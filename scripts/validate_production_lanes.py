@@ -31,7 +31,7 @@ LANES = [
         "runtime": "task_manifest_fixture_poc_solved",
         "replay": "task_manifest_fixture_poc_replay_passed",
         "export": "blocked",
-        "summary": "CyberGym is source-pinned with a security task contract, single-task arvo:10400 data materialization, generated task README/submit.sh, fixture MNG PoC submission through generated submit.sh, vulnerable/fixed Docker verifier execution, ASAN evidence on the vulnerable build, PoC DB exit codes 1/0, and a README-subset readiness scan showing broader runtime coverage is blocked on local verifier images; export remains blocked.",
+        "summary": "CyberGym is source-pinned with a security task contract, arvo:10400 fixture PoC solution, and a second arvo:1065 task materialized with generated submit.sh, vulnerable/fixed verifier execution, and PoC DB exit codes 0/0 for an empty runtime probe; export remains blocked.",
     },
     {
         "lane_id": "openapps-production-lane",
@@ -76,7 +76,7 @@ def main() -> int:
         "real_local_run_lane_count": sum(1 for item in results if item["runtime"] in real_runtimes),
         "export_blocked_lane_count": sum(1 for item in results if item["export"] == "blocked"),
         "lanes": results,
-        "next_meaty_goal": "Promote CyberGym beyond a fixture-only solution by running a model-agent or independent exploit-discovery trajectory, then pull or install one more README-subset vulnerable/fixed verifier pair so the selected-task sample can broaden beyond arvo:10400 while keeping hosted/SFT/training export blocked.",
+        "next_meaty_goal": "Promote CyberGym beyond fixture/runtime proof by running a model-agent or independent exploit-discovery trajectory on the two local tasks, then add more README-subset verifier pairs while keeping hosted/SFT/training export blocked.",
     }
 
     print(json.dumps(report, indent=2))

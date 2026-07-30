@@ -5,22 +5,22 @@
   "command": "make probe-cybergym-broader-sample",
   "scope": "readme_subset_no_heavy_download_readiness",
   "task_count": 10,
-  "locally_runnable_task_count": 1,
+  "locally_runnable_task_count": 2,
   "locally_runnable_tasks": [
+    "arvo:1065",
     "arvo:10400"
   ],
   "remote_visible_but_missing_local_verifier_images": [
     "arvo:47101",
     "arvo:3938",
     "arvo:24993",
-    "arvo:1065",
     "arvo:368",
     "oss-fuzz:42535201",
     "oss-fuzz:42535468",
     "oss-fuzz:370689421",
     "oss-fuzz:385167047"
   ],
-  "status": "blocked_missing_local_verifier_images",
+  "status": "ready_for_broader_sample_probe",
   "does_not_download": [
     "benchmark data bundle",
     "binary-only server data bundle",
@@ -31,8 +31,8 @@
     "CyberGym README subset contains 10 tasks",
     "all 10 subset tasks are present in CyberGym/mask_map.json",
     "all 10 subset tasks expose description.txt, error.txt, patch.diff, repo-fix.tar.gz, and repo-vul.tar.gz through the Hugging Face dataset",
-    "local Docker only has n132/arvo:10400-vul and n132/arvo:10400-fix from the subset",
-    "broadening runtime coverage requires pulling at least one more vulnerable/fixed verifier image pair or installing the binary-only server data bundle"
+    "local Docker has vulnerable/fixed verifier image pairs for arvo:1065 and arvo:10400",
+    "remaining README-subset runtime coverage requires pulling more vulnerable/fixed verifier image pairs or installing the binary-only server data bundle"
   ],
-  "next_action": "Pull or install one additional README-subset vulnerable/fixed verifier image pair, then materialize that task and record a second CyberGym verifier trace."
+  "next_action": "Run model-agent or exploit-discovery trajectories on the two local tasks, then add more verifier image pairs for broader coverage."
 }

@@ -137,6 +137,11 @@ def main() -> int:
         if item["remote_task_data_visible"]
         and not (item["local_verifier_images"]["vul"] and item["local_verifier_images"]["fix"])
     ]
+    local_image_pairs = [
+        item["task_id"]
+        for item in task_records
+        if item["local_verifier_images"]["vul"] and item["local_verifier_images"]["fix"]
+    ]
 
     report = {
         "receipt_id": "cybergym-broader-sample-readiness-001",
@@ -159,10 +164,14 @@ def main() -> int:
             "CyberGym README subset contains 10 tasks",
             "all 10 subset tasks are present in CyberGym/mask_map.json",
             "all 10 subset tasks expose description.txt, error.txt, patch.diff, repo-fix.tar.gz, and repo-vul.tar.gz through the Hugging Face dataset",
-            "local Docker only has n132/arvo:10400-vul and n132/arvo:10400-fix from the subset",
-            "broadening runtime coverage requires pulling at least one more vulnerable/fixed verifier image pair or installing the binary-only server data bundle",
+            f"local Docker has vulnerable/fixed verifier image pairs for {', '.join(local_image_pairs) if local_image_pairs else 'no README-subset tasks'}",
+            "remaining README-subset runtime coverage requires pulling more vulnerable/fixed verifier image pairs or installing the binary-only server data bundle",
         ],
-        "next_action": "Pull or install one additional README-subset vulnerable/fixed verifier image pair, then materialize that task and record a second CyberGym verifier trace.",
+        "next_action": (
+            "Materialize the second local task and record a verifier trace."
+            if len(runnable) < 2
+            else "Run model-agent or exploit-discovery trajectories on the two local tasks, then add more verifier image pairs for broader coverage."
+        ),
         "tasks": task_records,
     }
     print(json.dumps(report, indent=2))

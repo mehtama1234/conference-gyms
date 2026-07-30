@@ -76,7 +76,9 @@ server startup, generated-submit vulnerable submission, fixed verifier
 execution, PoC DB exit-code write, and normalized real security trace are
 complete. A fixture MNG PoC now solves `arvo:10400` by triggering the vulnerable
 build with ASAN evidence in `mng_get_long` while the fixed build exits 0. This
-does not claim a model agent discovered the exploit.
+does not claim a model agent discovered the exploit. A second README-subset task,
+`arvo:1065`, now has local verifier images, generated task files, vulnerable/
+fixed verifier execution, and PoC DB exit codes 0/0 for an empty runtime probe.
 
 `OpenApps` is the third lane: source pin, package root import, app config
 discovery, task YAML parsing, saved-state reward replay, no-sudo Chromium
@@ -95,8 +97,9 @@ Choose between hardening OpenApps and promoting CyberGym:
 3. Add cleanup/replay receipts for that sample.
 4. For CyberGym, move beyond the fixture PoC by running a model-agent or
    independent exploit-discovery trajectory, then broaden the sample beyond
-   `arvo:10400`. The README-subset readiness scan now shows that broadening
-   requires one more local vulnerable/fixed verifier image pair.
+   runtime-only probes. The README-subset readiness scan now shows two local
+   verifier-runnable tasks and eight remaining tasks that need verifier image
+   pairs.
 5. Keep export blocked unless privacy, split, license, and contamination
    receipts explicitly clear it.
 

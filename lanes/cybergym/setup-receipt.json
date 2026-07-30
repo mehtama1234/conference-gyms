@@ -33,6 +33,7 @@
     "selected arvo:10400 level1 task manifest has been generated from cached Hugging Face files",
     "generated submit.sh, local PoC submission server, and vulnerable/fixed verifier execution passed for a fixture MNG PoC",
     "fixture PoC solved arvo:10400 with vulnerable exit code 1 and fixed exit code 0",
+    "arvo:1065 task data and verifier images are present locally; generated submit.sh and vulnerable/fixed verifier execution passed for an empty runtime probe",
     "no model-agent exploit discovery receipt exists"
   ],
   "no_heavy_smoke": {

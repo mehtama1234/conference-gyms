@@ -19,6 +19,7 @@
     "selected task manifest generation passed for arvo:10400 level1",
     "masked task checksum validation, generated submit.sh, PoC database write, and vulnerable/fixed verifier execution passed for arvo:10400",
     "fixture PoC solves arvo:10400 by producing vulnerable exit code 1 and fixed exit code 0",
+    "arvo:1065 vulnerable/fixed verifier images are also present locally and a second generated-task runtime probe has executed",
     "no model-agent exploit discovery receipt exists",
     "network/firewall policy has not been exercised",
     "hosted conversion, SFT export, and training export approvals are not cleared"
